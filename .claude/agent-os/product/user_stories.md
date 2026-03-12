@@ -1,1017 +1,1017 @@
-# WalletWise — Historias de Usuario
+# Zenda — User Stories
 
-**Proyecto:** WalletWise — App Móvil de Gestión Financiera con IA para Universitarios  
-**Duración:** 10.5 meses (Febrero — Diciembre 2026)  
-**Presupuesto:** S/ 14,241  
-**Status Tracking:** ✅ Completo | 🚧 En Progreso | ⏳ No Iniciado | 🔒 Bloqueado
-
----
-
-## Épica 1: Autenticación y Gestión de Usuarios
-
-**Goal:** Todo usuario debe registrarse, autenticarse y configurar su perfil financiero antes de acceder a funcionalidades.
-
-### US-0101: Registro de Usuario
-**Como** estudiante universitario  
-**Quiero** registrarme con un método seguro  
-**Para** proteger mis datos financieros personales
-
-**Criterios de Aceptación:**
-- [ ] `POST /api/v1/auth/register` acepta: email, password, name
-- [ ] Email validado con formato correcto, no duplicado
-- [ ] Password ≥ 8 caracteres con al menos 1 mayúscula, 1 minúscula, 1 número
-- [ ] Password hasheado con bcrypt (cost factor 12) antes de almacenar
-- [ ] Cuenta creada con `profile_completed = false`
-- [ ] Retorna JWT token válido por 30 días
-- [ ] Pantalla de registro con validación en tiempo real
-
-**Story Points:** 5  
-**Status:** ⏳ No Iniciado  
-**Fase:** 2 — Autenticación
+**Project:** Zenda — AI-Powered Mobile Financial Management App for University Students
+**Duration:** 10.5 months (February — December 2026)
+**Budget:** S/ 14,241
+**Status Tracking:** Done | In Progress | Not Started | Blocked
 
 ---
 
-### US-0102: Inicio de Sesión
-**Como** usuario registrado  
-**Quiero** iniciar sesión con mis credenciales  
-**Para** acceder solo yo a mi información financiera
+## Epic 1: Authentication and User Management
 
-**Criterios de Aceptación:**
-- [ ] `POST /api/v1/auth/login` acepta email y password
-- [ ] Credenciales correctas retornan JWT token
-- [ ] Credenciales incorrectas retornan 401 con mensaje genérico
-- [ ] Bloqueo temporal tras 3 intentos fallidos consecutivos (15 minutos)
-- [ ] JWT almacenado en EncryptedSharedPreferences (Android)
-- [ ] Auto-login si JWT válido existe al abrir app
+**Goal:** Every user must register, authenticate, and configure their financial profile before accessing features.
 
-**Story Points:** 5  
-**Status:** ⏳ No Iniciado  
-**Fase:** 2 — Autenticación
+### US-0101: User Registration
+**As a** university student
+**I want to** register with a secure method
+**So that** my personal financial data is protected
 
----
+**Acceptance Criteria:**
+- [ ] `POST /api/v1/auth/register` accepts: email, password, name
+- [ ] Email validated with correct format, no duplicates
+- [ ] Password >= 8 characters with at least 1 uppercase, 1 lowercase, 1 number
+- [ ] Password hashed with bcrypt (cost factor 12) before storage
+- [ ] Account created with `profile_completed = false`
+- [ ] Returns valid JWT token for 30 days
+- [ ] Registration screen with real-time validation
 
-### US-0103: Middleware de Autenticación
-**Como** sistema  
-**Quiero** validar JWT en cada request autenticado  
-**Para** garantizar que solo usuarios válidos acceden a la API
-
-**Criterios de Aceptación:**
-- [ ] Intercepta todas las rutas `/api/v1/*` excepto `/api/v1/auth/*`
-- [ ] Extrae token del header `Authorization: Bearer {token}`
-- [ ] Valida firma, expiración y estructura del JWT
-- [ ] Carga `user_id` en request context para uso downstream
-- [ ] Retorna 401 Unauthorized si token inválido, expirado o ausente
-- [ ] Logging de intentos de acceso no autorizados
-
-**Story Points:** 3  
-**Status:** ⏳ No Iniciado  
-**Fase:** 2 — Autenticación
+**Story Points:** 5
+**Status:** Not Started
+**Phase:** 2 — Authentication
 
 ---
 
-### US-0104: Recuperación de Contraseña
-**Como** usuario  
-**Quiero** recuperar mi cuenta si olvido mi contraseña  
-**Para** no perder acceso a mi historial financiero
+### US-0102: Login
+**As a** registered user
+**I want to** log in with my credentials
+**So that** only I can access my financial information
 
-**Criterios de Aceptación:**
-- [ ] `POST /api/v1/auth/forgot-password` acepta email
-- [ ] Envía email con token de reset (expira en 1 hora)
-- [ ] `POST /api/v1/auth/reset-password` acepta token + nueva contraseña
-- [ ] Token invalidado tras uso (single-use)
-- [ ] Pantalla de "Olvidé mi contraseña" con campo email
-- [ ] Mensaje de confirmación: "Revisa tu correo electrónico"
+**Acceptance Criteria:**
+- [ ] `POST /api/v1/auth/login` accepts email and password
+- [ ] Correct credentials return JWT token
+- [ ] Incorrect credentials return 401 with generic message
+- [ ] Temporary lockout after 3 consecutive failed attempts (15 minutes)
+- [ ] JWT stored in EncryptedSharedPreferences (Android)
+- [ ] Auto-login if valid JWT exists when opening app
 
-**Story Points:** 3  
-**Status:** ⏳ No Iniciado  
-**Fase:** 2 — Autenticación
-
----
-
-### US-0105: Configuración de Perfil Inicial (Onboarding)
-**Como** estudiante  
-**Quiero** configurar mi perfil financiero al primer ingreso  
-**Para** recibir recomendaciones adaptadas a mi situación
-
-**Criterios de Aceptación:**
-- [ ] Se presenta tras primer login exitoso (si `profile_completed = false`)
-- [ ] Campos: edad, universidad, tipo de ingreso (beca/trabajo/familia/mixto), ingreso mensual promedio, moneda preferida (default PEN)
-- [ ] Cada campo en pantalla individual con transición fluida
-- [ ] Skip opcional con mensaje: "Completar tu perfil mejora las predicciones en un 40%"
-- [ ] Al completar: `profile_completed = true`, `financial_literacy_level` asignado según respuestas
-- [ ] Datos editables posteriormente en perfil
-
-**Story Points:** 5  
-**Status:** ⏳ No Iniciado  
-**Fase:** 2 — Autenticación
+**Story Points:** 5
+**Status:** Not Started
+**Phase:** 2 — Authentication
 
 ---
 
-### US-0106: Edición de Perfil y Preferencias
-**Como** usuario  
-**Quiero** editar mi perfil y preferencias de la app  
-**Para** mantener mi información actualizada y personalizar la experiencia
+### US-0103: Authentication Middleware
+**As a** system
+**I want to** validate JWT on each authenticated request
+**So that** only valid users access the API
 
-**Criterios de Aceptación:**
-- [ ] `GET /api/v1/users/me` retorna perfil completo del usuario
-- [ ] `PUT /api/v1/users/me` acepta campos editables: name, university, income_type, average_monthly_income, currency
-- [ ] Pantalla de perfil con todos los campos editables
-- [ ] Selector de moneda: PEN (default), USD
-- [ ] Formato numérico: separador de miles (punto/coma)
-- [ ] Cambios guardados con confirmación visual
+**Acceptance Criteria:**
+- [ ] Intercepts all routes `/api/v1/*` except `/api/v1/auth/*`
+- [ ] Extracts token from `Authorization: Bearer {token}` header
+- [ ] Validates JWT signature, expiration, and structure
+- [ ] Loads `user_id` into request context for downstream use
+- [ ] Returns 401 Unauthorized if token is invalid, expired, or absent
+- [ ] Logging of unauthorized access attempts
 
-**Story Points:** 3  
-**Status:** ⏳ No Iniciado  
-**Fase:** 2 — Autenticación
-
----
-
-## Épica 2: Registro de Transacciones
-
-**Goal:** Los estudiantes pueden registrar ingresos y gastos de forma simple y rápida, manteniendo un historial limpio y consultable.
-
-### US-0201: Registrar Ingreso
-**Como** estudiante  
-**Quiero** registrar mis ingresos manualmente  
-**Para** llevar control de mis fuentes de dinero
-
-**Criterios de Aceptación:**
-- [ ] `POST /api/v1/transactions` acepta: `type: INGRESO`, `amount` (> 0), `category_id`, `description` (opcional), `date`
-- [ ] Valida que categoría exista y sea de tipo INGRESO
-- [ ] Crea transacción y retorna con balance actualizado del mes
-- [ ] Pantalla con: selector tipo (toggle Ingreso/Gasto), input monto numérico, selector categoría, date picker (default hoy), campo descripción
-- [ ] Mensaje de confirmación: "Ingreso de S/{monto} registrado"
-- [ ] Balance en pantalla principal se actualiza inmediatamente
-
-**Story Points:** 5  
-**Status:** ⏳ No Iniciado  
-**Fase:** 3 — Registro de Transacciones
+**Story Points:** 3
+**Status:** Not Started
+**Phase:** 2 — Authentication
 
 ---
 
-### US-0202: Registrar Gasto
-**Como** estudiante  
-**Quiero** registrar mis gastos manualmente  
-**Para** saber en qué gasto mi dinero
+### US-0104: Password Recovery
+**As a** user
+**I want to** recover my account if I forget my password
+**So that** I don't lose access to my financial history
 
-**Criterios de Aceptación:**
-- [ ] Mismo endpoint `POST /api/v1/transactions` con `type: GASTO`
-- [ ] Valida que categoría sea de tipo GASTO
-- [ ] Actualiza balance restando el monto
-- [ ] Aparece en historial ordenado por fecha descendente
-- [ ] Si gasto excede promedio de categoría (>20%), trigger de detección de anomalía
+**Acceptance Criteria:**
+- [ ] `POST /api/v1/auth/forgot-password` accepts email
+- [ ] Sends email with reset token (expires in 1 hour)
+- [ ] `POST /api/v1/auth/reset-password` accepts token + new password
+- [ ] Token invalidated after use (single-use)
+- [ ] "Forgot my password" screen with email field
+- [ ] Confirmation message: "Check your email"
 
-**Story Points:** 5  
-**Status:** ⏳ No Iniciado  
-**Fase:** 3 — Registro de Transacciones
-
----
-
-### US-0203: Historial de Transacciones con Filtros
-**Como** usuario  
-**Quiero** aplicar filtros avanzados a mi historial  
-**Para** buscar información específica rápidamente
-
-**Criterios de Aceptación:**
-- [ ] `GET /api/v1/transactions` con query params: `type`, `category_id`, `date_from`, `date_to`, `min_amount`, `max_amount`, `search` (descripción), `page`, `limit`, `sort`
-- [ ] Retorna lista paginada con total de resultados
-- [ ] Pantalla con filtros desplegables: rango de fechas, categoría, tipo, rango de monto
-- [ ] Búsqueda por texto en descripción
-- [ ] Paginación infinita (scroll)
-- [ ] Response time < 2 segundos con 1000+ transacciones
-
-**Story Points:** 5  
-**Status:** ⏳ No Iniciado  
-**Fase:** 3 — Registro de Transacciones
+**Story Points:** 3
+**Status:** Not Started
+**Phase:** 2 — Authentication
 
 ---
 
-### US-0204: Dashboard Principal
-**Como** estudiante  
-**Quiero** ver un resumen rápido de mi situación financiera al abrir la app  
-**Para** tener una foto instantánea de mi estado
+### US-0105: Initial Profile Setup (Onboarding)
+**As a** student
+**I want to** set up my financial profile on first login
+**So that** I receive recommendations adapted to my situation
 
-**Criterios de Aceptación:**
-- [ ] Pantalla principal muestra: balance del mes actual (ingresos - gastos), total ingresos del mes, total gastos del mes
-- [ ] Últimas 5 transacciones con icono de categoría, monto y fecha
-- [ ] FAB (Floating Action Button) "+" para agregar transacción
-- [ ] Pull-to-refresh para actualizar datos
-- [ ] Carga completa en < 2 segundos
-- [ ] Sección "Sugerencias" con última recomendación de IA (si disponible)
+**Acceptance Criteria:**
+- [ ] Presented after first successful login (if `profile_completed = false`)
+- [ ] Fields: age, university, income type (scholarship/work/family/mixed), average monthly income, preferred currency (default PEN)
+- [ ] Each field on individual screen with smooth transition
+- [ ] Optional skip with message: "Completing your profile improves predictions by 40%"
+- [ ] On completion: `profile_completed = true`, `financial_literacy_level` assigned based on responses
+- [ ] Data editable later in profile
 
-**Story Points:** 8  
-**Status:** ⏳ No Iniciado  
-**Fase:** 3 — Registro de Transacciones
-
----
-
-### US-0205: Editar Transacción
-**Como** usuario  
-**Quiero** editar transacciones registradas  
-**Para** corregir información incorrecta
-
-**Criterios de Aceptación:**
-- [ ] `PUT /api/v1/transactions/{id}` acepta campos modificables: amount, category_id, description, date
-- [ ] Valida que transacción pertenezca al usuario autenticado (403 si no)
-- [ ] Transacciones de otro usuario retornan 403 Forbidden
-- [ ] Balance y reportes se recalculan tras edición
-- [ ] Tap en transacción abre pantalla de edición pre-rellenada
-- [ ] Botón "Guardar cambios" con confirmación
-
-**Story Points:** 3  
-**Status:** ⏳ No Iniciado  
-**Fase:** 3 — Registro de Transacciones
+**Story Points:** 5
+**Status:** Not Started
+**Phase:** 2 — Authentication
 
 ---
 
-### US-0206: Eliminar Transacción
-**Como** usuario  
-**Quiero** eliminar transacciones  
-**Para** mantener un historial limpio
+### US-0106: Profile and Preferences Editing
+**As a** user
+**I want to** edit my profile and app preferences
+**So that** my information stays up to date and the experience is personalized
 
-**Criterios de Aceptación:**
-- [ ] `DELETE /api/v1/transactions/{id}` realiza soft delete (`deleted_at = NOW()`)
-- [ ] Valida ownership (403 si no pertenece al usuario)
-- [ ] Diálogo de confirmación: "¿Estás seguro? Esta acción eliminará la transacción de tus reportes"
-- [ ] Transacción desaparece del historial y reportes
-- [ ] Balance se recalcula inmediatamente
+**Acceptance Criteria:**
+- [ ] `GET /api/v1/users/me` returns complete user profile
+- [ ] `PUT /api/v1/users/me` accepts editable fields: name, university, income_type, average_monthly_income, currency
+- [ ] Profile screen with all editable fields
+- [ ] Currency selector: PEN (default), USD
+- [ ] Number format: thousands separator (dot/comma)
+- [ ] Changes saved with visual confirmation
 
-**Story Points:** 2  
-**Status:** ⏳ No Iniciado  
-**Fase:** 3 — Registro de Transacciones
-
----
-
-## Épica 3: Sistema de Categorización
-
-**Goal:** Las transacciones se organizan por categorías que alimentan reportes, presupuestos y predicciones.
-
-### US-0301: Categorías Predeterminadas
-**Como** estudiante  
-**Quiero** tener categorías predefinidas de gastos e ingresos  
-**Para** categorizar mis transacciones sin configuración previa
-
-**Criterios de Aceptación:**
-- [ ] Categorías de gasto seed: Alimentación, Transporte, Educación, Entretenimiento, Salud, Vivienda, Servicios, Vestimenta, Otros
-- [ ] Categorías de ingreso seed: Beca, Trabajo parcial, Familia, Freelance, Otros
-- [ ] Cada categoría con icono Material Design y color asignado
-- [ ] Disponibles para todos los usuarios sin creación manual
-- [ ] No eliminables ni editables (son del sistema)
-
-**Story Points:** 3  
-**Status:** ⏳ No Iniciado  
-**Fase:** 4 — Categorización
+**Story Points:** 3
+**Status:** Not Started
+**Phase:** 2 — Authentication
 
 ---
 
-### US-0302: Categorías Personalizadas
-**Como** usuario  
-**Quiero** crear mis propias categorías  
-**Para** organizar mis finanzas según mis necesidades específicas
+## Epic 2: Transaction Recording
 
-**Criterios de Aceptación:**
-- [ ] `POST /api/v1/categories` crea categoría: name, type (INGRESO/GASTO), icon, color
-- [ ] `GET /api/v1/categories` retorna default + custom del usuario
-- [ ] `PUT /api/v1/categories/{id}` edita nombre/icono/color (solo custom)
-- [ ] `DELETE /api/v1/categories/{id}` elimina (solo custom, error si tiene transacciones)
-- [ ] Opción "Crear nueva categoría" visible al registrar transacción
-- [ ] Modal de creación rápida: nombre, selección de icono, selección de color
+**Goal:** Students can record income and expenses simply and quickly, maintaining a clean and searchable history.
 
-**Story Points:** 5  
-**Status:** ⏳ No Iniciado  
-**Fase:** 4 — Categorización
+### US-0201: Record Income
+**As a** student
+**I want to** manually record my income
+**So that** I can track my money sources
 
----
+**Acceptance Criteria:**
+- [ ] `POST /api/v1/transactions` accepts: `type: INCOME`, `amount` (> 0), `category_id`, `description` (optional), `date`
+- [ ] Validates that category exists and is of type INCOME
+- [ ] Creates transaction and returns with updated monthly balance
+- [ ] Screen with: type selector (Income/Expense toggle), numeric amount input, category selector, date picker (default today), description field
+- [ ] Confirmation message: "Income of S/{amount} recorded"
+- [ ] Balance on main screen updates immediately
 
-## Épica 4: Reportes Financieros
-
-**Goal:** Los usuarios visualizan sus hábitos financieros con datos claros y gráficos intuitivos.
-
-### US-0401: Resumen Mensual
-**Como** usuario  
-**Quiero** ver un resumen mensual de mis finanzas  
-**Para** evaluar mi salud financiera del mes
-
-**Criterios de Aceptación:**
-- [ ] `GET /api/v1/reports/monthly?year={y}&month={m}` retorna: total_income, total_expenses, balance, breakdown_by_category (array con name, amount, percentage), transaction_count
-- [ ] Pantalla con: total ingresos (verde), total gastos (rojo), balance (verde/rojo según signo)
-- [ ] Gráfico circular de gastos por categoría con leyenda y porcentajes
-- [ ] Top 3 categorías de gasto con iconos
-- [ ] Selector de mes (← anterior / siguiente →)
-- [ ] Response time < 2 segundos
-
-**Story Points:** 8  
-**Status:** ⏳ No Iniciado  
-**Fase:** 5 — Reportes
+**Story Points:** 5
+**Status:** Not Started
+**Phase:** 3 — Transaction Recording
 
 ---
 
-### US-0402: Resumen Semanal
-**Como** usuario  
-**Quiero** ver un resumen semanal  
-**Para** identificar tendencias tempranas en mis gastos
+### US-0202: Record Expense
+**As a** student
+**I want to** manually record my expenses
+**So that** I know what I spend my money on
 
-**Criterios de Aceptación:**
-- [ ] `GET /api/v1/reports/weekly?year={y}&week={w}` retorna misma estructura que mensual
-- [ ] Totales agrupados correctamente por semana ISO
-- [ ] Selector de semana con fechas visibles (Lun-Dom)
+**Acceptance Criteria:**
+- [ ] Same endpoint `POST /api/v1/transactions` with `type: EXPENSE`
+- [ ] Validates that category is of type EXPENSE
+- [ ] Updates balance by subtracting the amount
+- [ ] Appears in history sorted by date descending
+- [ ] If expense exceeds category average (>20%), triggers anomaly detection
 
-**Story Points:** 3  
-**Status:** ⏳ No Iniciado  
-**Fase:** 5 — Reportes
-
----
-
-### US-0403: Resumen Diario
-**Como** estudiante  
-**Quiero** ver un resumen diario de gastos  
-**Para** monitorizar mis hábitos financieros día a día
-
-**Criterios de Aceptación:**
-- [ ] `GET /api/v1/reports/daily?date={d}` retorna: total gastado del día, desglose por categoría, lista de transacciones
-- [ ] Muestra total del día en < 2 segundos
-- [ ] Calendario visual con indicador de gasto por día (color según intensidad)
-
-**Story Points:** 3  
-**Status:** ⏳ No Iniciado  
-**Fase:** 5 — Reportes
+**Story Points:** 5
+**Status:** Not Started
+**Phase:** 3 — Transaction Recording
 
 ---
 
-### US-0404: Comparativa Mensual
-**Como** estudiante  
-**Quiero** ver gráficos comparativos por mes  
-**Para** analizar la evolución de mis gastos y ahorros en el tiempo
+### US-0203: Transaction History with Filters
+**As a** user
+**I want to** apply advanced filters to my history
+**So that** I can quickly find specific information
 
-**Criterios de Aceptación:**
-- [ ] `GET /api/v1/reports/comparison?months=3` retorna datos de últimos N meses
-- [ ] Gráfico de líneas con evolución de ingresos, gastos y balance
-- [ ] Selector: 2, 3, 4, 6 meses de comparación
-- [ ] Visualización clara de tendencias (subida/bajada)
+**Acceptance Criteria:**
+- [ ] `GET /api/v1/transactions` with query params: `type`, `category_id`, `date_from`, `date_to`, `min_amount`, `max_amount`, `search` (description), `page`, `limit`, `sort`
+- [ ] Returns paginated list with total results
+- [ ] Screen with collapsible filters: date range, category, type, amount range
+- [ ] Text search in description
+- [ ] Infinite scroll pagination
+- [ ] Response time < 2 seconds with 1000+ transactions
 
-**Story Points:** 5  
-**Status:** ⏳ No Iniciado  
-**Fase:** 5 — Reportes
-
----
-
-### US-0405: Gráficos por Categoría
-**Como** estudiante  
-**Quiero** ver gráficos de gastos por categoría  
-**Para** entender visualmente en qué gasto más
-
-**Criterios de Aceptación:**
-- [ ] Gráfico de barras horizontal ordenado por monto (mayor a menor)
-- [ ] Gráfico circular alternativo con porcentajes
-- [ ] Tap en categoría muestra detalle de transacciones de esa categoría
-- [ ] Selector de periodo: semana, mes, trimestre
-- [ ] Librería: MPAndroidChart
-
-**Story Points:** 5  
-**Status:** ⏳ No Iniciado  
-**Fase:** 5 — Reportes
+**Story Points:** 5
+**Status:** Not Started
+**Phase:** 3 — Transaction Recording
 
 ---
 
-### US-0406: Exportación a PDF
-**Como** usuario  
-**Quiero** exportar mis reportes en PDF  
-**Para** compartir o guardar mis datos financieros
+### US-0204: Main Dashboard
+**As a** student
+**I want to** see a quick summary of my financial situation when opening the app
+**So that** I have an instant snapshot of my status
 
-**Criterios de Aceptación:**
-- [ ] `GET /api/v1/reports/export/pdf?year={y}&month={m}` genera PDF
-- [ ] PDF incluye: encabezado con periodo, resumen numérico, gráfico de categorías, desglose detallado
-- [ ] Botón "Exportar PDF" en pantalla de reporte
-- [ ] Permite compartir via apps del teléfono (share intent)
-- [ ] URL de descarga temporal (24 horas)
+**Acceptance Criteria:**
+- [ ] Main screen shows: current month balance (income - expenses), total monthly income, total monthly expenses
+- [ ] Last 5 transactions with category icon, amount, and date
+- [ ] FAB (Floating Action Button) "+" to add transaction
+- [ ] Pull-to-refresh to update data
+- [ ] Full load in < 2 seconds
+- [ ] "Suggestions" section with latest AI recommendation (if available)
 
-**Story Points:** 5  
-**Status:** ⏳ No Iniciado  
-**Fase:** 5 — Reportes
-
----
-
-## Épica 5: Presupuestos y Metas
-
-**Goal:** Los usuarios definen límites de gasto y objetivos de ahorro con seguimiento visual.
-
-### US-0501: Gestión de Presupuestos
-**Como** estudiante  
-**Quiero** definir presupuestos mensuales por categoría  
-**Para** controlar mis gastos y no excederme
-
-**Criterios de Aceptación:**
-- [ ] `POST /api/v1/budgets` crea presupuesto: category_id (null = global), amount_limit, month, year
-- [ ] `GET /api/v1/budgets?month={m}&year={y}` retorna con current_spent y percentage_used
-- [ ] Pantalla con lista de presupuestos y barra de progreso visual
-- [ ] Colores: verde (< 60%), amarillo (60-80%), rojo (> 80%)
-- [ ] Modal de creación: seleccionar categoría o "General", ingresar monto límite
-
-**Story Points:** 8  
-**Status:** ⏳ No Iniciado  
-**Fase:** 6 — Presupuestos y Metas
+**Story Points:** 8
+**Status:** Not Started
+**Phase:** 3 — Transaction Recording
 
 ---
 
-### US-0502: Metas Financieras
-**Como** usuario  
-**Quiero** definir metas de ahorro con plazo  
-**Para** trabajar en objetivos concretos de ahorro
+### US-0205: Edit Transaction
+**As a** user
+**I want to** edit recorded transactions
+**So that** I can correct incorrect information
 
-**Criterios de Aceptación:**
-- [ ] `POST /api/v1/goals` crea meta: name, target_amount, deadline
-- [ ] `GET /api/v1/goals` retorna con current_amount, percentage, days_remaining
-- [ ] `PATCH /api/v1/goals/{id}/contribute` suma monto a current_amount
-- [ ] Card de meta: nombre, barra de progreso, monto actual/objetivo, fecha límite
-- [ ] Botón "Abonar" con input de monto
-- [ ] Animación de completado cuando current_amount ≥ target_amount
+**Acceptance Criteria:**
+- [ ] `PUT /api/v1/transactions/{id}` accepts modifiable fields: amount, category_id, description, date
+- [ ] Validates that transaction belongs to authenticated user (403 if not)
+- [ ] Transactions from another user return 403 Forbidden
+- [ ] Balance and reports recalculated after edit
+- [ ] Tap on transaction opens pre-filled edit screen
+- [ ] "Save changes" button with confirmation
 
-**Story Points:** 5  
-**Status:** ⏳ No Iniciado  
-**Fase:** 6 — Presupuestos y Metas
-
----
-
-### US-0503: Seguimiento Detallado de Metas
-**Como** usuario  
-**Quiero** ver el detalle de progreso de mis metas  
-**Para** saber si voy a cumplirlas a tiempo
-
-**Criterios de Aceptación:**
-- [ ] Pantalla de detalle con historial de abonos (fecha, monto)
-- [ ] Gráfico de progreso acumulado en el tiempo
-- [ ] Proyección: "A este ritmo completarás tu meta el {fecha}"
-- [ ] Alerta si la proyección indica que no se cumplirá antes del deadline
-
-**Story Points:** 5  
-**Status:** ⏳ No Iniciado  
-**Fase:** 6 — Presupuestos y Metas
+**Story Points:** 3
+**Status:** Not Started
+**Phase:** 3 — Transaction Recording
 
 ---
 
-## Épica 6: Pipeline de IA
+### US-0206: Delete Transaction
+**As a** user
+**I want to** delete transactions
+**So that** I maintain a clean history
 
-**Goal:** Los datos del usuario se transforman en features, se entrenan modelos y se exportan para inferencia.
+**Acceptance Criteria:**
+- [ ] `DELETE /api/v1/transactions/{id}` performs soft delete (`deleted_at = NOW()`)
+- [ ] Validates ownership (403 if not belonging to user)
+- [ ] Confirmation dialog: "Are you sure? This action will remove the transaction from your reports"
+- [ ] Transaction disappears from history and reports
+- [ ] Balance recalculated immediately
 
-### US-0701: Extracción de Features
-**Como** sistema de ML  
-**Quiero** extraer features financieras de cada usuario  
-**Para** alimentar los modelos de predicción
-
-**Criterios de Aceptación:**
-- [ ] Script Python extrae por usuario: gasto_total_por_categoria_por_mes, ingreso_total_por_mes, ratio_gasto_ingreso, frecuencia_transacciones, variabilidad_ingresos, dia_semana_pico_gasto, top_3_categorias
-- [ ] Output: CSV con una fila por usuario por mes
-- [ ] Documentación de cada feature y su cálculo
-- [ ] Ejecutable como job periódico
-
-**Story Points:** 8  
-**Status:** ⏳ No Iniciado  
-**Fase:** 7 — Pipeline ML
+**Story Points:** 2
+**Status:** Not Started
+**Phase:** 3 — Transaction Recording
 
 ---
 
-### US-0702: Dataset de Entrenamiento
-**Como** data scientist  
-**Quiero** un dataset sintético realista  
-**Para** entrenar modelos cuando no hay suficientes datos reales
+## Epic 3: Categorization System
 
-**Criterios de Aceptación:**
-- [ ] Mínimo 1000 registros simulados basados en perfiles de estudiantes universitarios peruanos
-- [ ] Distribuciones realistas: ingresos S/ 500-2000, gastos concentrados en alimentación (30-40%), transporte (15-25%)
-- [ ] Variabilidad mensual incorporada (inicio de ciclo = más gastos en educación)
-- [ ] Documentación de variables, distribuciones y supuestos
+**Goal:** Transactions are organized by categories that feed reports, budgets, and predictions.
 
-**Story Points:** 5  
-**Status:** ⏳ No Iniciado  
-**Fase:** 7 — Pipeline ML
+### US-0301: Default Categories
+**As a** student
+**I want to** have predefined expense and income categories
+**So that** I can categorize my transactions without prior setup
 
----
+**Acceptance Criteria:**
+- [ ] Expense category seed: Food, Transportation, Education, Entertainment, Health, Housing, Utilities, Clothing, Other
+- [ ] Income category seed: Scholarship, Part-time work, Family, Freelance, Other
+- [ ] Each category with Material Design icon and assigned color
+- [ ] Available to all users without manual creation
+- [ ] Not deletable or editable (system categories)
 
-### US-0703: Entrenamiento y Selección de Modelo
-**Como** data scientist  
-**Quiero** evaluar múltiples modelos de predicción  
-**Para** seleccionar el más preciso para nuestro caso
-
-**Criterios de Aceptación:**
-- [ ] Modelos evaluados: Linear Regression, Random Forest, XGBoost, LSTM
-- [ ] Métricas: MAE, RMSE, R², Accuracy (definida como 1 - |pred-real|/real)
-- [ ] Validación cruzada 5-fold
-- [ ] Target: predecir gasto total del próximo mes con accuracy ≥ 80%
-- [ ] Documentación de resultados y justificación de modelo seleccionado
-
-**Story Points:** 13  
-**Status:** ⏳ No Iniciado  
-**Fase:** 7 — Pipeline ML
+**Story Points:** 3
+**Status:** Not Started
+**Phase:** 4 — Categorization
 
 ---
 
-## Épica 7: Predicciones
+### US-0302: Custom Categories
+**As a** user
+**I want to** create my own categories
+**So that** I can organize my finances according to my specific needs
 
-**Goal:** La app anticipa gastos e ingresos futuros basándose en historial y patrones detectados por IA.
+**Acceptance Criteria:**
+- [ ] `POST /api/v1/categories` creates category: name, type (INCOME/EXPENSE), icon, color
+- [ ] `GET /api/v1/categories` returns default + user's custom categories
+- [ ] `PUT /api/v1/categories/{id}` edits name/icon/color (custom only)
+- [ ] `DELETE /api/v1/categories/{id}` deletes (custom only, error if has transactions)
+- [ ] "Create new category" option visible when recording transaction
+- [ ] Quick creation modal: name, icon selection, color selection
 
-### US-0801: Predicción de Gastos
-**Como** usuario  
-**Quiero** recibir predicciones de mis gastos del próximo mes  
-**Para** anticipar mi situación financiera
-
-**Criterios de Aceptación:**
-- [ ] `GET /api/v1/predictions/expenses?period=next_month` invoca modelo ML
-- [ ] Retorna: predicted_total, predicted_by_category (array), confidence_interval, model_version
-- [ ] Requiere historial mínimo de 2 meses (retorna 400 con mensaje explicativo si insuficiente)
-- [ ] Precisión promedio ≥ 80% medida retrospectivamente
-- [ ] Pantalla muestra predicción con indicador de confianza (alta/media/baja)
-
-**Story Points:** 8  
-**Status:** ⏳ No Iniciado  
-**Fase:** 8 — Predicciones
+**Story Points:** 5
+**Status:** Not Started
+**Phase:** 4 — Categorization
 
 ---
 
-### US-0802: Predicción de Ingresos
-**Como** estudiante  
-**Quiero** recibir predicciones de mis ingresos  
-**Para** planificar mejor mis próximos meses
+## Epic 4: Financial Reports
 
-**Criterios de Aceptación:**
-- [ ] `GET /api/v1/predictions/income?period=next_month` proyecta ingresos
-- [ ] Considera variabilidad de fuentes (beca fija vs trabajo variable)
-- [ ] Retorna: predicted_total, predicted_by_source, confidence_level
-- [ ] Proyección coherente basada en datos históricos
+**Goal:** Users visualize their financial habits with clear data and intuitive charts.
 
-**Story Points:** 5  
-**Status:** ⏳ No Iniciado  
-**Fase:** 8 — Predicciones
+### US-0401: Monthly Summary
+**As a** user
+**I want to** see a monthly summary of my finances
+**So that** I can evaluate my financial health for the month
 
----
+**Acceptance Criteria:**
+- [ ] `GET /api/v1/reports/monthly?year={y}&month={m}` returns: total_income, total_expenses, balance, breakdown_by_category (array with name, amount, percentage), transaction_count
+- [ ] Screen with: total income (green), total expenses (red), balance (green/red depending on sign)
+- [ ] Pie chart of expenses by category with legend and percentages
+- [ ] Top 3 expense categories with icons
+- [ ] Month selector (← previous / next →)
+- [ ] Response time < 2 seconds
 
-### US-0803: Detección de Anomalías de Gasto
-**Como** usuario  
-**Quiero** recibir alertas si aumento mis gastos en una categoría  
-**Para** evitar desbalances financieros
-
-**Criterios de Aceptación:**
-- [ ] Al registrar transacción: si gasto en categoría supera >20% el promedio de últimos 3 meses, genera alerta
-- [ ] Notificación push: "Tu gasto en {categoría} este mes es {x}% mayor que tu promedio"
-- [ ] Solo una alerta por categoría por mes (no spammear)
-- [ ] Alerta visible en dashboard y en notificaciones
-
-**Story Points:** 5  
-**Status:** ⏳ No Iniciado  
-**Fase:** 8 — Predicciones
+**Story Points:** 8
+**Status:** Not Started
+**Phase:** 5 — Reports
 
 ---
 
-## Épica 8: Recomendaciones Personalizadas
+### US-0402: Weekly Summary
+**As a** user
+**I want to** see a weekly summary
+**So that** I can identify early trends in my spending
 
-**Goal:** La IA genera sugerencias accionables basadas en datos del usuario.
+**Acceptance Criteria:**
+- [ ] `GET /api/v1/reports/weekly?year={y}&week={w}` returns same structure as monthly
+- [ ] Totals correctly grouped by ISO week
+- [ ] Week selector with visible dates (Mon-Sun)
 
-### US-0901: Motor de Recomendaciones
-**Como** estudiante  
-**Quiero** recibir recomendaciones personalizadas  
-**Para** mejorar mis decisiones financieras
-
-**Criterios de Aceptación:**
-- [ ] `GET /api/v1/recommendations` genera 1-5 recomendaciones activas
-- [ ] Basadas en: patrones de gasto, predicciones, presupuestos, metas
-- [ ] Tipos: AHORRO, PRESUPUESTO, META
-- [ ] Cada recomendación con mensaje concreto y acción sugerida
-- [ ] Integrada en Dashboard como sección "Sugerencias para ti"
-- [ ] Cards con botón feedback: "Útil" / "No relevante"
-
-**Story Points:** 8  
-**Status:** ⏳ No Iniciado  
-**Fase:** 9 — Recomendaciones
+**Story Points:** 3
+**Status:** Not Started
+**Phase:** 5 — Reports
 
 ---
 
-### US-0902: Tracking de Feedback
-**Como** sistema  
-**Quiero** registrar si el usuario acepta o rechaza recomendaciones  
-**Para** medir efectividad y mejorar futuras sugerencias
+### US-0403: Daily Summary
+**As a** student
+**I want to** see a daily expense summary
+**So that** I can monitor my financial habits day by day
 
-**Criterios de Aceptación:**
-- [ ] `PATCH /api/v1/recommendations/{id}/feedback` con accepted: true/false
-- [ ] Métrica: tasa_aceptacion = accepted_true / total, target ≥ 60%
-- [ ] Dashboard interno muestra tasa de aceptación por tipo
+**Acceptance Criteria:**
+- [ ] `GET /api/v1/reports/daily?date={d}` returns: total spent for the day, breakdown by category, transaction list
+- [ ] Shows daily total in < 2 seconds
+- [ ] Visual calendar with spending indicator per day (color by intensity)
 
-**Story Points:** 3  
-**Status:** ⏳ No Iniciado  
-**Fase:** 9 — Recomendaciones
-
----
-
-## Épica 9: Educación Financiera
-
-**Goal:** Los usuarios aprenden conceptos financieros clave a través de contenido adaptado a su nivel.
-
-### US-1001: Módulo de Contenido Educativo
-**Como** estudiante  
-**Quiero** acceder a material educativo financiero  
-**Para** aprender conceptos clave de finanzas personales
-
-**Criterios de Aceptación:**
-- [ ] `GET /api/v1/education/topics` retorna lista de temas con progreso del usuario
-- [ ] `GET /api/v1/education/topics/{id}` retorna contenido completo
-- [ ] `PATCH /api/v1/education/topics/{id}/complete` marca como visto
-- [ ] Temas seed: Presupuesto personal, Ahorro, Crédito/deuda, Inflación, Tasas de interés, Inversión básica, Consumo responsable, Billeteras digitales en Perú
-- [ ] Contenido en formato móvil legible (texto + iconos + ejemplos prácticos peruanos)
-- [ ] Progreso general visible (barra de completado)
-
-**Story Points:** 8  
-**Status:** ⏳ No Iniciado  
-**Fase:** 10 — Educación y Gamificación
+**Story Points:** 3
+**Status:** Not Started
+**Phase:** 5 — Reports
 
 ---
 
-## Épica 10: Gamificación
+### US-0404: Monthly Comparison
+**As a** student
+**I want to** see comparative charts by month
+**So that** I can analyze the evolution of my spending and savings over time
 
-**Goal:** Los usuarios se mantienen motivados mediante retos, insignias y progreso visible.
+**Acceptance Criteria:**
+- [ ] `GET /api/v1/reports/comparison?months=3` returns data for last N months
+- [ ] Line chart with income, expense, and balance evolution
+- [ ] Selector: 2, 3, 4, 6 months comparison
+- [ ] Clear visualization of trends (up/down)
 
-### US-1002: Sistema de Retos Financieros
-**Como** estudiante  
-**Quiero** completar mini-retos financieros  
-**Para** mejorar mis hábitos mediante gamificación
-
-**Criterios de Aceptación:**
-- [ ] `GET /api/v1/challenges` retorna retos con estado del usuario (disponible/activo/completado)
-- [ ] `POST /api/v1/challenges/{id}/accept` acepta reto
-- [ ] Verificación automática basada en criteria_json (e.g., "no_transactions_category_delivery_3_days")
-- [ ] Retos seed: "No gastes en delivery por 3 días", "Registra gastos 7 días seguidos", "Ahorra S/20 esta semana", "Reduce entretenimiento un 10%"
-- [ ] Pantalla con retos activos (progreso), disponibles (aceptar), completados (fecha)
-- [ ] Animación al completar reto
-
-**Story Points:** 8  
-**Status:** ⏳ No Iniciado  
-**Fase:** 10 — Educación y Gamificación
+**Story Points:** 5
+**Status:** Not Started
+**Phase:** 5 — Reports
 
 ---
 
-### US-1003: Sistema de Insignias
-**Como** usuario  
-**Quiero** ganar insignias por logros  
-**Para** mantenerme motivado y ver mi progreso
+### US-0405: Charts by Category
+**As a** student
+**I want to** see expense charts by category
+**So that** I can visually understand what I spend most on
 
-**Criterios de Aceptación:**
-- [ ] `GET /api/v1/badges` retorna todas las insignias con estado (obtenida/no)
-- [ ] Asignación automática al cumplir criterios:
-  - "Primera transacción" — registrar primera transacción
-  - "Constancia" — 7 días seguidos registrando
-  - "Meta cumplida" — completar primera meta de ahorro
-  - "Retador" — completar 5 retos
-  - "Sabio financiero" — completar módulo educativo 100%
-  - "Predictor" — consultar predicciones 3 veces
-  - "Presupuestador" — crear y respetar presupuesto por 1 mes
-- [ ] Grid de insignias: color si obtenida, gris si no
-- [ ] Tap muestra detalle: nombre, descripción, criterio, fecha de obtención
-- [ ] Notificación push al desbloquear insignia nueva
+**Acceptance Criteria:**
+- [ ] Horizontal bar chart sorted by amount (highest to lowest)
+- [ ] Alternative pie chart with percentages
+- [ ] Tap on category shows detail of transactions in that category
+- [ ] Period selector: week, month, quarter
+- [ ] Library: MPAndroidChart
 
-**Story Points:** 8  
-**Status:** ⏳ No Iniciado  
-**Fase:** 10 — Educación y Gamificación
+**Story Points:** 5
+**Status:** Not Started
+**Phase:** 5 — Reports
 
 ---
 
-## Épica 11: Notificaciones
+### US-0406: PDF Export
+**As a** user
+**I want to** export my reports as PDF
+**So that** I can share or save my financial data
 
-**Goal:** Las alertas proactivas mantienen engagement y previenen problemas financieros.
+**Acceptance Criteria:**
+- [ ] `GET /api/v1/reports/export/pdf?year={y}&month={m}` generates PDF
+- [ ] PDF includes: header with period, numeric summary, category chart, detailed breakdown
+- [ ] "Export PDF" button on report screen
+- [ ] Allows sharing via phone apps (share intent)
+- [ ] Temporary download URL (24 hours)
 
-### US-1101: Infraestructura de Notificaciones Push
-**Como** sistema  
-**Quiero** enviar notificaciones push al dispositivo del usuario  
-**Para** comunicar alertas y recordatorios en tiempo real
-
-**Criterios de Aceptación:**
-- [ ] Integración con Firebase Cloud Messaging (FCM)
-- [ ] Servicio NotificationService con métodos específicos por tipo
-- [ ] Token FCM registrado al login, actualizado al refresh
-- [ ] Manejo de tokens expirados (re-registro automático)
-
-**Story Points:** 5  
-**Status:** ⏳ No Iniciado  
-**Fase:** 11 — Notificaciones
+**Story Points:** 5
+**Status:** Not Started
+**Phase:** 5 — Reports
 
 ---
 
-### US-1102: Alerta de Presupuesto al 80%
-**Como** estudiante  
-**Quiero** recibir alertas cuando me acerque a mi límite presupuestal  
-**Para** evitar sobrepasarlo
+## Epic 5: Budgets and Goals
 
-**Criterios de Aceptación:**
-- [ ] Job scheduled (cada hora) verifica presupuestos activos
-- [ ] Si current_spent / budget_limit ≥ 0.80 → envía notificación
-- [ ] Mensaje: "Tu presupuesto de {categoría} está al {x}%. Te quedan S/{restante}"
-- [ ] Solo una notificación por presupuesto por periodo (no repetir)
-- [ ] Configurable: el usuario puede desactivar este tipo de alerta
+**Goal:** Users define spending limits and savings objectives with visual tracking.
 
-**Story Points:** 5  
-**Status:** ⏳ No Iniciado  
-**Fase:** 11 — Notificaciones
+### US-0501: Budget Management
+**As a** student
+**I want to** define monthly budgets by category
+**So that** I can control my spending and not exceed limits
 
----
+**Acceptance Criteria:**
+- [ ] `POST /api/v1/budgets` creates budget: category_id (null = global), amount_limit, month, year
+- [ ] `GET /api/v1/budgets?month={m}&year={y}` returns with current_spent and percentage_used
+- [ ] Screen with budget list and visual progress bar
+- [ ] Colors: green (< 60%), yellow (60-80%), red (> 80%)
+- [ ] Creation modal: select category or "General", enter limit amount
 
-### US-1103: Alerta de Gasto Anómalo
-**Como** usuario  
-**Quiero** recibir alertas si mis gastos en una categoría suben demasiado  
-**Para** actuar a tiempo
-
-**Criterios de Aceptación:**
-- [ ] Trigger al registrar transacción
-- [ ] Si gasto del mes en categoría supera >20% el promedio de últimos 3 meses → notificación
-- [ ] Mensaje: "Tu gasto en {categoría} este mes es {x}% mayor que tu promedio"
-- [ ] Máximo una alerta por categoría por mes
-
-**Story Points:** 3  
-**Status:** ⏳ No Iniciado  
-**Fase:** 11 — Notificaciones
+**Story Points:** 8
+**Status:** Not Started
+**Phase:** 6 — Budgets and Goals
 
 ---
 
-## Épica 12: Evaluación de Impacto
+### US-0502: Financial Goals
+**As a** user
+**I want to** define savings goals with deadlines
+**So that** I can work toward concrete savings objectives
 
-**Goal:** Medir cuantitativamente si la app mejora la educación financiera del usuario.
+**Acceptance Criteria:**
+- [ ] `POST /api/v1/goals` creates goal: name, target_amount, deadline
+- [ ] `GET /api/v1/goals` returns with current_amount, percentage, days_remaining
+- [ ] `PATCH /api/v1/goals/{id}/contribute` adds amount to current_amount
+- [ ] Goal card: name, progress bar, current/target amount, deadline
+- [ ] "Contribute" button with amount input
+- [ ] Completion animation when current_amount >= target_amount
 
-### US-1201: Encuesta Pre-Uso
-**Como** investigador  
-**Quiero** medir el conocimiento financiero del usuario antes del uso  
-**Para** establecer una línea base de comparación
-
-**Criterios de Aceptación:**
-- [ ] Cuestionario de 15-20 preguntas sobre: presupuesto, ahorro, inflación, crédito, tasas de interés
-- [ ] Basado en instrumentos validados (Cordova-Buiza et al., 2022; SBS, 2022)
-- [ ] Se presenta durante onboarding o primera semana de uso
-- [ ] Cálculo automático de score (0-100)
-- [ ] Pantalla: una pregunta por vista, progress bar, guardado parcial automático
-- [ ] Al finalizar: "Tu nivel actual de educación financiera es {BAJO/MEDIO/ALTO}"
-
-**Story Points:** 8  
-**Status:** ⏳ No Iniciado  
-**Fase:** 12 — Evaluación
+**Story Points:** 5
+**Status:** Not Started
+**Phase:** 6 — Budgets and Goals
 
 ---
 
-### US-1202: Encuesta Post-Uso
-**Como** investigador  
-**Quiero** medir el conocimiento financiero después del uso  
-**Para** calcular el incremento educativo
+### US-0503: Detailed Goal Tracking
+**As a** user
+**I want to** see detailed progress of my goals
+**So that** I know if I'm on track to meet them
 
-**Criterios de Aceptación:**
-- [ ] Mismo cuestionario (variante para evitar memorización) + sección SUS
-- [ ] Se presenta tras 4-8 semanas de uso (notificación invitando a completar)
-- [ ] Al finalizar: comparativa visual "Mejoraste de {x} a {y} puntos ({z}% de incremento)"
-- [ ] Si improvement < 20%: sugerencias de contenido educativo relevante
+**Acceptance Criteria:**
+- [ ] Detail screen with contribution history (date, amount)
+- [ ] Cumulative progress chart over time
+- [ ] Projection: "At this pace you'll complete your goal on {date}"
+- [ ] Alert if projection indicates it won't be met before deadline
 
-**Story Points:** 8  
-**Status:** ⏳ No Iniciado  
-**Fase:** 12 — Evaluación
-
----
-
-### US-1203: Cálculo de Incremento Educativo
-**Como** investigador  
-**Quiero** calcular el incremento agregado de conocimiento financiero  
-**Para** validar la hipótesis de la investigación
-
-**Criterios de Aceptación:**
-- [ ] `GET /api/v1/surveys/comparison?user_id={id}` retorna: pre_score, post_score, improvement_percentage, sus_score
-- [ ] `GET /api/v1/surveys/aggregate` retorna: promedio, mediana, desviación estándar, N
-- [ ] Target global: improvement_percentage promedio ≥ 20%
-- [ ] Exportable a CSV para análisis estadístico externo
-
-**Story Points:** 5  
-**Status:** ⏳ No Iniciado  
-**Fase:** 12 — Evaluación
+**Story Points:** 5
+**Status:** Not Started
+**Phase:** 6 — Budgets and Goals
 
 ---
 
-## Épica 13: Seguridad y Compliance
+## Epic 6: AI Pipeline
 
-**Goal:** Datos financieros protegidos según Ley 29733 y estándares internacionales.
+**Goal:** User data is transformed into features, models are trained, and exported for inference.
 
-### US-1301: Cifrado de Datos
-**Como** usuario  
-**Quiero** que mis datos financieros estén cifrados  
-**Para** evitar accesos no autorizados
+### US-0701: Feature Extraction
+**As an** ML system
+**I want to** extract financial features from each user
+**So that** prediction models can be fed
 
-**Criterios de Aceptación:**
-- [ ] TLS 1.3 en todas las comunicaciones API (HTTPS obligatorio)
-- [ ] Azure Database encryption at rest habilitado
-- [ ] Backups encriptados
-- [ ] EncryptedSharedPreferences para datos locales en Android
-- [ ] SQLCipher para Room database local
+**Acceptance Criteria:**
+- [ ] Python script extracts per user: total_spending_per_category_per_month, total_income_per_month, expense_income_ratio, transaction_frequency, income_variability, peak_spending_day_of_week, top_3_categories
+- [ ] Output: CSV with one row per user per month
+- [ ] Documentation of each feature and its calculation
+- [ ] Executable as periodic job
 
-**Story Points:** 5  
-**Status:** ⏳ No Iniciado  
-**Fase:** 13 — Seguridad
-
----
-
-### US-1303: Consentimiento de Datos
-**Como** usuario  
-**Quiero** dar mi consentimiento explícito para el uso de mis datos  
-**Para** cumplir con la Ley de Protección de Datos Personales
-
-**Criterios de Aceptación:**
-- [ ] Pantalla de consentimiento al primer uso con política de privacidad clara
-- [ ] Checkbox: "Acepto que mis datos financieros sean procesados para generar reportes y predicciones personalizadas"
-- [ ] No se puede usar la app sin consentimiento
-- [ ] Registro de consentimiento: user_id, consent_given=true, consent_at=timestamp
-- [ ] Opción de revocar consentimiento en configuración (implica desactivar IA)
-
-**Story Points:** 3  
-**Status:** ⏳ No Iniciado  
-**Fase:** 13 — Seguridad
+**Story Points:** 8
+**Status:** Not Started
+**Phase:** 7 — ML Pipeline
 
 ---
 
-## Épica 14: Testing
+### US-0702: Training Dataset
+**As a** data scientist
+**I want to** have a realistic synthetic dataset
+**So that** I can train models when there isn't enough real data
 
-**Goal:** Calidad verificada con pruebas unitarias, integración, ML y usabilidad.
+**Acceptance Criteria:**
+- [ ] Minimum 1000 simulated records based on Peruvian university student profiles
+- [ ] Realistic distributions: income S/ 500-2000, spending concentrated in food (30-40%), transportation (15-25%)
+- [ ] Monthly variability incorporated (semester start = more education spending)
+- [ ] Documentation of variables, distributions, and assumptions
 
-### US-1401: Tests Unitarios de Servicios
-**Como** desarrollador  
-**Quiero** tests unitarios para todos los servicios  
-**Para** garantizar que la lógica de negocio es correcta
-
-**Criterios de Aceptación:**
-- [ ] Tests para: TransactionService, BudgetService, GoalService, PredictionService, RecommendationService, SurveyService
-- [ ] Mock de repositorios y dependencias externas
-- [ ] Cobertura target ≥ 80% en servicios
-- [ ] Tests ejecutables en < 30 segundos
-
-**Story Points:** 8  
-**Status:** ⏳ No Iniciado  
-**Fase:** 14 — Testing
+**Story Points:** 5
+**Status:** Not Started
+**Phase:** 7 — ML Pipeline
 
 ---
 
-### US-1403: Validación de Modelos ML
-**Como** desarrollador  
-**Quiero** validar la precisión de los modelos de predicción  
-**Para** garantizar predicciones confiables
+### US-0703: Model Training and Selection
+**As a** data scientist
+**I want to** evaluate multiple prediction models
+**So that** I can select the most accurate for our use case
 
-**Criterios de Aceptación:**
-- [ ] Test que verifica accuracy ≥ 80% en dataset de test
-- [ ] No overfitting: diferencia train vs test accuracy < 10%
-- [ ] Predicciones coherentes: no negativas, dentro de rangos razonables
-- [ ] Métricas documentadas: accuracy, MAE, RMSE, confusion matrix
-- [ ] Pipeline de validación ejecutable con `python ml/validate.py`
+**Acceptance Criteria:**
+- [ ] Models evaluated: Linear Regression, Random Forest, XGBoost, LSTM
+- [ ] Metrics: MAE, RMSE, R², Accuracy (defined as 1 - |pred-actual|/actual)
+- [ ] 5-fold cross-validation
+- [ ] Target: predict next month's total spending with accuracy >= 80%
+- [ ] Documentation of results and justification for selected model
 
-**Story Points:** 8  
-**Status:** ⏳ No Iniciado  
-**Fase:** 14 — Testing
-
----
-
-### US-1404: Tests de Usabilidad con Usuarios
-**Como** investigador  
-**Quiero** evaluar la usabilidad con usuarios reales  
-**Para** medir si la app cumple estándares de experiencia
-
-**Criterios de Aceptación:**
-- [ ] Grupo de 30 estudiantes universitarios de Lima Metropolitana
-- [ ] 4-8 semanas de uso activo
-- [ ] Cuestionario SUS al finalizar
-- [ ] Target: puntuación SUS ≥ 4.0/5.0
-- [ ] Documentación: tareas completadas, errores encontrados, tiempo promedio, observaciones
-
-**Story Points:** 13  
-**Status:** ⏳ No Iniciado  
-**Fase:** 14 — Testing
+**Story Points:** 13
+**Status:** Not Started
+**Phase:** 7 — ML Pipeline
 
 ---
 
-## Épica 15: Feedback del Usuario
+## Epic 7: Predictions
 
-**Goal:** Los usuarios piloto pueden reportar bugs y sugerencias para iterar.
+**Goal:** The app anticipates future expenses and income based on history and patterns detected by AI.
 
-### US-1501: Sistema de Feedback In-App
-**Como** usuario  
-**Quiero** enviar feedback sobre la app fácilmente  
-**Para** reportar problemas o sugerir mejoras
+### US-0801: Expense Prediction
+**As a** user
+**I want to** receive predictions of my next month's expenses
+**So that** I can anticipate my financial situation
 
-**Criterios de Aceptación:**
-- [ ] `POST /api/v1/feedback` acepta: type (BUG/SUGERENCIA/GENERAL), message, screen_name, rating (1-5)
-- [ ] Botón de feedback accesible desde menú lateral o FAB
-- [ ] Modal con: tipo, mensaje, rating opcional
-- [ ] Confirmación: "Gracias por tu feedback. Lo revisaremos pronto"
+**Acceptance Criteria:**
+- [ ] `GET /api/v1/predictions/expenses?period=next_month` invokes ML model
+- [ ] Returns: predicted_total, predicted_by_category (array), confidence_interval, model_version
+- [ ] Requires minimum 2-month history (returns 400 with explanatory message if insufficient)
+- [ ] Average accuracy >= 80% measured retrospectively
+- [ ] Screen shows prediction with confidence indicator (high/medium/low)
 
-**Story Points:** 3  
-**Status:** ⏳ No Iniciado  
-**Fase:** 15 — Feedback
-
----
-
-## Épica 16: Analytics
-
-**Goal:** Métricas de uso para entender comportamiento y mejorar la app.
-
-### US-1502: Registro de Eventos de Uso
-**Como** desarrollador  
-**Quiero** registrar eventos clave de interacción  
-**Para** analizar métricas y mejorar la solución
-
-**Criterios de Aceptación:**
-- [ ] Eventos: registro_transaccion, vista_reporte, vista_prediccion, aceptacion_reto, completar_tema_educativo, consulta_recomendacion
-- [ ] Tabla analytics_events: user_id, event_type, metadata_json, timestamp
-- [ ] Sin afectar rendimiento percibido (async logging)
-
-**Story Points:** 3  
-**Status:** ⏳ No Iniciado  
-**Fase:** 15 — Feedback
+**Story Points:** 8
+**Status:** Not Started
+**Phase:** 8 — Predictions
 
 ---
 
-## Épica 17: Demo y Datos de Prueba
+### US-0802: Income Prediction
+**As a** student
+**I want to** receive predictions of my income
+**So that** I can better plan my upcoming months
 
-**Goal:** Datos realistas y script reproducible para validación y presentación.
+**Acceptance Criteria:**
+- [ ] `GET /api/v1/predictions/income?period=next_month` projects income
+- [ ] Considers source variability (fixed scholarship vs variable work)
+- [ ] Returns: predicted_total, predicted_by_source, confidence_level
+- [ ] Coherent projection based on historical data
 
-### US-1601: Script de Datos Demo
-**Como** presentador  
-**Quiero** datos de prueba realistas  
-**Para** demostrar la app con escenarios creíbles
-
-**Criterios de Aceptación:**
-- [ ] 5 usuarios con perfiles variados (universidades, ingresos, tipos distintos)
-- [ ] 200+ transacciones por usuario distribuidas en 3 meses
-- [ ] Categorías predeterminadas pobladas
-- [ ] 3 presupuestos activos por usuario
-- [ ] 2 metas por usuario (1 en progreso, 1 completada)
-- [ ] Encuestas pre-uso completadas
-- [ ] Script idempotente y documentado
-
-**Story Points:** 5  
-**Status:** ⏳ No Iniciado  
-**Fase:** 16 — Demo
+**Story Points:** 5
+**Status:** Not Started
+**Phase:** 8 — Predictions
 
 ---
 
-## Épica 18: Infraestructura
+### US-0803: Spending Anomaly Detection
+**As a** user
+**I want to** receive alerts if my spending in a category increases
+**So that** I can avoid financial imbalances
 
-**Goal:** Repositorio, base de datos y CI/CD configurados correctamente.
+**Acceptance Criteria:**
+- [ ] When recording transaction: if category spending exceeds >20% the average of last 3 months, generates alert
+- [ ] Push notification: "Your spending in {category} this month is {x}% higher than your average"
+- [ ] Only one alert per category per month (no spamming)
+- [ ] Alert visible on dashboard and in notifications
 
-### US-1801: Repositorio y Estructura de Proyecto
-**Como** desarrollador  
-**Quiero** un repositorio bien organizado  
-**Para** trabajar de forma estructurada
+**Story Points:** 5
+**Status:** Not Started
+**Phase:** 8 — Predictions
 
-**Criterios de Aceptación:**
-- [ ] Monorepo GitHub: /android, /backend, /ml, /docs
+---
+
+## Epic 8: Personalized Recommendations
+
+**Goal:** AI generates actionable suggestions based on user data.
+
+### US-0901: Recommendation Engine
+**As a** student
+**I want to** receive personalized recommendations
+**So that** I can improve my financial decisions
+
+**Acceptance Criteria:**
+- [ ] `GET /api/v1/recommendations` generates 1-5 active recommendations
+- [ ] Based on: spending patterns, predictions, budgets, goals
+- [ ] Types: SAVINGS, BUDGET, GOAL
+- [ ] Each recommendation with concrete message and suggested action
+- [ ] Integrated into Dashboard as "Suggestions for you" section
+- [ ] Cards with feedback button: "Helpful" / "Not relevant"
+
+**Story Points:** 8
+**Status:** Not Started
+**Phase:** 9 — Recommendations
+
+---
+
+### US-0902: Feedback Tracking
+**As a** system
+**I want to** record whether the user accepts or rejects recommendations
+**So that** I can measure effectiveness and improve future suggestions
+
+**Acceptance Criteria:**
+- [ ] `PATCH /api/v1/recommendations/{id}/feedback` with accepted: true/false
+- [ ] Metric: acceptance_rate = accepted_true / total, target >= 60%
+- [ ] Internal dashboard shows acceptance rate by type
+
+**Story Points:** 3
+**Status:** Not Started
+**Phase:** 9 — Recommendations
+
+---
+
+## Epic 9: Financial Education
+
+**Goal:** Users learn key financial concepts through content adapted to their level.
+
+### US-1001: Educational Content Module
+**As a** student
+**I want to** access financial educational material
+**So that** I can learn key personal finance concepts
+
+**Acceptance Criteria:**
+- [ ] `GET /api/v1/education/topics` returns topic list with user progress
+- [ ] `GET /api/v1/education/topics/{id}` returns complete content
+- [ ] `PATCH /api/v1/education/topics/{id}/complete` marks as viewed
+- [ ] Seed topics: Personal budget, Savings, Credit/debt, Inflation, Interest rates, Basic investing, Responsible consumption, Digital wallets in Peru
+- [ ] Content in readable mobile format (text + icons + practical Peruvian examples)
+- [ ] Overall progress visible (completion bar)
+
+**Story Points:** 8
+**Status:** Not Started
+**Phase:** 10 — Education and Gamification
+
+---
+
+## Epic 10: Gamification
+
+**Goal:** Users stay motivated through challenges, badges, and visible progress.
+
+### US-1002: Financial Challenge System
+**As a** student
+**I want to** complete financial mini-challenges
+**So that** I can improve my habits through gamification
+
+**Acceptance Criteria:**
+- [ ] `GET /api/v1/challenges` returns challenges with user status (available/active/completed)
+- [ ] `POST /api/v1/challenges/{id}/accept` accepts challenge
+- [ ] Automatic verification based on criteria_json (e.g., "no_transactions_category_delivery_3_days")
+- [ ] Seed challenges: "No delivery spending for 3 days", "Record expenses for 7 consecutive days", "Save S/20 this week", "Reduce entertainment by 10%"
+- [ ] Screen with active challenges (progress), available (accept), completed (date)
+- [ ] Animation on challenge completion
+
+**Story Points:** 8
+**Status:** Not Started
+**Phase:** 10 — Education and Gamification
+
+---
+
+### US-1003: Badge System
+**As a** user
+**I want to** earn badges for achievements
+**So that** I stay motivated and see my progress
+
+**Acceptance Criteria:**
+- [ ] `GET /api/v1/badges` returns all badges with status (earned/not)
+- [ ] Automatic assignment on meeting criteria:
+  - "First transaction" — record first transaction
+  - "Consistency" — 7 consecutive days recording
+  - "Goal achieved" — complete first savings goal
+  - "Challenger" — complete 5 challenges
+  - "Financial sage" — complete educational module 100%
+  - "Predictor" — check predictions 3 times
+  - "Budgeter" — create and respect budget for 1 month
+- [ ] Badge grid: color if earned, gray if not
+- [ ] Tap shows detail: name, description, criteria, date earned
+- [ ] Push notification when unlocking new badge
+
+**Story Points:** 8
+**Status:** Not Started
+**Phase:** 10 — Education and Gamification
+
+---
+
+## Epic 11: Notifications
+
+**Goal:** Proactive alerts maintain engagement and prevent financial problems.
+
+### US-1101: Push Notification Infrastructure
+**As a** system
+**I want to** send push notifications to user devices
+**So that** I can communicate alerts and reminders in real time
+
+**Acceptance Criteria:**
+- [ ] Integration with Firebase Cloud Messaging (FCM)
+- [ ] NotificationService with specific methods per type
+- [ ] FCM token registered on login, updated on refresh
+- [ ] Expired token handling (automatic re-registration)
+
+**Story Points:** 5
+**Status:** Not Started
+**Phase:** 11 — Notifications
+
+---
+
+### US-1102: Budget Alert at 80%
+**As a** student
+**I want to** receive alerts when I'm approaching my budget limit
+**So that** I can avoid exceeding it
+
+**Acceptance Criteria:**
+- [ ] Scheduled job (every hour) checks active budgets
+- [ ] If current_spent / budget_limit >= 0.80 → sends notification
+- [ ] Message: "Your {category} budget is at {x}%. You have S/{remaining} left"
+- [ ] Only one notification per budget per period (no repeats)
+- [ ] Configurable: user can disable this alert type
+
+**Story Points:** 5
+**Status:** Not Started
+**Phase:** 11 — Notifications
+
+---
+
+### US-1103: Anomalous Spending Alert
+**As a** user
+**I want to** receive alerts if my spending in a category rises too much
+**So that** I can act in time
+
+**Acceptance Criteria:**
+- [ ] Trigger when recording transaction
+- [ ] If month's spending in category exceeds >20% the average of last 3 months → notification
+- [ ] Message: "Your spending in {category} this month is {x}% higher than your average"
+- [ ] Maximum one alert per category per month
+
+**Story Points:** 3
+**Status:** Not Started
+**Phase:** 11 — Notifications
+
+---
+
+## Epic 12: Impact Evaluation
+
+**Goal:** Quantitatively measure whether the app improves users' financial education.
+
+### US-1201: Pre-Usage Survey
+**As a** researcher
+**I want to** measure the user's financial knowledge before usage
+**So that** I can establish a baseline for comparison
+
+**Acceptance Criteria:**
+- [ ] Questionnaire of 15-20 questions about: budgeting, savings, inflation, credit, interest rates
+- [ ] Based on validated instruments (Cordova-Buiza et al., 2022; SBS, 2022)
+- [ ] Presented during onboarding or first week of usage
+- [ ] Automatic score calculation (0-100)
+- [ ] Screen: one question per view, progress bar, automatic partial save
+- [ ] On completion: "Your current financial education level is {LOW/MEDIUM/HIGH}"
+
+**Story Points:** 8
+**Status:** Not Started
+**Phase:** 12 — Evaluation
+
+---
+
+### US-1202: Post-Usage Survey
+**As a** researcher
+**I want to** measure financial knowledge after usage
+**So that** I can calculate educational improvement
+
+**Acceptance Criteria:**
+- [ ] Same questionnaire (variant to avoid memorization) + SUS section
+- [ ] Presented after 4-8 weeks of usage (notification inviting completion)
+- [ ] On completion: visual comparison "You improved from {x} to {y} points ({z}% increase)"
+- [ ] If improvement < 20%: suggestions for relevant educational content
+
+**Story Points:** 8
+**Status:** Not Started
+**Phase:** 12 — Evaluation
+
+---
+
+### US-1203: Educational Improvement Calculation
+**As a** researcher
+**I want to** calculate the aggregate financial knowledge improvement
+**So that** I can validate the research hypothesis
+
+**Acceptance Criteria:**
+- [ ] `GET /api/v1/surveys/comparison?user_id={id}` returns: pre_score, post_score, improvement_percentage, sus_score
+- [ ] `GET /api/v1/surveys/aggregate` returns: average, median, standard deviation, N
+- [ ] Global target: average improvement_percentage >= 20%
+- [ ] Exportable to CSV for external statistical analysis
+
+**Story Points:** 5
+**Status:** Not Started
+**Phase:** 12 — Evaluation
+
+---
+
+## Epic 13: Security and Compliance
+
+**Goal:** Financial data protected per Law 29733 and international standards.
+
+### US-1301: Data Encryption
+**As a** user
+**I want to** have my financial data encrypted
+**So that** unauthorized access is prevented
+
+**Acceptance Criteria:**
+- [ ] TLS 1.3 on all API communications (mandatory HTTPS)
+- [ ] Azure Database encryption at rest enabled
+- [ ] Encrypted backups
+- [ ] EncryptedSharedPreferences for local data on Android
+- [ ] SQLCipher for local Room database
+
+**Story Points:** 5
+**Status:** Not Started
+**Phase:** 13 — Security
+
+---
+
+### US-1303: Data Consent
+**As a** user
+**I want to** give my explicit consent for the use of my data
+**So that** compliance with the Personal Data Protection Law is met
+
+**Acceptance Criteria:**
+- [ ] Consent screen on first use with clear privacy policy
+- [ ] Checkbox: "I agree that my financial data will be processed to generate personalized reports and predictions"
+- [ ] App cannot be used without consent
+- [ ] Consent record: user_id, consent_given=true, consent_at=timestamp
+- [ ] Option to revoke consent in settings (implies disabling AI)
+
+**Story Points:** 3
+**Status:** Not Started
+**Phase:** 13 — Security
+
+---
+
+## Epic 14: Testing
+
+**Goal:** Quality verified with unit, integration, ML, and usability tests.
+
+### US-1401: Service Unit Tests
+**As a** developer
+**I want to** have unit tests for all services
+**So that** business logic correctness is guaranteed
+
+**Acceptance Criteria:**
+- [ ] Tests for: TransactionService, BudgetService, GoalService, PredictionService, RecommendationService, SurveyService
+- [ ] Mock of repositories and external dependencies
+- [ ] Coverage target >= 80% on services
+- [ ] Tests executable in < 30 seconds
+
+**Story Points:** 8
+**Status:** Not Started
+**Phase:** 14 — Testing
+
+---
+
+### US-1403: ML Model Validation
+**As a** developer
+**I want to** validate the accuracy of prediction models
+**So that** reliable predictions are guaranteed
+
+**Acceptance Criteria:**
+- [ ] Test verifying accuracy >= 80% on test dataset
+- [ ] No overfitting: train vs test accuracy difference < 10%
+- [ ] Coherent predictions: not negative, within reasonable ranges
+- [ ] Documented metrics: accuracy, MAE, RMSE, confusion matrix
+- [ ] Validation pipeline executable with `python ml/validate.py`
+
+**Story Points:** 8
+**Status:** Not Started
+**Phase:** 14 — Testing
+
+---
+
+### US-1404: Usability Tests with Users
+**As a** researcher
+**I want to** evaluate usability with real users
+**So that** I can measure if the app meets experience standards
+
+**Acceptance Criteria:**
+- [ ] Group of 30 university students from Metropolitan Lima
+- [ ] 4-8 weeks of active usage
+- [ ] SUS questionnaire upon completion
+- [ ] Target: SUS score >= 4.0/5.0
+- [ ] Documentation: completed tasks, errors found, average time, observations
+
+**Story Points:** 13
+**Status:** Not Started
+**Phase:** 14 — Testing
+
+---
+
+## Epic 15: User Feedback
+
+**Goal:** Pilot users can report bugs and suggestions for iteration.
+
+### US-1501: In-App Feedback System
+**As a** user
+**I want to** easily send feedback about the app
+**So that** I can report problems or suggest improvements
+
+**Acceptance Criteria:**
+- [ ] `POST /api/v1/feedback` accepts: type (BUG/SUGGESTION/GENERAL), message, screen_name, rating (1-5)
+- [ ] Feedback button accessible from sidebar menu or FAB
+- [ ] Modal with: type, message, optional rating
+- [ ] Confirmation: "Thanks for your feedback. We'll review it soon"
+
+**Story Points:** 3
+**Status:** Not Started
+**Phase:** 15 — Feedback
+
+---
+
+## Epic 16: Analytics
+
+**Goal:** Usage metrics to understand behavior and improve the app.
+
+### US-1502: Usage Event Logging
+**As a** developer
+**I want to** log key interaction events
+**So that** I can analyze metrics and improve the solution
+
+**Acceptance Criteria:**
+- [ ] Events: record_transaction, view_report, view_prediction, accept_challenge, complete_educational_topic, check_recommendation
+- [ ] Table analytics_events: user_id, event_type, metadata_json, timestamp
+- [ ] Without affecting perceived performance (async logging)
+
+**Story Points:** 3
+**Status:** Not Started
+**Phase:** 15 — Feedback
+
+---
+
+## Epic 17: Demo and Test Data
+
+**Goal:** Realistic data and reproducible script for validation and presentation.
+
+### US-1601: Demo Data Script
+**As a** presenter
+**I want to** have realistic test data
+**So that** I can demonstrate the app with credible scenarios
+
+**Acceptance Criteria:**
+- [ ] 5 users with varied profiles (universities, income, different types)
+- [ ] 200+ transactions per user distributed across 3 months
+- [ ] Default categories populated
+- [ ] 3 active budgets per user
+- [ ] 2 goals per user (1 in progress, 1 completed)
+- [ ] Pre-usage surveys completed
+- [ ] Idempotent and documented script
+
+**Story Points:** 5
+**Status:** Not Started
+**Phase:** 16 — Demo
+
+---
+
+## Epic 18: Infrastructure
+
+**Goal:** Repository, database, and CI/CD correctly configured.
+
+### US-1801: Repository and Project Structure
+**As a** developer
+**I want to** have a well-organized repository
+**So that** I can work in a structured way
+
+**Acceptance Criteria:**
+- [ ] GitHub monorepo: /android, /backend, /ml, /docs
 - [ ] .gitignore, README.md, CONTRIBUTING.md, LICENSE
-- [ ] Branch protection: main (protegido), develop, feature/*
+- [ ] Branch protection: main (protected), develop, feature/*
 
-**Story Points:** 2  
-**Status:** ⏳ No Iniciado  
-**Fase:** 1 — Infraestructura
+**Story Points:** 2
+**Status:** Not Started
+**Phase:** 1 — Infrastructure
 
 ---
 
-## Estadísticas Resumen
+## Summary Statistics
 
-**Total Épicas:** 18  
-**Total Historias de Usuario:** 55  
+**Total Epics:** 18
+**Total User Stories:** 55
 **Total Story Points:** 302
 
-**Por Fase:**
-- **Fase 1-2:** Infra + Auth — 12 historias, 54 points
-- **Fase 3-4:** Transacciones + Categorías — 8 historias, 33 points
-- **Fase 5-6:** Reportes + Presupuestos — 11 historias, 60 points
-- **Fase 7-8:** ML + Predicciones — 8 historias, 52 points
-- **Fase 9-10:** Recomendaciones + Educación — 8 historias, 48 points
-- **Fase 11-12:** Notificaciones + Evaluación — 8 historias, 37 points
-- **Fase 13-16:** Seguridad + Testing + Demo — 10 historias, 47 points
+**By Phase:**
+- **Phase 1-2:** Infra + Auth — 12 stories, 54 points
+- **Phase 3-4:** Transactions + Categories — 8 stories, 33 points
+- **Phase 5-6:** Reports + Budgets — 11 stories, 60 points
+- **Phase 7-8:** ML + Predictions — 8 stories, 52 points
+- **Phase 9-10:** Recommendations + Education — 8 stories, 48 points
+- **Phase 11-12:** Notifications + Evaluation — 8 stories, 37 points
+- **Phase 13-16:** Security + Testing + Demo — 10 stories, 47 points
 
 **Status Overview:**
-- ✅ Completo: 0
-- 🚧 En Progreso: 0
-- ⏳ No Iniciado: 55
-- 🔒 Bloqueado: 0
+- Done: 0
+- In Progress: 0
+- Not Started: 55
+- Blocked: 0
 
 ---
 
-## Cómo Usar Este Documento
+## How to Use This Document
 
-**Antes de iniciar trabajo nuevo:**
-1. Revisar el objetivo de la épica y las historias relacionadas
-2. Verificar criterios de aceptación como definición de "done"
-3. Revisar fase correspondiente en [roadmap.md](./roadmap.md)
-4. Actualizar status a 🚧 En Progreso
-5. Implementar siguiendo estándares
-6. Actualizar status a ✅ Completo cuando todos los criterios se cumplan
+**Before starting new work:**
+1. Review the epic's goal and related stories
+2. Verify acceptance criteria as definition of "done"
+3. Review corresponding phase in [roadmap.md](./roadmap.md)
+4. Update status to In Progress
+5. Implement following standards
+6. Update status to Done when all criteria are met
 
-**Durante el desarrollo:**
-- Usar story points para planificación (1 punto ≈ 2-3 horas)
-- Bloquear historias si hay dependencias faltantes
-- Agregar notas para desviaciones de criterios de aceptación
-- Actualizar referencias cruzadas si la implementación difiere
+**During development:**
+- Use story points for planning (1 point ~ 2-3 hours)
+- Block stories if dependencies are missing
+- Add notes for deviations from acceptance criteria
+- Update cross-references if implementation differs
 
-**Para seguimiento:**
-- Marcar historias como completas inmediatamente al cumplir criterios
-- Revisiones semanales: verificar avance real vs roadmap
-- Este documento es la fuente de verdad de qué está hecho vs pendiente
+**For tracking:**
+- Mark stories as complete immediately when criteria are met
+- Weekly reviews: verify actual progress vs roadmap
+- This document is the source of truth for what's done vs pending
 
 ---
 
-**Documentos relacionados:**
-- [mission.md](./mission.md) — Visión y objetivos del producto
-- [roadmap.md](./roadmap.md) — Plan de ejecución por fases (16 fases)
+**Related documents:**
+- [mission.md](./mission.md) — Product vision and objectives
+- [roadmap.md](./roadmap.md) — Execution plan by phases (16 phases)
