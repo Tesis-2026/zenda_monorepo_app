@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  # ── Backend: lint + build ──────────────────────────────────────────────────
+  backend:
+    name: Backend — Build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: zenda_backend_app
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: zenda_backend_app/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma client
+        run: npx prisma generate
+
+      - name: Build
+        run: npm run build
+
+  # ── Frontend: analyze ─────────────────────────────────────────────────────
+  frontend:
+    name: Frontend — Analyze
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.10.0'
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        working-directory: zenda_fronted_app
+        run: flutter pub get
+
+      - name: Analyze
+        working-directory: zenda_fronted_app
+        run: flutter analyze --no-fatal-infos
