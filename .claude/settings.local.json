@@ -17,7 +17,16 @@
       "Bash(grep -r \"app.*name\\\\|APP_NAME\" /c/Users/paolo/OneDrive/Desktop/Tesis2026 --include=\"*.json\" --include=\"*.ts\" --include=\"*.yaml\" --include=\"*.yml\" --include=\"*.plist\" 2>/dev/null | head -20)",
       "Bash(find /c/Users/paolo/OneDrive/Desktop/Tesis2026 -type f \\\\\\( -name \"*.dart\" -o -name \"*.xml\" -o -name \"*.plist\" -o -name \"*.rc\" -o -name \"*.json\" -o -name \"*.txt\" -o -name \"*.md\" -o -name \"CMakeLists.txt\" \\\\\\) 2>/dev/null | head -50)",
       "Bash(find /c/Users/paolo/OneDrive/Desktop/Tesis2026 -type f -name \"*.dart\" 2>/dev/null | wc -l)",
-      "Bash(find /c/Users/paolo/OneDrive/Desktop/Tesis2026/zenda_backend_app -maxdepth 3 -type f -name \"*.ts\" -o -name \"*.json\" | grep -E \"\\\\.\\(ts|json\\)$\" | head -30)"
+      "Bash(find /c/Users/paolo/OneDrive/Desktop/Tesis2026/zenda_backend_app -maxdepth 3 -type f -name \"*.ts\" -o -name \"*.json\" | grep -E \"\\\\.\\(ts|json\\)$\" | head -30)",
+      "Bash(grep -r budget C:UserspaoloOneDriveDesktopTesis2026zenda_backend_appsrcmodules --include=*.ts)",
+      "Bash(grep -r \"Budget\\\\|budget\" C:UserspaoloOneDriveDesktopTesis2026zenda_fronted_applib --include=*.dart)",
+      "Bash(npx prisma:*)",
+      "Bash(npm run:*)",
+      "Bash(node_modules/.bin/prisma generate:*)",
+      "Bash(npm install:*)",
+      "Bash(node_modules/.bin/prisma validate:*)",
+      "Bash(DATABASE_URL=\"postgresql://x:x@localhost:5432/x\" node_modules/.bin/prisma generate)",
+      "Bash(echo \"Exit code: $?\")"
     ]
   }
 }
