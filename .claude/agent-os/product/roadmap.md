@@ -36,17 +36,17 @@
 
 > **Impact: Critical** — Without infrastructure there is no development. Blocks all subsequent phases.
 
-- [ ] `P0` `infra` `backend` -- **Git repository setup** -- Create monorepo on GitHub with structure: `/android` (mobile app), `/backend` (REST API), `/ml` (AI models), `/docs` (documentation). Include `.gitignore`, `README.md`, `CONTRIBUTING.md`, `LICENSE`. Configure branch protection: `main` (protected), `develop` (integration), `feature/*` (development). Refs: [US-1801](./user_stories.md#US-1801)
+- [x] `P0` `infra` `backend` -- **Git repository setup** -- Create monorepo on GitHub with structure: `/android` (mobile app), `/backend` (REST API), `/ml` (AI models), `/docs` (documentation). Include `.gitignore`, `README.md`, `CONTRIBUTING.md`, `LICENSE`. Configure branch protection: `main` (protected), `develop` (integration), `feature/*` (development). Refs: [US-1801](./user_stories.md#US-1801)
 
-- [ ] `P0` `infra` `backend` -- **PostgreSQL database setup** -- Provision PostgreSQL instance on Azure. Create initial schema with tables: `users`, `transactions`, `categories`, `budgets`, `goals`, `educational_content`, `challenges`, `badges`, `user_badges`, `predictions`, `recommendations`, `surveys`, `survey_responses`, `notification_preferences`, `analytics_events`, `audit_logs`, `feedback`. Include indexes, foreign keys, check constraints, enums. Script: `database/schema.sql`. Refs: [US-1802](./user_stories.md#US-1802)
+- [x] `P0` `infra` `backend` -- **PostgreSQL database setup** -- Provision PostgreSQL instance on Azure. Create initial schema with tables: `users`, `transactions`, `categories`, `budgets`, `goals`, `educational_content`, `challenges`, `badges`, `user_badges`, `predictions`, `recommendations`, `surveys`, `survey_responses`, `notification_preferences`, `analytics_events`, `audit_logs`, `feedback`. Include indexes, foreign keys, check constraints, enums. Script: `database/schema.sql`. Refs: [US-1802](./user_stories.md#US-1802) — **Note:** Local Docker (PostgreSQL 15) instead of Azure; Azure provisioning deferred to production deployment.
 
-- [ ] `P0` `infra` `android` -- **Base Android project** -- Create Android Studio project with Kotlin, minSdkVersion 28 (Android 9). Configure: MVVM architecture, Room (local SQLite), Retrofit (HTTP client), Hilt (dependency injection), Navigation Component, Material Design 3. Package structure: `ui/`, `data/`, `domain/`, `di/`, `utils/`. Refs: [US-1803](./user_stories.md#US-1803)
+- [x] `P0` `infra` `android` -- **Base Android project** -- Create Android Studio project with Kotlin, minSdkVersion 28 (Android 9). Configure: MVVM architecture, Room (local SQLite), Retrofit (HTTP client), Hilt (dependency injection), Navigation Component, Material Design 3. Package structure: `ui/`, `data/`, `domain/`, `di/`, `utils/`. Refs: [US-1803](./user_stories.md#US-1803) — **Note:** Tech stack changed to Flutter 3.10+ with Riverpod (replaces Kotlin/MVVM/Hilt). Feature-based structure under `lib/features/`. GoRouter replaces Navigation Component.
 
-- [ ] `P0` `infra` `backend` -- **Base REST API** -- Configure backend server with health-check endpoints: `GET /api/v1/health` returns `{ status: "ok", version: "1.0.0" }`. Configure CORS, global rate limiting, logging, centralized error handling. Document with OpenAPI/Swagger. Refs: [US-1804](./user_stories.md#US-1804)
+- [x] `P0` `infra` `backend` -- **Base REST API** -- Configure backend server with health-check endpoints: `GET /api/v1/health` returns `{ status: "ok", version: "1.0.0" }`. Configure CORS, global rate limiting, logging, centralized error handling. Document with OpenAPI/Swagger. Refs: [US-1804](./user_stories.md#US-1804) — **Note:** `GET /api/health` (no version prefix); Swagger at `/api/docs`.
 
-- [ ] `P1` `infra` -- **CI/CD setup** -- GitHub Actions workflow: lint → test → build on each PR. Automatic deployment to Azure (backend) and Google Play Internal Testing (APK) on merge to `main`. Refs: Best practices
+- [x] `P1` `infra` -- **CI/CD setup** -- GitHub Actions workflow: lint → test → build on each PR. Automatic deployment to Azure (backend) and Google Play Internal Testing (APK) on merge to `main`. Refs: Best practices — **Note:** `.github/workflows/ci.yml` covers backend (build + test) and frontend (`flutter analyze`). Deployment step deferred to production phase.
 
-- [ ] `P1` `infra` -- **Environment variables and secrets** -- Create `.env.example` with all required variables. Configure GitHub Secrets for CI/CD. Document in `SETUP.md`. Refs: Security best practices
+- [x] `P1` `infra` -- **Environment variables and secrets** -- Create `.env.example` with all required variables. Configure GitHub Secrets for CI/CD. Document in `SETUP.md`. Refs: Security best practices
 
 ---
 
@@ -54,13 +54,13 @@
 
 > **Impact: Critical** — The schema defines the structure of the entire application.
 
-- [ ] `P0` `backend` `database` -- **Users schema** -- Table `users`: `id` (UUID PK), `email` (UNIQUE NOT NULL), `password_hash` (TEXT NOT NULL), `name` (VARCHAR 100), `age` (INT), `university` (VARCHAR 200), `income_type` (ENUM: SCHOLARSHIP, PART_TIME, FAMILY, MIXED), `average_monthly_income` (DECIMAL), `financial_literacy_level` (ENUM: LOW, MEDIUM, HIGH), `profile_completed` (BOOLEAN DEFAULT false), `currency` (VARCHAR 3 DEFAULT 'PEN'), `consent_given` (BOOLEAN DEFAULT false), `consent_at` (TIMESTAMP), `created_at` (TIMESTAMP), `updated_at` (TIMESTAMP). Refs: [US-0101](./user_stories.md#US-0101)
+- [x] `P0` `backend` `database` -- **Users schema** -- Table `users`: `id` (UUID PK), `email` (UNIQUE NOT NULL), `password_hash` (TEXT NOT NULL), `name` (VARCHAR 100), `age` (INT), `university` (VARCHAR 200), `income_type` (ENUM: SCHOLARSHIP, PART_TIME, FAMILY, MIXED), `average_monthly_income` (DECIMAL), `financial_literacy_level` (ENUM: LOW, MEDIUM, HIGH), `profile_completed` (BOOLEAN DEFAULT false), `currency` (VARCHAR 3 DEFAULT 'PEN'), `consent_given` (BOOLEAN DEFAULT false), `consent_at` (TIMESTAMP), `created_at` (TIMESTAMP), `updated_at` (TIMESTAMP). Refs: [US-0101](./user_stories.md#US-0101)
 
-- [ ] `P0` `backend` `database` -- **Transactions schema** -- Table `transactions`: `id` (UUID PK), `user_id` (FK → users), `type` (ENUM: INCOME, EXPENSE), `amount` (DECIMAL NOT NULL CHECK > 0), `category_id` (FK → categories), `description` (TEXT), `date` (DATE NOT NULL), `deleted_at` (TIMESTAMP nullable), `created_at` (TIMESTAMP), `updated_at` (TIMESTAMP). Indexes: `(user_id, date)`, `(user_id, category_id)`, `(user_id, type, date)`. Refs: [US-0201](./user_stories.md#US-0201)
+- [x] `P0` `backend` `database` -- **Transactions schema** -- Table `transactions`: `id` (UUID PK), `user_id` (FK → users), `type` (ENUM: INCOME, EXPENSE), `amount` (DECIMAL NOT NULL CHECK > 0), `category_id` (FK → categories), `description` (TEXT), `date` (DATE NOT NULL), `deleted_at` (TIMESTAMP nullable), `created_at` (TIMESTAMP), `updated_at` (TIMESTAMP). Indexes: `(user_id, date)`, `(user_id, category_id)`, `(user_id, type, date)`. Refs: [US-0201](./user_stories.md#US-0201)
 
-- [ ] `P0` `backend` `database` -- **Categories, budgets, goals schema** -- Tables `categories`, `budgets`, `goals` per specification in Phase 4 and 6. Foreign keys with ON DELETE CASCADE where appropriate. Check constraints for enums. Refs: [US-0301](./user_stories.md#US-0301)
+- [x] `P0` `backend` `database` -- **Categories, budgets, goals schema** -- Tables `categories`, `budgets`, `goals` per specification in Phase 4 and 6. Foreign keys with ON DELETE CASCADE where appropriate. Check constraints for enums. Refs: [US-0301](./user_stories.md#US-0301)
 
-- [ ] `P1` `backend` `database` -- **Gamification, AI, and evaluation schema** -- Tables: `educational_content`, `challenges`, `badges`, `user_badges`, `predictions`, `recommendations`, `surveys`, `survey_responses`, `analytics_events`, `audit_logs`, `feedback`. Refs: [US-0901](./user_stories.md#US-0901)
+- [x] `P1` `backend` `database` -- **Gamification, AI, and evaluation schema** -- Tables: `educational_content`, `challenges`, `badges`, `user_badges`, `predictions`, `recommendations`, `surveys`, `survey_responses`, `analytics_events`, `audit_logs`, `feedback`. Refs: [US-0901](./user_stories.md#US-0901)
 
 ---
 
@@ -310,7 +310,7 @@
 
 | Phase | Name | Sprint(s) | Duration | Status |
 |-------|------|-----------|----------|--------|
-| 1 | Infrastructure and Setup | Sprint 1 | 3 weeks | -- |
+| 1 | Infrastructure and Setup | Sprint 1 | 3 weeks | ✅ Done |
 | 2 | Authentication and Users | Sprint 1-2 | 3 weeks | -- |
 | 3 | Transaction Recording | Sprint 2-3 | 4 weeks | -- |
 | 4 | Categorization | Sprint 3 | 2 weeks | -- |
