@@ -46,6 +46,83 @@ Tesis2026/
 - Account types: cash, debit, credit — each with different mutation rules
 - Streak system for daily engagement gamification
 
+## Roadmap Documentation
+
+Phase specs live in `.claude/specs/<phase>/`. **After implementing any roadmap phase, Claude must create or update all four spec files for that phase.**
+
+### File responsibilities
+
+| File | What goes in it |
+|------|----------------|
+| `spec.md` | Context (what existed before), tasks completed (numbered list), what was built (tables/diagrams per model/feature) |
+| `shape.md` | Every non-obvious architecture or data-model decision with rationale; constraints enforced and where (DB vs service layer) |
+| `standards.md` | Coding patterns applied: naming, validation, error handling, testing — anything a future dev must follow to stay consistent |
+| `references.md` | Key files changed and what changed in each; test files added; external standards or skills referenced |
+
+### Templates
+
+**`spec.md`**
+```markdown
+# Phase <id>: <title>
+
+## Context
+<What existed before this phase. What gap it closes. User stories covered (e.g. US-XXXX).>
+
+## Tasks Completed
+1. `<file path>` — <what changed>
+2. ...
+
+## What Was Built
+### <Feature / Model name> (<user story>)
+<Description. Tables for fields, state machines for flows.>
+```
+
+**`shape.md`**
+```markdown
+# Shape: Phase <id> — <title>
+
+## Decisions
+- **<Decision title>** — <what was chosen and why; what the alternative was and why it was rejected>
+
+## Constraints
+- <Invariant> — enforced by <schema @@unique / service layer / controller guard>
+```
+
+**`standards.md`**
+```markdown
+# Standards Applied: Phase <id> — <title>
+
+## <Layer (Database / Service / API / Frontend)>
+- **<Pattern name>:** <rule and rationale>
+```
+
+**`references.md`**
+```markdown
+# References: Phase <id> — <title>
+
+## Key Files
+| File | Change |
+|------|--------|
+| `<path>` | <what changed> |
+
+## Test Files
+<List test files added, or "No test files were created in this phase.">
+
+## Standards Applied
+- `<skill or doc path>` — <which rules from it were applied>
+```
+
+### Rules
+- Read the existing spec (if any) before implementing — it defines the expected shape.
+- Write specs **after** implementation, using the actual code as the source of truth.
+- Every decision in `shape.md` must state the alternative that was considered.
+- `references.md` must list every file that was created or modified.
+- Update the **Current phases** list below when a new phase spec is added.
+
+### Current phases
+- `phase-1a` — Backend scaffolding and core infrastructure (NestJS, Prisma, JWT auth, 5 feature modules)
+- `phase-1b` — Database design (Prisma schema, PostgreSQL)
+
 ## Thesis Success Metrics
 | Metric | Target |
 |--------|--------|
