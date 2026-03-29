@@ -1,125 +1,55 @@
-# Zenda — AI-Powered Financial Education App
+# Zenda — AI-Powered Finance App
 
-Zenda is a mobile personal finance application that uses artificial intelligence to help Peruvian university students (ages 18–24) record, understand, and predict their financial behavior.
+Zenda (working title: WalletWise) is a thesis project: an AI-powered mobile finance app for Peruvian university students (18–24). It helps users track income and expenses, follow the 50/30/20 budget rule, and improve financial literacy through personalized recommendations and gamification.
 
-> **Thesis Project** · Universidad · 2026
-> Team: Paolo Guillen Luna · Fernando Quispe Condori · Advisor: Diego Rojas Sihuay
+## Monorepo Structure
 
----
-
-## Project Structure
-
-```
-Tesis2026/
-├── zenda_backend_app/    # NestJS 11 + Prisma + PostgreSQL REST API
-├── zenda_fronted_app/    # Flutter 3.10+ mobile app (Android)
-├── ml/                   # Python ML pipeline (predictions, anomaly detection)
-├── docs/                 # Architecture, design docs, and demo scripts
-├── .github/workflows/    # CI/CD (GitHub Actions)
-└── CLAUDE.md             # Project conventions for AI-assisted development
-```
-
----
+| Folder | Stack | Purpose |
+|--------|-------|---------|
+| `zenda_backend_app/` | NestJS 11, Prisma, PostgreSQL 15 | REST API |
+| `zenda_fronted_app/` | Flutter 3.10+, Riverpod 3 | Mobile app (iOS/Android) |
+| `ml/` | Python 3.11, scikit-learn | Prediction and recommendation models |
+| `docs/` | Markdown | Architecture and design docs |
 
 ## Quick Start
 
 ### Prerequisites
+- Node.js 20+
+- Docker Desktop
+- Flutter SDK 3.10+
+- Python 3.11+
 
-| Tool | Version |
-|------|---------|
-| Node.js | 20+ |
-| Flutter SDK | 3.10+ |
-| Docker Desktop | Latest |
-| Python | 3.11+ |
-
-### 1. Clone
-
-```bash
-git clone https://github.com/<org>/zenda.git
-cd zenda
-```
-
-### 2. Backend
-
+### Backend
 ```bash
 cd zenda_backend_app
-cp .env.example .env          # fill in secrets
-docker compose up -d          # start PostgreSQL
+cp .env.example .env        # fill in values
+docker compose up -d        # start PostgreSQL
 npm install
-npm run prisma:migrate        # run migrations
-npm run prisma:seed           # seed default data
-npm run start:dev             # http://localhost:3000
+npm run prisma:migrate
+npm run prisma:seed
+npm run start:dev           # http://localhost:3000
 ```
 
-API docs: [http://localhost:3000/api/docs](http://localhost:3000/api/docs)
-
-### 3. Frontend
-
+### Frontend
 ```bash
 cd zenda_fronted_app
 flutter pub get
-flutter run                   # requires connected Android device or emulator
+flutter run
 ```
 
-### 4. ML Pipeline
-
+### ML
 ```bash
 cd ml
 python -m venv .venv
-source .venv/bin/activate     # Windows: .venv\Scripts\activate
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
----
+## API Documentation
+Swagger UI is available at `http://localhost:3000/api/docs` when the backend is running.
 
-## Architecture
+## Contributing
+See [CONTRIBUTING.md](CONTRIBUTING.md) for branching model, commit conventions, and PR process.
 
-```
-Android App (Flutter)
-      │  HTTPS / JWT
-      ▼
-NestJS REST API ──► PostgreSQL 15
-      │
-      ▼
-Python ML Pipeline (Azure / TFLite)
-```
-
-**Key design decisions:**
-- 50/30/20 budget rule: Needs / Wants / Savings
-- AI suggests, the user decides — no automatic transactions
-- Currency: PEN (Peruvian Sol, `S/`)
-- Offline-first mobile with periodic API sync
-
----
-
-## Branch Strategy
-
-| Branch | Purpose |
-|--------|---------|
-| `main` | Protected — production-ready releases only |
-| `develop` | Integration branch for completed features |
-| `feature/<name>` | Individual feature development |
-
----
-
-## Documentation
-
-- [`docs/`](docs/) — Architecture diagrams, DB schema, AI flow, demo script
-- [`zenda_backend_app/README.md`](zenda_backend_app/README.md) — Backend setup
-- [`zenda_fronted_app/README.md`](zenda_fronted_app/README.md) — Frontend setup
-- [`ml/README.md`](ml/README.md) — ML pipeline overview
-- [`CONTRIBUTING.md`](CONTRIBUTING.md) — Contribution guidelines
-- [`SETUP.md`](SETUP.md) — Detailed environment setup
-
----
-
-## Thesis Success Metrics
-
-| Metric | Target |
-|--------|--------|
-| AI prediction accuracy | ≥ 80% |
-| Daily active users | ≥ 50% |
-| Financial literacy improvement | ≥ 20% |
-| SUS usability score | ≥ 4.0 / 5.0 |
-| 30-day retention | ≥ 40% |
-| Critical error rate | < 1% |
+## Setup
+See [SETUP.md](SETUP.md) for a full environment reference including all environment variables.

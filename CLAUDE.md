@@ -1,5 +1,23 @@
 # Zenda (WalletWise) — Project Conventions
 
+## Active Standards
+@skills/assistant/pre-work-audit/SKILL.md
+@skills/universal/core-coding-standards/SKILL.md
+@skills/universal/lang-typescript/SKILL.md
+@skills/platform/platform-backend/SKILL.md
+@skills/platform/platform-backend/domain-driven-design-nestjs/SKILL.md
+@skills/platform/platform-database/SKILL.md
+@skills/platform/platform-testing/SKILL.md
+@skills/platform/platform-mobile/flutter/SKILLS.md
+@skills/assistant/agent-add-rule/SKILL.md
+@skills/assistant/agent-init-deep/SKILL.md
+@skills/assistant/agent-pr-creator/SKILL.md
+@skills/assistant/pr-comments-address/SKILL.md
+@skills/assistant/promptify/SKILL.md
+@skills/assistant/rewrite-commit-history/SKILL.md
+@skills/_drafts/framework/tech-prisma/SKILL.md
+@skills/_drafts/platform/platform-mobile/SKILL.md
+
 ## Overview
 Zenda is an AI-powered mobile finance app (thesis project) targeting Peruvian university students (18-24). The codebase is a monorepo with a NestJS backend and Flutter frontend.
 
@@ -8,9 +26,9 @@ Zenda is an AI-powered mobile finance app (thesis project) targeting Peruvian un
 Tesis2026/
 ├── zenda_backend_app/   # NestJS + Prisma + PostgreSQL API
 ├── zenda_fronted_app/   # Flutter + Riverpod mobile app (note: "fronted" is the actual folder name)
-├── ml/                  # Python ML pipeline (Phase 7–8)
-├── docs/                # Architecture docs, demo script (Phase 16)
-├── specs/               # Phase documentation — one folder per completed phase
+├── ml/                  # Python ML models (planned, Phase 8+)
+├── docs/                # Architecture documentation
+├── skills/              # Custom Claude Code skills
 └── CLAUDE.md            # This file
 ```
 
@@ -25,7 +43,8 @@ Tesis2026/
 - **API docs**: `http://localhost:3000/api/docs` (Swagger)
 - **Database**: `docker compose up -d`, then `npm run prisma:migrate && npm run prisma:seed`
 - **Conventions**:
-  - Modules in `src/modules/` follow NestJS module pattern (controller, service, DTOs)
+  - 6 feature modules in `src/modules/`: `auth`, `users`, `categories`, `transactions`, `goals`, `insights`
+  - Each module uses DDD layers: `application/use-cases/`, `domain/`, `infrastructure/`, `interface/`
   - All entities use soft deletes (`deletedAt` field)
   - DTOs use `class-validator` decorators
   - Responses use `SuccessResponseDto` wrapper
@@ -48,6 +67,83 @@ Tesis2026/
 - Category-to-bucket mapping is in `transaction.dart:bucketForCategory()`
 - Account types: cash, debit, credit — each with different mutation rules
 - Streak system for daily engagement gamification
+
+## Roadmap Documentation
+
+Phase specs live in `.claude/specs/<phase>/`. **After implementing any roadmap phase, Claude must create or update all four spec files for that phase.**
+
+### File responsibilities
+
+| File | What goes in it |
+|------|----------------|
+| `spec.md` | Context (what existed before), tasks completed (numbered list), what was built (tables/diagrams per model/feature) |
+| `shape.md` | Every non-obvious architecture or data-model decision with rationale; constraints enforced and where (DB vs service layer) |
+| `standards.md` | Coding patterns applied: naming, validation, error handling, testing — anything a future dev must follow to stay consistent |
+| `references.md` | Key files changed and what changed in each; test files added; external standards or skills referenced |
+
+### Templates
+
+**`spec.md`**
+```markdown
+# Phase <id>: <title>
+
+## Context
+<What existed before this phase. What gap it closes. User stories covered (e.g. US-XXXX).>
+
+## Tasks Completed
+1. `<file path>` — <what changed>
+2. ...
+
+## What Was Built
+### <Feature / Model name> (<user story>)
+<Description. Tables for fields, state machines for flows.>
+```
+
+**`shape.md`**
+```markdown
+# Shape: Phase <id> — <title>
+
+## Decisions
+- **<Decision title>** — <what was chosen and why; what the alternative was and why it was rejected>
+
+## Constraints
+- <Invariant> — enforced by <schema @@unique / service layer / controller guard>
+```
+
+**`standards.md`**
+```markdown
+# Standards Applied: Phase <id> — <title>
+
+## <Layer (Database / Service / API / Frontend)>
+- **<Pattern name>:** <rule and rationale>
+```
+
+**`references.md`**
+```markdown
+# References: Phase <id> — <title>
+
+## Key Files
+| File | Change |
+|------|--------|
+| `<path>` | <what changed> |
+
+## Test Files
+<List test files added, or "No test files were created in this phase.">
+
+## Standards Applied
+- `<skill or doc path>` — <which rules from it were applied>
+```
+
+### Rules
+- Read the existing spec (if any) before implementing — it defines the expected shape.
+- Write specs **after** implementation, using the actual code as the source of truth.
+- Every decision in `shape.md` must state the alternative that was considered.
+- `references.md` must list every file that was created or modified.
+- Update the **Current phases** list below when a new phase spec is added.
+
+### Current phases
+- `phase-1a` — Backend scaffolding and core infrastructure (NestJS, Prisma, JWT auth, 6 feature modules)
+- `phase-1b` — Database design (Prisma schema, PostgreSQL)
 
 ## Thesis Success Metrics
 | Metric | Target |

@@ -7,54 +7,80 @@ on:
     branches: [main, develop]
 
 jobs:
-  # ── Backend: lint + build ──────────────────────────────────────────────────
   backend:
-    name: Backend — Build
+    name: Backend — Build & Test
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: zenda_test
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     defaults:
       run:
         working-directory: zenda_backend_app
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: 20
+          cache: npm
           cache-dependency-path: zenda_backend_app/package-lock.json
 
-      - name: Install dependencies
-        run: npm ci
+      - run: npm ci
 
       - name: Generate Prisma client
         run: npx prisma generate
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5433/zenda_test
 
-      - name: Build
-        run: npm run build
+      - name: Run migrations
+        run: npx prisma migrate deploy
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5433/zenda_test
 
-  # ── Frontend: analyze ─────────────────────────────────────────────────────
+      - run: npm run build
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5433/zenda_test
+          JWT_SECRET: ci-test-secret
+          JWT_EXPIRES_IN: 30d
+          BCRYPT_ROUNDS: 4
+
+      - run: npm run test -- --passWithNoTests
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5433/zenda_test
+          JWT_SECRET: ci-test-secret
+          JWT_EXPIRES_IN: 30d
+          BCRYPT_ROUNDS: 4
+
   frontend:
     name: Frontend — Analyze
     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+    defaults:
+      run:
+        working-directory: zenda_fronted_app
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.10.0'
-          channel: 'stable'
-          cache: true
+          channel: stable
 
-      - name: Install dependencies
-        working-directory: zenda_fronted_app
-        run: flutter pub get
+      - run: flutter pub get
 
-      - name: Analyze
-        working-directory: zenda_fronted_app
-        run: flutter analyze --no-fatal-infos
+      - run: flutter analyze --no-fatal-infos

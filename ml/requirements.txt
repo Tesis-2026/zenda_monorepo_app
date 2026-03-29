@@ -1,26 +1,8 @@
-# Zenda ML Pipeline — Python dependencies
-# Phase 7-8: Feature extraction, model training, and export
-
-# Data processing
-pandas>=2.0.0
-numpy>=1.24.0
-
-# Machine learning
-scikit-learn>=1.3.0
-xgboost>=2.0.0
-
-# Deep learning (LSTM experiments)
-tensorflow>=2.13.0
-
-# Jupyter notebooks
-jupyter>=1.0.0
-matplotlib>=3.7.0
-seaborn>=0.12.0
-
-# Model export
-# TFLite is included with tensorflow
-
-# Database access (for feature extraction from PostgreSQL)
-psycopg2-binary>=2.9.0
-sqlalchemy>=2.0.0
-python-dotenv>=1.0.0
+scikit-learn==1.4.2
+pandas==2.2.2
+numpy==1.26.4
+joblib==1.4.2
+python-dotenv==1.0.1
+fastapi==0.111.0
+uvicorn==0.30.1
+httpx==0.27.0

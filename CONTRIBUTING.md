@@ -1,80 +1,44 @@
 # Contributing to Zenda
 
-This document describes the conventions for contributing to this repository.
-
----
-
-## Branching Strategy
+## Branching Model
 
 ```
-main          ← protected, production-ready only
-  └── develop ← integration branch, all features merge here first
-        └── feature/<short-name>  ← your work branch
+main          — stable, protected; merged via PR only
+develop       — integration branch
+feature/<id>  — new features (e.g. feature/phase-2a-auth-profile)
+fix/<id>      — bug fixes
+chore/<id>    — tooling, deps, docs
 ```
 
-- **Never commit directly to `main` or `develop`.**
-- Branch names use lowercase kebab-case: `feature/auth-integration`, `fix/budget-alert`.
-- Open a PR from `feature/*` → `develop`; from `develop` → `main` only at release.
+All work branches off `develop`. PRs target `develop`. `develop` → `main` is a release merge.
 
----
+## Commit Convention
 
-## Commit Conventions
-
-Follow [Conventional Commits](https://www.conventionalcommits.org/):
+We follow [Conventional Commits](https://www.conventionalcommits.org/):
 
 ```
-<type>(<scope>): <short description>
+<type>(<scope>): <description>
 
-[optional body]
+feat(auth): add refresh token endpoint
+fix(transactions): prevent future-dated transactions
+chore(deps): upgrade NestJS to 11.1
+docs(contributing): add branching model
 ```
 
-| Type | When to use |
-|------|-------------|
-| `feat` | New feature |
-| `fix` | Bug fix |
-| `docs` | Documentation only |
-| `refactor` | Code change without feature/fix |
-| `test` | Adding or updating tests |
-| `chore` | Build, CI, tooling changes |
-
-**Examples:**
-```
-feat(auth): add JWT refresh endpoint
-fix(transactions): correct soft-delete ownership check
-docs(ml): add feature extraction README
-```
-
----
+Types: `feat`, `fix`, `chore`, `docs`, `test`, `refactor`, `perf`, `ci`
 
 ## Pull Request Process
 
-1. Branch from `develop`, not `main`.
-2. Keep PRs focused — one feature or fix per PR.
-3. All CI checks must pass before merging.
-4. At least one team member must review before merging.
-5. Squash and merge into `develop`.
-
----
+1. Branch off `develop`
+2. Write code following the conventions in `CLAUDE.md`
+3. Ensure `npm run build` passes (backend) and `flutter analyze` passes (frontend)
+4. Open a PR targeting `develop` with a description of what and why
+5. At least one approval required before merge
+6. Squash and merge
 
 ## Code Standards
 
-All conventions are defined in [`CLAUDE.md`](CLAUDE.md) and the `skills/` directory:
-
-- **Language:** All code, comments, and strings in **English**.
-- **Backend:** Follow NestJS module pattern — controller → service → DTOs.
-- **Frontend:** Feature-based structure under `lib/features/`, Riverpod state management.
-- **ML:** Document every feature variable and its calculation.
-- **No `any`** in TypeScript. No type assertions.
-- **No mocking the database** in integration tests.
-
----
-
-## Environment Setup
-
-See [`SETUP.md`](SETUP.md) for detailed instructions.
-
----
-
-## Questions
-
-Open an issue on GitHub or contact the team directly.
+- All code, comments, and variable names in **English**
+- Backend: NestJS conventions, DDD architecture, Prisma enums (no string literals)
+- Frontend: Riverpod Notifier pattern, GoRouter, feature-based folders
+- Currency: PEN (S/) only
