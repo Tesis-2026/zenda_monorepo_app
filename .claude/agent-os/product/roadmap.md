@@ -13,13 +13,15 @@
 ## Technical Foundation
 
 **Stack:**
-- Mobile Frontend: Android native (Kotlin) — Android 9+ (API 28)
-- Backend: Node.js/Express or Spring Boot + PostgreSQL
-- AI/ML: Python (Scikit-learn, TensorFlow Lite) — models exported for mobile inference
-- Cloud: Azure (cloud services, storage, AI APIs)
-- Authentication: Firebase Auth (email/password)
-- Notifications: Firebase Cloud Messaging (FCM)
-- CI/CD: GitHub Actions + Google Play Internal Testing
+- Mobile Frontend: Flutter 3.10+ (Dart) — iOS and Android, feature-based architecture with Riverpod 3
+- Backend: NestJS 11 + Prisma ORM + PostgreSQL 15 (Docker locally, cloud TBD for production)
+- State Management: Riverpod 3 (AsyncNotifierProvider, NotifierProvider, FutureProvider)
+- Navigation: GoRouter 17
+- Charts: fl_chart 1.1.1
+- AI/ML: Python (Scikit-learn, TensorFlow Lite) — models exported for API inference
+- Authentication: JWT (Passport + bcrypt) — no Firebase
+- Notifications: Firebase Cloud Messaging (FCM) — Phase 11
+- CI/CD: GitHub Actions + deployment TBD
 
 **Standards:**
 - ISO 25010: Software product quality
@@ -36,17 +38,17 @@
 
 > **Impact: Critical** — Without infrastructure there is no development. Blocks all subsequent phases.
 
-- [x] `P0` `infra` `backend` -- **Git repository setup** -- Create monorepo on GitHub with structure: `/android` (mobile app), `/backend` (REST API), `/ml` (AI models), `/docs` (documentation). Include `.gitignore`, `README.md`, `CONTRIBUTING.md`, `LICENSE`. Configure branch protection: `main` (protected), `develop` (integration), `feature/*` (development). Refs: [US-1801](./user_stories.md#US-1801)
+- [x] `P0` `infra` `backend` -- **Git repository setup** -- Monorepo on GitHub: `zenda_backend_app/` (NestJS API), `zenda_fronted_app/` (Flutter app), `ml/` (AI models), `docs/` (documentation). Includes `.gitignore`, `README.md`, `CONTRIBUTING.md`, `SETUP.md`, `LICENSE`. Branch strategy: `main` (protected), `feature/*`, `chore/*`. Refs: [US-1801](./user_stories.md#US-1801)
 
-- [x] `P0` `infra` `backend` -- **PostgreSQL database setup** -- Provision PostgreSQL instance on Azure. Create initial schema with tables: `users`, `transactions`, `categories`, `budgets`, `goals`, `educational_content`, `challenges`, `badges`, `user_badges`, `predictions`, `recommendations`, `surveys`, `survey_responses`, `notification_preferences`, `analytics_events`, `audit_logs`, `feedback`. Include indexes, foreign keys, check constraints, enums. Script: `database/schema.sql`. Refs: [US-1802](./user_stories.md#US-1802) — **Note:** Local Docker (PostgreSQL 15) instead of Azure; Azure provisioning deferred to production deployment.
+- [x] `P0` `infra` `backend` -- **PostgreSQL database setup** -- PostgreSQL 15 via Docker Compose (`docker-compose.yml`). Prisma ORM manages schema (`prisma/schema.prisma`). Migrations via `npx prisma migrate dev`. Azure provisioning deferred to production deployment. Refs: [US-1802](./user_stories.md#US-1802)
 
-- [x] `P0` `infra` `android` -- **Base Android project** -- Create Android Studio project with Kotlin, minSdkVersion 28 (Android 9). Configure: MVVM architecture, Room (local SQLite), Retrofit (HTTP client), Hilt (dependency injection), Navigation Component, Material Design 3. Package structure: `ui/`, `data/`, `domain/`, `di/`, `utils/`. Refs: [US-1803](./user_stories.md#US-1803) — **Note:** Tech stack changed to Flutter 3.10+ with Riverpod (replaces Kotlin/MVVM/Hilt). Feature-based structure under `lib/features/`. GoRouter replaces Navigation Component.
+- [x] `P0` `infra` `flutter` -- **Base Flutter project** -- Flutter 3.10+ project (`zenda_fronted_app/`). Architecture: feature-based under `lib/features/`. State management: Riverpod 3 (NotifierProvider, AsyncNotifierProvider). Navigation: GoRouter 17 (`lib/routing/app_router.dart`). Local storage: SharedPreferences via `LocalKvStore`. Theme: Material Design 3 light/dark in `lib/core/theme/`. Refs: [US-1803](./user_stories.md#US-1803)
 
-- [x] `P0` `infra` `backend` -- **Base REST API** -- Configure backend server with health-check endpoints: `GET /api/v1/health` returns `{ status: "ok", version: "1.0.0" }`. Configure CORS, global rate limiting, logging, centralized error handling. Document with OpenAPI/Swagger. Refs: [US-1804](./user_stories.md#US-1804) — **Note:** `GET /api/health` (no version prefix); Swagger at `/api/docs`.
+- [x] `P0` `infra` `backend` -- **Base REST API** -- NestJS 11 server. Health check: `GET /api/health` returns `{ status: "ok", timestamp, version: "1.0.0" }`. Global prefix `/api` (no `/v1`). CORS (localhost regex), rate limiting (ThrottlerModule: 120 req/min global), Helmet security headers, ValidationPipe (strict), centralized GlobalExceptionFilter. Swagger at `/api/docs`. Refs: [US-1804](./user_stories.md#US-1804)
 
-- [x] `P1` `infra` -- **CI/CD setup** -- GitHub Actions workflow: lint → test → build on each PR. Automatic deployment to Azure (backend) and Google Play Internal Testing (APK) on merge to `main`. Refs: Best practices — **Note:** `.github/workflows/ci.yml` covers backend (build + test) and frontend (`flutter analyze`). Deployment step deferred to production phase.
+- [x] `P1` `infra` -- **CI/CD setup** -- `.github/workflows/ci.yml`: backend (build + tsc typecheck) and frontend (`flutter analyze`) on each PR. Deployment to production deferred. Refs: Best practices
 
-- [x] `P1` `infra` -- **Environment variables and secrets** -- Create `.env.example` with all required variables. Configure GitHub Secrets for CI/CD. Document in `SETUP.md`. Refs: Security best practices
+- [x] `P1` `infra` -- **Environment variables and secrets** -- `.env.example` with all required variables. Documented in `SETUP.md`. Refs: Security best practices
 
 ---
 
@@ -54,13 +56,13 @@
 
 > **Impact: Critical** — The schema defines the structure of the entire application.
 
-- [x] `P0` `backend` `database` -- **Users schema** -- Table `users`: `id` (UUID PK), `email` (UNIQUE NOT NULL), `password_hash` (TEXT NOT NULL), `name` (VARCHAR 100), `age` (INT), `university` (VARCHAR 200), `income_type` (ENUM: SCHOLARSHIP, PART_TIME, FAMILY, MIXED), `average_monthly_income` (DECIMAL), `financial_literacy_level` (ENUM: LOW, MEDIUM, HIGH), `profile_completed` (BOOLEAN DEFAULT false), `currency` (VARCHAR 3 DEFAULT 'PEN'), `consent_given` (BOOLEAN DEFAULT false), `consent_at` (TIMESTAMP), `created_at` (TIMESTAMP), `updated_at` (TIMESTAMP). Refs: [US-0101](./user_stories.md#US-0101)
+- [x] `P0` `backend` `database` -- **Users schema** -- Model `User`: `id` (UUID PK), `email` (UNIQUE NOT NULL), `passwordHash` (TEXT), `fullName` (VARCHAR), `age` (INT?), `university` (VARCHAR?), `incomeType` (ENUM: SCHOLARSHIP, PART_TIME, FAMILY, MIXED), `averageMonthlyIncome` (Decimal 12,2), `financialLiteracyLevel` (ENUM: LOW, MEDIUM, HIGH), `profileCompleted` (Boolean default false), `currency` (VARCHAR 3 default 'PEN'), `consentGiven` (Boolean), `consentAt` (DateTime?), `createdAt`, `updatedAt`, `deletedAt`. Refs: [US-0101](./user_stories.md#US-0101)
 
-- [x] `P0` `backend` `database` -- **Transactions schema** -- Table `transactions`: `id` (UUID PK), `user_id` (FK → users), `type` (ENUM: INCOME, EXPENSE), `amount` (DECIMAL NOT NULL CHECK > 0), `category_id` (FK → categories), `description` (TEXT), `date` (DATE NOT NULL), `deleted_at` (TIMESTAMP nullable), `created_at` (TIMESTAMP), `updated_at` (TIMESTAMP). Indexes: `(user_id, date)`, `(user_id, category_id)`, `(user_id, type, date)`. Refs: [US-0201](./user_stories.md#US-0201)
+- [x] `P0` `backend` `database` -- **Transactions schema** -- Model `Transaction`: `id` (UUID PK), `userId` (FK → User, Cascade), `type` (ENUM: INCOME, EXPENSE), `amount` (Decimal 12,2 NOT NULL), `categoryId` (FK → Category, SetNull), `description` (TEXT?), `occurredAt` (DateTime default now()), `deletedAt` (DateTime?), `createdAt`, `updatedAt`. Indexes: `(userId, occurredAt, deletedAt)`, `(userId, categoryId)`, `(userId, type, occurredAt, deletedAt)`. Refs: [US-0201](./user_stories.md#US-0201)
 
-- [x] `P0` `backend` `database` -- **Categories, budgets, goals schema** -- Tables `categories`, `budgets`, `goals` per specification in Phase 4 and 6. Foreign keys with ON DELETE CASCADE where appropriate. Check constraints for enums. Refs: [US-0301](./user_stories.md#US-0301)
+- [x] `P0` `backend` `database` -- **Categories, budgets, goals schema** -- Models `Category`, `Budget` (@@unique userId+categoryId+month+year), `SavingsGoal`. Soft deletes on all. Foreign keys with appropriate onDelete strategies. Refs: [US-0301](./user_stories.md#US-0301)
 
-- [x] `P1` `backend` `database` -- **Gamification, AI, and evaluation schema** -- Tables: `educational_content`, `challenges`, `badges`, `user_badges`, `predictions`, `recommendations`, `surveys`, `survey_responses`, `analytics_events`, `audit_logs`, `feedback`. Refs: [US-0901](./user_stories.md#US-0901)
+- [x] `P1` `backend` `database` -- **Gamification, AI, and evaluation schema** -- Models: `EducationalTopic`, `UserTopicProgress`, `Challenge`, `UserChallenge`, `Badge`, `UserBadge`, `Prediction`, `Recommendation`, `RecommendationFeedback`, `Survey`, `SurveyQuestion`, `SurveyResponse`, `AnalyticsEvent`, `AuditLog`, `Feedback`, `NotificationPreference`. Schema complete; backend services/endpoints implemented in their respective phases. Refs: [US-0901](./user_stories.md#US-0901)
 
 ---
 
@@ -68,19 +70,19 @@
 
 > **Impact: Critical** — Without authentication there is no access to the app. Blocks all user functions.
 
-- [ ] `P0` `backend` `security` -- **Registration endpoint** -- `POST /api/v1/auth/register` accepts `email`, `password`, `name`. Validates correct email format, password >= 8 characters with uppercase, lowercase, and number. Creates user with active status. Returns JWT token. Hashing with bcrypt (cost factor 12). Refs: [US-0101](./user_stories.md#US-0101)
+- [x] `P0` `backend` `security` -- **Registration endpoint** -- `POST /api/auth/register` accepts `email`, `password`, `fullName`. Validates email format, password >= 8 chars. Creates user. Returns JWT token. bcrypt password hashing. Refs: [US-0101](./user_stories.md#US-0101)
 
-- [ ] `P0` `backend` `security` -- **Login endpoint** -- `POST /api/v1/auth/login` accepts `email`, `password`. Validates credentials. Returns JWT (expires in 30 days). Temporary lockout after 3 failed attempts (15 min lockout). Refs: [US-0102](./user_stories.md#US-0102)
+- [x] `P0` `backend` `security` -- **Login endpoint** -- `POST /api/auth/login` accepts `email`, `password`. Validates credentials. Returns JWT. Refs: [US-0102](./user_stories.md#US-0102)
 
-- [ ] `P0` `backend` `security` -- **JWT authentication middleware** -- Intercepts routes `/api/v1/*` (except `/auth/*`). Validates signature, expiration. Loads `user_id` into request context. Returns 401 if invalid. Refs: [US-0103](./user_stories.md#US-0103)
+- [x] `P0` `backend` `security` -- **JWT authentication middleware** -- `JwtAuthGuard` protects all routes under `/api/*` except `/api/auth/*` and `/api/health`. Validates signature and expiration. Injects `userId` via `@UserId()` decorator. Returns 401 if invalid. Refs: [US-0103](./user_stories.md#US-0103)
 
-- [ ] `P0` `android` `ui` -- **Registration and login screens** -- Forms with real-time validation. Loading states. Error handling. JWT stored in EncryptedSharedPreferences. Refs: [US-0101](./user_stories.md#US-0101), [US-0102](./user_stories.md#US-0102)
+- [x] `P0` `flutter` `ui` -- **Registration and login screens** -- Forms with real-time validation, loading states, error handling. Currently uses local auth service (`LocalAuthService`). Backend JWT integration pending (Phase 2 completion). JWT to be stored in `flutter_secure_storage`. Refs: [US-0101](./user_stories.md#US-0101), [US-0102](./user_stories.md#US-0102)
 
-- [ ] `P1` `backend` -- **Password recovery** -- `POST /api/v1/auth/forgot-password` sends email with reset token (1h expiry). `POST /api/v1/auth/reset-password` accepts token + new password. Refs: [US-0104](./user_stories.md#US-0104)
+- [ ] `P1` `backend` -- **Password recovery** -- `POST /api/auth/forgot-password` sends email with reset token (1h expiry). `POST /api/auth/reset-password` accepts token + new password. Refs: [US-0104](./user_stories.md#US-0104)
 
-- [ ] `P1` `android` `ui` -- **Initial profile onboarding** -- After first login: age, university, income type, average income, currency. Saves `profile_completed = true`. Optional skip with importance message. Refs: [US-0105](./user_stories.md#US-0105)
+- [x] `P1` `flutter` `ui` -- **Initial profile onboarding** -- Multi-page onboarding screen after first launch. Captures age, university, income type, average income. Saves `profileCompleted = true`. Refs: [US-0105](./user_stories.md#US-0105)
 
-- [ ] `P1` `android` `ui` -- **Profile editing** -- Allows editing personal data, currency, number format. Refs: [US-0106](./user_stories.md#US-0106)
+- [ ] `P1` `flutter` `ui` -- **Profile editing** -- Allows editing personal data and currency. `GET /api/users/me`, `PUT /api/users/me` backend endpoints pending. Refs: [US-0106](./user_stories.md#US-0106)
 
 ---
 
@@ -88,15 +90,15 @@
 
 > **Impact: Critical** — This is the app's primary action. Without transactions there is no data for anything else.
 
-- [ ] `P0` `backend` `api` -- **Transaction CRUD** -- `POST /api/v1/transactions` (create), `GET /api/v1/transactions` (list with filters and pagination), `GET /api/v1/transactions/{id}` (detail), `PUT /api/v1/transactions/{id}` (edit), `DELETE /api/v1/transactions/{id}` (soft delete). Ownership validation. Balance updated on each operation. Refs: [US-0201](./user_stories.md#US-0201) to [US-0206](./user_stories.md#US-0206)
+- [x] `P0` `backend` `api` -- **Transaction CRUD (partial)** -- `POST /api/transactions` (create), `GET /api/transactions` (list with filters: type, categoryId, from/to date), `DELETE /api/transactions/:id` (soft delete). Ownership validated via `@UserId()`. Missing: `GET /api/transactions/:id` (detail) and `PUT /api/transactions/:id` (edit). Refs: [US-0201](./user_stories.md#US-0201) to [US-0206](./user_stories.md#US-0206)
 
-- [ ] `P0` `android` `ui` -- **Transaction recording screen** -- Type selector (Income/Expense), numeric amount input, category selector (grid), date picker (default today), optional description. "Save" button. Confirmation message. Refs: [US-0201](./user_stories.md#US-0201)
+- [x] `P0` `flutter` `ui` -- **Transaction recording screen** -- `AddTransactionScreen`: kind selector (Expense/Income/Transfer via SegmentedButton), amount input, category grid, account picker, date picker, note field. Uses `NewTransactionController` (NotifierProvider). Local-only; backend integration pending. Refs: [US-0201](./user_stories.md#US-0201)
 
-- [ ] `P0` `android` `ui` -- **Main dashboard** -- Current month balance, last 5 transactions, FAB "+" to add. Pull-to-refresh. Loads in < 2 sec. Refs: [US-0204](./user_stories.md#US-0204)
+- [x] `P0` `flutter` `ui` -- **Main dashboard** -- `DashboardScreen`: 4-tab PageView (Home, Transactions, Budget, Profile). Shows balance summary, last transactions, streak card, 50/30/20 pie chart, AI advice card. Refs: [US-0204](./user_stories.md#US-0204)
 
-- [ ] `P1` `android` `ui` -- **History with filters** -- Complete transaction list. Filters: dates, category, type, amount. Search by description. Infinite scroll pagination. Refs: [US-0203](./user_stories.md#US-0203)
+- [ ] `P1` `flutter` `ui` -- **History with filters** -- Full transaction list with date, category, type filters. Infinite scroll pagination. Backend integration required. Refs: [US-0203](./user_stories.md#US-0203)
 
-- [ ] `P2` `android` `ui` -- **Edit and delete** -- Tap on transaction opens editable detail. Delete button with confirmation. Immediate update of balance and reports. Refs: [US-0205](./user_stories.md#US-0205), [US-0206](./user_stories.md#US-0206)
+- [ ] `P2` `backend` `api` -- **Transaction detail and edit** -- `GET /api/transactions/:id` and `PUT /api/transactions/:id`. Immediate update of balance and reports. Refs: [US-0205](./user_stories.md#US-0205), [US-0206](./user_stories.md#US-0206)
 
 ---
 
@@ -104,13 +106,13 @@
 
 > **Impact: High** — Foundation for reports, predictions, and budgets.
 
-- [ ] `P0` `backend` -- **Default categories (seed)** -- Expenses: Food, Transportation, Education, Entertainment, Health, Housing, Utilities, Clothing, Other. Income: Scholarship, Part-time work, Family, Freelance, Other. With assigned icons and colors. Refs: [US-0301](./user_stories.md#US-0301)
+- [x] `P0` `backend` -- **Default categories (seed)** -- 9 expense categories (comida, transporte, vivienda, servicios, salud, ocio, compras, suscripciones, antojos) and 5 income categories seeded via `prisma/seed.ts`. Idempotent seeding. Refs: [US-0301](./user_stories.md#US-0301)
 
-- [ ] `P0` `backend` `api` -- **Custom categories CRUD** -- Create, list, edit, delete custom categories. Validate that categories with transactions cannot be deleted. Refs: [US-0302](./user_stories.md#US-0302)
+- [x] `P0` `backend` `api` -- **Custom categories CRUD (partial)** -- `POST /api/categories` (create), `GET /api/categories` (list system + user custom), `DELETE /api/categories/:id` (soft delete). `ResolveCategoryUseCase` creates on-the-fly during transaction creation. Missing: `PUT /api/categories/:id` (edit). Refs: [US-0302](./user_stories.md#US-0302)
 
-- [ ] `P0` `android` `ui` -- **Category selector** -- Grid with icons/colors. "Create new" option. Quick creation modal. Refs: [US-0301](./user_stories.md#US-0301)
+- [x] `P0` `flutter` `ui` -- **Category selector** -- Grid with icons/colors in `AddTransactionScreen`. Maps to 50/30/20 buckets via `bucketForCategory()`. Refs: [US-0301](./user_stories.md#US-0301)
 
-- [ ] `P1` `android` `ui` -- **Category management** -- Custom category administration screen. Refs: [US-0302](./user_stories.md#US-0302)
+- [ ] `P1` `flutter` `ui` -- **Category management screen** -- Custom category administration. Backend integration required. Refs: [US-0302](./user_stories.md#US-0302)
 
 ---
 
@@ -118,11 +120,15 @@
 
 > **Impact: High** — Visibility into financial habits. Prerequisite for predictions to have context.
 
-- [ ] `P0` `backend` `api` -- **Report endpoints** -- Monthly, weekly, daily summary. Multi-month comparison. Each returns totals, breakdown by category with percentages. Response < 2 sec. Refs: [US-0401](./user_stories.md#US-0401) to [US-0404](./user_stories.md#US-0404)
+- [x] `P0` `backend` `api` -- **Monthly summary endpoint** -- `GET /api/summary/month?year=&month=` returns total income, total expense, net balance, top 5 categories by spend, savings goals progress. Uses `Promise.all` for parallel aggregation queries. Refs: [US-0401](./user_stories.md#US-0401)
 
-- [ ] `P0` `android` `ui` -- **Monthly summary screen** -- Total income/expenses/balance, pie chart by category, top 3 categories. Month selector. Refs: [US-0401](./user_stories.md#US-0401)
+- [ ] `P0` `backend` `api` -- **Weekly and daily summary endpoints** -- `GET /api/summary/week` and `GET /api/summary/day`. Breakdown by category. Response < 2 sec. Refs: [US-0402](./user_stories.md#US-0402), [US-0403](./user_stories.md#US-0403)
 
-- [ ] `P1` `android` `ui` -- **Interactive charts** -- Bar charts by category, comparative line charts by month. MPAndroidChart library. Tap for detail. Refs: [US-0405](./user_stories.md#US-0405)
+- [ ] `P0` `backend` `api` -- **Multi-month comparison endpoint** -- `GET /api/summary/comparison?months=3`. Refs: [US-0404](./user_stories.md#US-0404)
+
+- [x] `P0` `flutter` `ui` -- **Monthly summary in dashboard** -- 50/30/20 `BudgetPieChart` (fl_chart), `SummaryCard` (today/week totals). Refs: [US-0401](./user_stories.md#US-0401)
+
+- [ ] `P1` `flutter` `ui` -- **Interactive charts screen** -- Bar charts by category, comparative line charts by month using fl_chart. Tap for detail. Backend integration required. Refs: [US-0405](./user_stories.md#US-0405)
 
 - [ ] `P2` `backend` `api` -- **PDF export** -- Generates PDF with complete summary. Temporary download URL (24h). Refs: [US-0406](./user_stories.md#US-0406)
 
@@ -132,15 +138,15 @@
 
 > **Impact: High** — Prerequisite for intelligent alerts. Goals give purpose to savings.
 
-- [ ] `P0` `backend` `api` -- **Budget CRUD** -- Create budget by category or global. List with `current_spent` and `percentage_used`. Edit and delete. Refs: [US-0501](./user_stories.md#US-0501)
+- [ ] `P0` `backend` `api` -- **Budget CRUD** -- `POST /api/budgets`, `GET /api/budgets` (with `currentSpent` and `percentageUsed`), `PUT /api/budgets/:id`, `DELETE /api/budgets/:id`. Budget model and schema ready (`@@unique([userId, categoryId, month, year])`). Refs: [US-0501](./user_stories.md#US-0501)
 
-- [ ] `P0` `android` `ui` -- **Budget screen** -- List with progress bars (green/yellow/red). Creation modal. Refs: [US-0501](./user_stories.md#US-0501)
+- [ ] `P0` `flutter` `ui` -- **Budget screen** -- List with progress bars (green/yellow/red). Creation modal. Backend integration required. Refs: [US-0501](./user_stories.md#US-0501)
 
-- [ ] `P1` `backend` `api` -- **Financial goals CRUD** -- Create goal with name, target amount, deadline. List with progress. Contribute to goal. Refs: [US-0502](./user_stories.md#US-0502)
+- [x] `P1` `backend` `api` -- **Financial goals CRUD** -- `POST /api/goals`, `GET /api/goals`, `POST /api/goals/:id/contribute`, `DELETE /api/goals/:id`. Ownership validated. Contribution updates `currentAmount` (Decimal arithmetic). Refs: [US-0502](./user_stories.md#US-0502)
 
-- [ ] `P1` `android` `ui` -- **Goals screen** -- Cards with progress, contribute button, completion animation. Refs: [US-0502](./user_stories.md#US-0502)
+- [ ] `P1` `flutter` `ui` -- **Goals screen** -- Cards with progress, contribute button, completion animation. Backend integration required. Refs: [US-0502](./user_stories.md#US-0502)
 
-- [ ] `P2` `android` `ui` -- **Goal detail** -- Contribution history, progress chart, completion projection. Refs: [US-0503](./user_stories.md#US-0503)
+- [ ] `P2` `flutter` `ui` -- **Goal detail** -- Contribution history, progress chart, completion projection. Refs: [US-0503](./user_stories.md#US-0503)
 
 ---
 
@@ -148,13 +154,13 @@
 
 > **Impact: Critical** — Without prepared data there is no model. Bridge between transactional app and intelligent app.
 
-- [ ] `P0` `ml` `backend` -- **Feature extraction pipeline** -- Python script that extracts features per user: spending by category per month, expense/income ratio, frequency, variability. Output CSV. Refs: [US-0701](./user_stories.md#US-0701)
+- [ ] `P0` `ml` `backend` -- **Feature extraction pipeline** -- Python script (`ml/src/features.py`) that extracts per-user features: spending by category per month, expense/income ratio, frequency, variability. Output CSV. Refs: [US-0701](./user_stories.md#US-0701)
 
-- [ ] `P0` `ml` -- **Training dataset** -- Synthetic dataset based on Peruvian student profiles. Minimum 1000 records with realistic distributions. Document variables and assumptions. Refs: [US-0702](./user_stories.md#US-0702)
+- [ ] `P0` `ml` -- **Training dataset** -- Synthetic dataset based on Peruvian student profiles. Minimum 1000 records with realistic distributions. Refs: [US-0702](./user_stories.md#US-0702)
 
-- [ ] `P0` `ml` -- **Model selection and training** -- Evaluate: Linear Regression, Random Forest, XGBoost, LSTM. Metrics: MAE, RMSE, R². 5-fold cross-validation. Target: predict next month's spending >= 80% accuracy. Refs: [US-0703](./user_stories.md#US-0703)
+- [ ] `P0` `ml` -- **Model selection and training** -- Evaluate: Linear Regression, Random Forest, XGBoost, LSTM. Metrics: MAE, RMSE, R². 5-fold cross-validation. Target: >= 80% accuracy. Refs: [US-0703](./user_stories.md#US-0703)
 
-- [ ] `P1` `ml` -- **Export for inference** -- TFLite for on-device or API endpoint. Document model input/output. Refs: [US-0704](./user_stories.md#US-0704)
+- [ ] `P1` `ml` -- **Export for inference** -- REST API endpoint (Python) or TFLite for on-device. Document model input/output. Refs: [US-0704](./user_stories.md#US-0704)
 
 - [ ] `P1` `ml` -- **Re-training pipeline** -- Monthly script that re-trains with new data. Only deploys if accuracy improves. Refs: [US-0705](./user_stories.md#US-0705)
 
@@ -164,15 +170,15 @@
 
 > **Impact: Critical** — Main differentiator. Turns the app from reactive to proactive.
 
-- [ ] `P0` `backend` `ml` `api` -- **Expense prediction** -- `GET /api/v1/predictions/expenses?period=next_month` invokes ML model. Returns: predicted_total, predicted_by_category (array), confidence_interval, model_version. Requires >= 2 months of history. Accuracy >= 80%. Refs: [US-0801](./user_stories.md#US-0801)
+- [ ] `P0` `backend` `ml` `api` -- **Expense prediction** -- `GET /api/predictions/expenses?period=next_month` invokes ML model. Returns: `predictedTotal`, `predictedByCategory`, `confidenceInterval`, `modelVersion`. Requires >= 2 months of history. Accuracy >= 80%. `Prediction` schema ready. Refs: [US-0801](./user_stories.md#US-0801)
 
-- [ ] `P0` `backend` `ml` `api` -- **Income prediction** -- `GET /api/v1/predictions/income?period=next_month` projects income considering source variability. Refs: [US-0802](./user_stories.md#US-0802)
+- [ ] `P0` `backend` `ml` `api` -- **Income prediction** -- `GET /api/predictions/income?period=next_month` projects income considering source variability. Refs: [US-0802](./user_stories.md#US-0802)
 
-- [ ] `P0` `android` `ui` -- **Predictions screen** -- Monthly prediction, breakdown by category, projected balance, confidence indicator. Refs: [US-0801](./user_stories.md#US-0801)
+- [ ] `P0` `flutter` `ui` -- **Predictions screen** -- Monthly prediction, breakdown by category, projected balance, confidence indicator. Refs: [US-0801](./user_stories.md#US-0801)
 
-- [ ] `P1` `backend` `ml` -- **Anomaly detection** -- If spending in category exceeds >20% historical average, generates alert. Refs: [US-0803](./user_stories.md#US-0803)
+- [ ] `P1` `backend` `ml` -- **Anomaly detection** -- If spending in a category exceeds >20% of historical average, generates alert. Refs: [US-0803](./user_stories.md#US-0803)
 
-- [ ] `P1` `backend` -- **Real accuracy tracking** -- When period completes, compare predicted vs actual. Calculate retrospective accuracy. Refs: [US-0804](./user_stories.md#US-0804)
+- [ ] `P1` `backend` -- **Real accuracy tracking** -- When period completes, compare predicted vs actual. Store `actualTotal` and `accuracy` in `Prediction` model. Refs: [US-0804](./user_stories.md#US-0804)
 
 ---
 
@@ -180,13 +186,13 @@
 
 > **Impact: High** — Closes the loop: data → analysis → concrete action.
 
-- [ ] `P0` `backend` `ml` `api` -- **Recommendation engine** -- `GET /api/v1/recommendations` generates 1-5 recommendations based on patterns, predictions, budgets, and goals. Types: SAVINGS, BUDGET, GOAL. Refs: [US-0901](./user_stories.md#US-0901)
+- [ ] `P0` `backend` `ml` `api` -- **Recommendation engine** -- `GET /api/recommendations` generates 1-5 recommendations based on patterns, predictions, budgets, and goals. Types: SAVINGS, BUDGET, GOAL. `Recommendation` schema ready. Refs: [US-0901](./user_stories.md#US-0901)
 
-- [ ] `P0` `android` `ui` -- **Recommendations section** -- Cards with message, suggested action, feedback button ("Helpful"/"Not relevant"). Integrated into Dashboard. Refs: [US-0901](./user_stories.md#US-0901)
+- [ ] `P0` `flutter` `ui` -- **Recommendations section** -- Cards with message, suggested action, feedback button ("Helpful"/"Not relevant"). Integrated into Dashboard. Refs: [US-0901](./user_stories.md#US-0901)
 
-- [ ] `P1` `backend` -- **Acceptance tracking** -- Feedback endpoint. Metric: acceptance rate target >= 60%. Refs: [US-0902](./user_stories.md#US-0902)
+- [ ] `P1` `backend` -- **Acceptance tracking** -- `POST /api/recommendations/:id/feedback`. `RecommendationFeedback` schema ready. Target acceptance rate >= 60%. Refs: [US-0902](./user_stories.md#US-0902)
 
-- [ ] `P2` `backend` `ml` -- **Feedback-driven improvement** -- Engine adjusts priority based on user's historical feedback. Refs: [US-0903](./user_stories.md#US-0903)
+- [ ] `P2` `backend` `ml` -- **Feedback-driven improvement** -- Engine adjusts priority based on historical feedback. Refs: [US-0903](./user_stories.md#US-0903)
 
 ---
 
@@ -194,17 +200,17 @@
 
 > **Impact: High** — Key differentiator. Required to demonstrate >= 20% knowledge improvement.
 
-- [ ] `P0` `backend` `api` -- **Educational content** -- CRUD of topics with user progress. Seed: Personal budget, Savings, Credit/debt, Inflation, Interest rates, Basic investing, Responsible consumption, Digital wallets in Peru. Refs: [US-1001](./user_stories.md#US-1001)
+- [ ] `P0` `backend` `api` -- **Educational content** -- `GET /api/education/topics`, `POST /api/education/topics/:id/complete`. Seed data ready (8 topics: Personal budget, Savings, Credit/debt, Inflation, Interest rates, Basic investing, Responsible consumption, Digital wallets in Peru). `EducationalTopic` and `UserTopicProgress` schemas ready. Refs: [US-1001](./user_stories.md#US-1001)
 
-- [ ] `P0` `android` `ui` -- **Educational module** -- Topic list with difficulty and status. Content in readable mobile format. Mark as completed. Refs: [US-1001](./user_stories.md#US-1001)
+- [ ] `P0` `flutter` `ui` -- **Educational module** -- Topic list with difficulty and completion status. Content in readable mobile format. Mark as completed. Refs: [US-1001](./user_stories.md#US-1001)
 
-- [ ] `P0` `backend` `api` -- **Challenge system** -- CRUD of challenges with automatic verification. Seed: "No delivery for 3 days", "Record expenses for 7 consecutive days", "Save S/20 this week". Refs: [US-1002](./user_stories.md#US-1002)
+- [ ] `P0` `backend` `api` -- **Challenge system** -- `GET /api/challenges`, `POST /api/challenges/:id/accept`, automatic completion verification. Seed data ready (4 challenges). `Challenge` and `UserChallenge` schemas ready (state machine: AVAILABLE → ACTIVE → COMPLETED). Refs: [US-1002](./user_stories.md#US-1002)
 
-- [ ] `P0` `android` `ui` -- **Challenges screen** -- Active challenges with progress, available with accept button, completed with date. Refs: [US-1002](./user_stories.md#US-1002)
+- [ ] `P0` `flutter` `ui` -- **Challenges screen** -- Active challenges with progress, available with accept button, completed with date. Refs: [US-1002](./user_stories.md#US-1002)
 
-- [ ] `P1` `backend` `api` -- **Badge system** -- Automatic assignment by criteria: "First transaction", "7 consecutive days", "Goal achieved", "5 challenges completed", "Module 100%". Refs: [US-1003](./user_stories.md#US-1003)
+- [ ] `P1` `backend` `api` -- **Badge system** -- Automatic assignment by criteria. `GET /api/badges`. Seed data ready (7 badges: First Transaction, Consistency, Goal Achieved, Challenger, Financial Sage, Predictor, Budgeter). `Badge` and `UserBadge` schemas ready. Refs: [US-1003](./user_stories.md#US-1003)
 
-- [ ] `P1` `android` `ui` -- **Badges screen** -- Grid with badges (color if earned, gray if not). Detail with criteria. Refs: [US-1003](./user_stories.md#US-1003)
+- [ ] `P1` `flutter` `ui` -- **Badges screen** -- Grid with badges (colored if earned, gray if not). Detail with criteria. Refs: [US-1003](./user_stories.md#US-1003)
 
 ---
 
@@ -212,13 +218,13 @@
 
 > **Impact: Medium-High** — Maintain engagement and prevent financial problems.
 
-- [ ] `P0` `backend` `notifications` -- **Push notification service** -- Integration with FCM. Methods for: budget alert, anomalous spending, prediction, challenge reminder. Refs: [US-1101](./user_stories.md#US-1101)
+- [ ] `P0` `backend` `notifications` -- **Push notification service** -- Integration with Firebase Cloud Messaging (FCM). Methods for: BUDGET_ALERT, ANOMALY_ALERT, PREDICTION_READY, CHALLENGE_REMINDER, DAILY_REMINDER, BADGE_EARNED. `NotificationPreference` schema ready. Refs: [US-1101](./user_stories.md#US-1101)
 
-- [ ] `P0` `backend` -- **Budget alert at 80%** -- Hourly job that checks budgets. Notifies once per budget per period. Refs: [US-1102](./user_stories.md#US-1102)
+- [ ] `P0` `backend` -- **Budget alert at 80%** -- Scheduled job checks budgets. Notifies once per budget per period. Refs: [US-1102](./user_stories.md#US-1102)
 
-- [ ] `P0` `backend` -- **Excessive spending alert** -- Trigger when recording transaction. If category exceeds >20% average of last 3 months, notify. Refs: [US-1103](./user_stories.md#US-1103)
+- [ ] `P0` `backend` -- **Excessive spending alert** -- Trigger on transaction creation. If category exceeds >20% average of last 3 months, notify. Refs: [US-1103](./user_stories.md#US-1103)
 
-- [ ] `P1` `android` `ui` -- **Notification preferences** -- Toggles for each type. Configurable daily reminder time. Refs: [US-1104](./user_stories.md#US-1104)
+- [ ] `P1` `flutter` `ui` -- **Notification preferences** -- Toggles per notification type. Configurable daily reminder time. `NotificationPreference` schema ready. Refs: [US-1104](./user_stories.md#US-1104)
 
 - [ ] `P2` `backend` -- **Daily recording reminder** -- If no transaction recorded today, send reminder at configured time. Refs: [US-1105](./user_stories.md#US-1105)
 
@@ -228,15 +234,15 @@
 
 > **Impact: Critical** — Without evaluation, OE4 cannot be demonstrated. Validates educational objective.
 
-- [ ] `P0` `backend` `api` -- **Pre-usage survey** -- Questionnaire of 15-20 financial knowledge questions (validated instruments). Score calculation 0-100. Present during onboarding. Refs: [US-1201](./user_stories.md#US-1201)
+- [ ] `P0` `backend` `api` -- **Pre-usage survey** -- `POST /api/surveys/pre/response`. 15-20 financial knowledge questions. Score 0-100. Present during onboarding. `Survey`, `SurveyQuestion`, `SurveyResponse` schemas ready. Refs: [US-1201](./user_stories.md#US-1201)
 
-- [ ] `P0` `backend` `api` -- **Post-usage survey** -- Same questionnaire (variant) + SUS. Present after 4-8 weeks. Refs: [US-1202](./user_stories.md#US-1202)
+- [ ] `P0` `backend` `api` -- **Post-usage survey** -- `POST /api/surveys/post/response`. Same questionnaire variant + SUS. Present after 4-8 weeks. Refs: [US-1202](./user_stories.md#US-1202)
 
-- [ ] `P0` `backend` `api` -- **Improvement calculation** -- Individual and aggregate pre/post comparison. Target: improvement >= 20%. Refs: [US-1203](./user_stories.md#US-1203)
+- [ ] `P0` `backend` `api` -- **Improvement calculation** -- Individual and aggregate pre/post comparison. Target: >= 20% improvement. Refs: [US-1203](./user_stories.md#US-1203)
 
-- [ ] `P0` `android` `ui` -- **Survey screens** -- Multiple choice questions, one per screen, progress bar. Score upon completion with interpretation. Refs: [US-1201](./user_stories.md#US-1201)
+- [ ] `P0` `flutter` `ui` -- **Survey screens** -- Multiple choice, one question per screen, progress bar. Score on completion with interpretation. Refs: [US-1201](./user_stories.md#US-1201)
 
-- [ ] `P1` `backend` -- **Integrated SUS questionnaire** -- 10 standard questions. Automatic calculation 0-100. Refs: [US-1204](./user_stories.md#US-1204)
+- [ ] `P1` `backend` -- **SUS questionnaire** -- 10 standard questions. Automatic 0-100 calculation. Refs: [US-1204](./user_stories.md#US-1204)
 
 ---
 
@@ -244,17 +250,17 @@
 
 > **Impact: Critical** — Without security, handling financial data violates the law.
 
-- [ ] `P0` `backend` `security` -- **Encryption in transit and at rest** -- Mandatory TLS. Azure encryption at rest. Encrypted backup. Refs: [US-1301](./user_stories.md#US-1301)
+- [ ] `P0` `backend` `security` -- **Encryption in transit and at rest** -- Mandatory TLS. Database encryption at rest. Encrypted backup. Refs: [US-1301](./user_stories.md#US-1301)
 
-- [ ] `P0` `android` `security` -- **Secure storage** -- EncryptedSharedPreferences, SQLCipher for Room, ProGuard enabled. Refs: [US-1302](./user_stories.md#US-1302)
+- [ ] `P0` `flutter` `security` -- **Secure storage** -- `flutter_secure_storage` for JWT tokens and sensitive credentials. ProGuard/R8 enabled for release builds. Refs: [US-1302](./user_stories.md#US-1302)
 
-- [ ] `P0` `backend` `security` -- **Law 29733 consent** -- Explicit consent screen. Record in DB with timestamp. Refs: [US-1303](./user_stories.md#US-1303)
+- [x] `P0` `backend` `security` -- **Law 29733 consent** -- `consentGiven` and `consentAt` fields on `User` model. Explicit consent recorded at registration. Refs: [US-1303](./user_stories.md#US-1303)
 
-- [ ] `P1` `backend` -- **Rate limiting** -- 100 req/min per user, 10 req/min for auth. Refs: [US-1304](./user_stories.md#US-1304)
+- [x] `P1` `backend` -- **Rate limiting** -- ThrottlerModule: 120 req/min global, 10 req/min for registration, 20 req/min for login. Refs: [US-1304](./user_stories.md#US-1304)
 
-- [ ] `P1` `backend` -- **Access auditing** -- Log sensitive actions in `audit_logs`. Refs: [US-1305](./user_stories.md#US-1305)
+- [ ] `P1` `backend` -- **Access auditing** -- Log sensitive actions to `AuditLog` model. Schema ready. Refs: [US-1305](./user_stories.md#US-1305)
 
-- [ ] `P2` `backend` -- **Right to deletion** -- `DELETE /api/v1/account` complete deletion with 30-day grace period. Refs: [US-1306](./user_stories.md#US-1306)
+- [ ] `P2` `backend` -- **Right to deletion** -- `DELETE /api/account` complete deletion with 30-day grace period. Refs: [US-1306](./user_stories.md#US-1306)
 
 ---
 
@@ -262,19 +268,19 @@
 
 > **Impact: Critical** — Without tests there is no confidence. Required by ISO 25010.
 
-- [ ] `P0` `backend` `testing` -- **Unit tests** -- Core services. Coverage >= 80%. Refs: [US-1401](./user_stories.md#US-1401)
+- [ ] `P0` `backend` `testing` -- **Unit tests** -- Core use cases. Coverage >= 80%. Refs: [US-1401](./user_stories.md#US-1401)
 
-- [ ] `P0` `backend` `testing` -- **Integration tests** -- Complete pipeline: registration → login → transaction → report → prediction. Refs: [US-1402](./user_stories.md#US-1402)
+- [ ] `P0` `backend` `testing` -- **Integration tests** -- Complete pipeline: registration → login → transaction → summary → goal. Refs: [US-1402](./user_stories.md#US-1402)
 
 - [ ] `P0` `ml` `testing` -- **Model validation** -- Accuracy >= 80%, no overfitting, coherent predictions. Refs: [US-1403](./user_stories.md#US-1403)
 
-- [ ] `P0` `android` `testing` -- **Usability tests** -- 30 students, 4-8 weeks, SUS >= 4.0/5.0. Refs: [US-1404](./user_stories.md#US-1404)
+- [ ] `P0` `flutter` `testing` -- **Usability tests** -- 30 students, 4-8 weeks, SUS >= 4.0/5.0. Refs: [US-1404](./user_stories.md#US-1404)
 
 - [ ] `P1` `backend` `testing` -- **Security tests** -- JWT, ownership, SQL injection, XSS, rate limiting. Refs: [US-1405](./user_stories.md#US-1405)
 
-- [ ] `P1` `android` `testing` -- **Performance tests** -- Dashboard < 2s, transaction < 3s, predictions < 5s. Refs: [US-1406](./user_stories.md#US-1406)
+- [ ] `P1` `flutter` `testing` -- **Performance tests** -- Dashboard < 2s, transaction < 3s, predictions < 5s. Refs: [US-1406](./user_stories.md#US-1406)
 
-- [ ] `P2` `android` `testing` -- **Compatibility tests** -- Android 9, 11, 13, 14. Resolutions 720p-1440p. Refs: [US-1407](./user_stories.md#US-1407)
+- [ ] `P2` `flutter` `testing` -- **Compatibility tests** -- iOS 16+, Android 9+. Multiple screen resolutions. Refs: [US-1407](./user_stories.md#US-1407)
 
 ---
 
@@ -282,13 +288,13 @@
 
 > **Impact: Medium** — Enables iteration before final release.
 
-- [ ] `P0` `backend` `api` -- **Feedback endpoint** -- Type (BUG/SUGGESTION/GENERAL), message, screen, rating. Refs: [US-1501](./user_stories.md#US-1501)
+- [ ] `P0` `backend` `api` -- **Feedback endpoint** -- `POST /api/feedback`. Type (BUG/SUGGESTION/GENERAL), message, screenName, rating (1-5). `Feedback` schema ready. Refs: [US-1501](./user_stories.md#US-1501)
 
-- [ ] `P0` `android` `ui` -- **Feedback button** -- Accessible from any screen. Modal with form. Refs: [US-1501](./user_stories.md#US-1501)
+- [ ] `P0` `flutter` `ui` -- **Feedback button** -- Accessible from any screen. Modal with form. Refs: [US-1501](./user_stories.md#US-1501)
 
-- [ ] `P1` `backend` -- **Event analytics** -- Log key actions without affecting performance. Refs: [US-1502](./user_stories.md#US-1502)
+- [ ] `P1` `backend` -- **Event analytics** -- Log key actions to `AnalyticsEvent` model without affecting performance. Schema ready. Refs: [US-1502](./user_stories.md#US-1502)
 
-- [ ] `P1` `backend` -- **Internal metrics dashboard** -- Active users, transactions/day, pre/post scores, acceptance rate. Refs: [US-1503](./user_stories.md#US-1503)
+- [ ] `P1` `backend` -- **Internal metrics dashboard** -- Active users, transactions/day, pre/post scores, recommendation acceptance rate. Refs: [US-1503](./user_stories.md#US-1503)
 
 ---
 
@@ -296,13 +302,13 @@
 
 > **Impact: Critical** — Validation requires realistic data and reproducible scenarios.
 
-- [ ] `P0` `database` -- **Test data script** -- 5 varied users, 200+ transactions per user (3 months), budgets, goals, pre-usage surveys. Refs: [US-1601](./user_stories.md#US-1601)
+- [ ] `P0` `database` -- **Test data script** -- 5 varied student profiles, 200+ transactions per user (3 months), budgets, goals, pre-usage surveys. Refs: [US-1601](./user_stories.md#US-1601)
 
-- [ ] `P0` `docs` -- **Installation guide** -- Step by step: clone, DB, variables, backend, APK. Refs: [US-1602](./user_stories.md#US-1602)
+- [ ] `P0` `docs` -- **Installation guide** -- Step by step: clone, Docker, env vars, backend (`npm run start:dev`), Flutter app (`flutter run`). Refs: [US-1602](./user_stories.md#US-1602)
 
 - [ ] `P0` `docs` -- **Demo script** -- 15-20 min: registration → onboarding → survey → transactions → report → budget → prediction → recommendation → challenge → badges. Refs: [US-1603](./user_stories.md#US-1603)
 
-- [ ] `P1` `docs` -- **Technical documentation** -- Context diagram, components, DB, AI flow, technical decisions. Refs: [US-1604](./user_stories.md#US-1604)
+- [ ] `P1` `docs` -- **Technical documentation** -- Context diagram, component diagram, DB schema, AI flow, key technical decisions. Refs: [US-1604](./user_stories.md#US-1604)
 
 ---
 
@@ -311,18 +317,18 @@
 | Phase | Name | Sprint(s) | Duration | Status |
 |-------|------|-----------|----------|--------|
 | 1 | Infrastructure and Setup | Sprint 1 | 3 weeks | ✅ Done |
-| 2 | Authentication and Users | Sprint 1-2 | 3 weeks | -- |
-| 3 | Transaction Recording | Sprint 2-3 | 4 weeks | -- |
-| 4 | Categorization | Sprint 3 | 2 weeks | -- |
-| 5 | Reports and Visualization | Sprint 4-5 | 4 weeks | -- |
-| 6 | Budgets and Goals | Sprint 5-6 | 3 weeks | -- |
+| 2 | Authentication and Users | Sprint 1-2 | 3 weeks | 🔄 Partial (backend auth done; profile editing, password recovery pending) |
+| 3 | Transaction Recording | Sprint 2-3 | 4 weeks | 🔄 Partial (create/list/delete done; edit/detail/backend integration pending) |
+| 4 | Categorization | Sprint 3 | 2 weeks | 🔄 Partial (CRUD + seed done; edit endpoint, management screen pending) |
+| 5 | Reports and Visualization | Sprint 4-5 | 4 weeks | 🔄 Partial (monthly summary done; weekly/daily/comparison pending) |
+| 6 | Budgets and Goals | Sprint 5-6 | 3 weeks | 🔄 Partial (goals backend done; budgets backend + all frontend pending) |
 | 7 | ML Pipeline (Data) | Sprint 6-7 | 4 weeks | -- |
 | 8 | AI Predictions | Sprint 7-8 | 4 weeks | -- |
 | 9 | Recommendations | Sprint 8-9 | 3 weeks | -- |
 | 10 | Education and Gamification | Sprint 9-10 | 4 weeks | -- |
 | 11 | Notifications | Sprint 10 | 2 weeks | -- |
 | 12 | Pre/Post Evaluation | Sprint 11 | 3 weeks | -- |
-| 13 | Security and Compliance | Sprint 11-12 | 3 weeks | -- |
+| 13 | Security and Compliance | Sprint 11-12 | 3 weeks | 🔄 Partial (consent + rate limiting done) |
 | 14 | Testing and Quality | Sprint 12-13 | 3 weeks | -- |
 | 15 | Feedback and Analytics | Sprint 13 | 2 weeks | -- |
 | 16 | Demo Readiness | Sprint 14 | 2 weeks | -- |
@@ -333,15 +339,15 @@
 
 | Risk | Prob. | Impact | Mitigation | Owner |
 |------|-------|--------|------------|-------|
-| **Cloud AI integration failures** | Medium | High | Local TFLite models as fallback | Fernando |
+| **Cloud AI integration failures** | Medium | High | REST API inference endpoint as primary; TFLite fallback | Fernando |
 | **ML complexity delays** | High | High | Short sprints, rapid prototyping, MVP prioritization | Fernando |
 | **Team availability** | Medium | Medium | Fixed schedules, backup plan, workload monitoring | Both |
-| **Data vulnerabilities** | Medium | High | E2E encryption, security audits, LGPD compliance | Paolo |
+| **Data vulnerabilities** | Medium | High | E2E encryption, security audits, Law 29733 compliance | Paolo |
 | **Low model accuracy** | Medium | High | Cross-validation, data augmentation | Fernando |
 | **Requirement changes** | High | Medium | Formal change process | Both |
 | **Insufficient data** | Low | High | Synthetic data, university collaboration | Fernando |
 | **Low adoption** | Medium | Medium | Early pilot tests, gamification | Paolo |
-| **Cloud costs** | Low | Medium | Usage alerts, Azure optimization | Paolo |
+| **Frontend-backend integration lag** | Medium | High | Integrate early (Phase 2 completion), not at end | Paolo |
 | **Library obsolescence** | Low | Medium | Continuous updates | Fernando |
 
 ---

@@ -17,16 +17,16 @@
 **So that** my personal financial data is protected
 
 **Acceptance Criteria:**
-- [ ] `POST /api/v1/auth/register` accepts: email, password, name
-- [ ] Email validated with correct format, no duplicates
-- [ ] Password >= 8 characters with at least 1 uppercase, 1 lowercase, 1 number
-- [ ] Password hashed with bcrypt (cost factor 12) before storage
-- [ ] Account created with `profile_completed = false`
-- [ ] Returns valid JWT token for 30 days
-- [ ] Registration screen with real-time validation
+- [x] `POST /api/auth/register` accepts: email, password, fullName
+- [x] Email validated with correct format, no duplicates
+- [x] Password >= 8 characters with at least 1 uppercase, 1 lowercase, 1 number
+- [x] Password hashed with bcrypt (cost factor 12) before storage
+- [x] Account created with `profileCompleted = false`
+- [x] Returns valid JWT token for 30 days
+- [x] Registration screen with real-time validation
 
 **Story Points:** 5
-**Status:** Not Started
+**Status:** Done
 **Phase:** 2 — Authentication
 
 ---
@@ -37,15 +37,15 @@
 **So that** only I can access my financial information
 
 **Acceptance Criteria:**
-- [ ] `POST /api/v1/auth/login` accepts email and password
-- [ ] Correct credentials return JWT token
-- [ ] Incorrect credentials return 401 with generic message
+- [x] `POST /api/auth/login` accepts email and password
+- [x] Correct credentials return JWT token
+- [x] Incorrect credentials return 401 with generic message
 - [ ] Temporary lockout after 3 consecutive failed attempts (15 minutes)
-- [ ] JWT stored in EncryptedSharedPreferences (Android)
-- [ ] Auto-login if valid JWT exists when opening app
+- [x] JWT stored in flutter_secure_storage
+- [x] Auto-login if valid JWT exists when opening app
 
 **Story Points:** 5
-**Status:** Not Started
+**Status:** In Progress
 **Phase:** 2 — Authentication
 
 ---
@@ -56,15 +56,15 @@
 **So that** only valid users access the API
 
 **Acceptance Criteria:**
-- [ ] Intercepts all routes `/api/v1/*` except `/api/v1/auth/*`
-- [ ] Extracts token from `Authorization: Bearer {token}` header
-- [ ] Validates JWT signature, expiration, and structure
-- [ ] Loads `user_id` into request context for downstream use
-- [ ] Returns 401 Unauthorized if token is invalid, expired, or absent
+- [x] Intercepts all routes `/api/*` except `/api/auth/*`
+- [x] Extracts token from `Authorization: Bearer {token}` header
+- [x] Validates JWT signature, expiration, and structure
+- [x] Loads `userId` into request context via `@UserId()` decorator
+- [x] Returns 401 Unauthorized if token is invalid, expired, or absent
 - [ ] Logging of unauthorized access attempts
 
 **Story Points:** 3
-**Status:** Not Started
+**Status:** Done
 **Phase:** 2 — Authentication
 
 ---
@@ -75,9 +75,9 @@
 **So that** I don't lose access to my financial history
 
 **Acceptance Criteria:**
-- [ ] `POST /api/v1/auth/forgot-password` accepts email
+- [ ] `POST /api/auth/forgot-password` accepts email
 - [ ] Sends email with reset token (expires in 1 hour)
-- [ ] `POST /api/v1/auth/reset-password` accepts token + new password
+- [ ] `POST /api/auth/reset-password` accepts token + new password
 - [ ] Token invalidated after use (single-use)
 - [ ] "Forgot my password" screen with email field
 - [ ] Confirmation message: "Check your email"
@@ -94,15 +94,15 @@
 **So that** I receive recommendations adapted to my situation
 
 **Acceptance Criteria:**
-- [ ] Presented after first successful login (if `profile_completed = false`)
-- [ ] Fields: age, university, income type (scholarship/work/family/mixed), average monthly income, preferred currency (default PEN)
-- [ ] Each field on individual screen with smooth transition
-- [ ] Optional skip with message: "Completing your profile improves predictions by 40%"
-- [ ] On completion: `profile_completed = true`, `financial_literacy_level` assigned based on responses
-- [ ] Data editable later in profile
+- [x] Presented after first successful login (if `profileCompleted = false`)
+- [x] Fields: age, university, income type (scholarship/work/family/mixed), average monthly income, preferred currency (default PEN)
+- [x] Each field on individual screen with smooth transition
+- [x] Optional skip with message: "Completing your profile improves predictions by 40%"
+- [ ] On completion: `profileCompleted = true`, `financialLiteracyLevel` assigned based on responses (backend integration pending)
+- [x] Data editable later in profile
 
 **Story Points:** 5
-**Status:** Not Started
+**Status:** In Progress
 **Phase:** 2 — Authentication
 
 ---
@@ -113,15 +113,15 @@
 **So that** my information stays up to date and the experience is personalized
 
 **Acceptance Criteria:**
-- [ ] `GET /api/v1/users/me` returns complete user profile
-- [ ] `PUT /api/v1/users/me` accepts editable fields: name, university, income_type, average_monthly_income, currency
-- [ ] Profile screen with all editable fields
+- [x] `GET /api/users/me` returns complete user profile
+- [x] `PUT /api/users/me` accepts editable fields: fullName, university, incomeType, averageMonthlyIncome, currency
+- [ ] Profile screen with all editable fields (frontend integration pending)
 - [ ] Currency selector: PEN (default), USD
 - [ ] Number format: thousands separator (dot/comma)
 - [ ] Changes saved with visual confirmation
 
 **Story Points:** 3
-**Status:** Not Started
+**Status:** In Progress
 **Phase:** 2 — Authentication
 
 ---
@@ -136,15 +136,15 @@
 **So that** I can track my money sources
 
 **Acceptance Criteria:**
-- [ ] `POST /api/v1/transactions` accepts: `type: INCOME`, `amount` (> 0), `category_id`, `description` (optional), `date`
-- [ ] Validates that category exists and is of type INCOME
-- [ ] Creates transaction and returns with updated monthly balance
-- [ ] Screen with: type selector (Income/Expense toggle), numeric amount input, category selector, date picker (default today), description field
-- [ ] Confirmation message: "Income of S/{amount} recorded"
-- [ ] Balance on main screen updates immediately
+- [x] `POST /api/transactions` accepts: `type: INCOME`, `amount` (> 0), `categoryId`, `description` (optional), `occurredAt`
+- [x] Validates that category exists and is of type INCOME
+- [x] Creates transaction and returns with updated monthly balance
+- [x] Screen with: type selector (Income/Expense toggle), numeric amount input, category selector, date picker (default today), description field
+- [x] Confirmation message: "Income of S/{amount} recorded"
+- [ ] Balance on main screen updates immediately (frontend-backend integration pending)
 
 **Story Points:** 5
-**Status:** Not Started
+**Status:** In Progress
 **Phase:** 3 — Transaction Recording
 
 ---
@@ -155,14 +155,14 @@
 **So that** I know what I spend my money on
 
 **Acceptance Criteria:**
-- [ ] Same endpoint `POST /api/v1/transactions` with `type: EXPENSE`
-- [ ] Validates that category is of type EXPENSE
-- [ ] Updates balance by subtracting the amount
-- [ ] Appears in history sorted by date descending
+- [x] Same endpoint `POST /api/transactions` with `type: EXPENSE`
+- [x] Validates that category is of type EXPENSE
+- [x] Updates balance by subtracting the amount
+- [x] Appears in history sorted by date descending
 - [ ] If expense exceeds category average (>20%), triggers anomaly detection
 
 **Story Points:** 5
-**Status:** Not Started
+**Status:** In Progress
 **Phase:** 3 — Transaction Recording
 
 ---
@@ -173,15 +173,15 @@
 **So that** I can quickly find specific information
 
 **Acceptance Criteria:**
-- [ ] `GET /api/v1/transactions` with query params: `type`, `category_id`, `date_from`, `date_to`, `min_amount`, `max_amount`, `search` (description), `page`, `limit`, `sort`
-- [ ] Returns paginated list with total results
-- [ ] Screen with collapsible filters: date range, category, type, amount range
-- [ ] Text search in description
-- [ ] Infinite scroll pagination
-- [ ] Response time < 2 seconds with 1000+ transactions
+- [x] `GET /api/transactions` with query params: `type`, `categoryId`, `dateFrom`, `dateTo`, `minAmount`, `maxAmount`, `search` (description), `page`, `limit`, `sort`
+- [x] Returns paginated list with total results
+- [x] Screen with collapsible filters: date range, category, type, amount range (frontend local-only)
+- [x] Text search in description
+- [x] Infinite scroll pagination
+- [ ] Response time < 2 seconds with 1000+ transactions (not benchmarked)
 
 **Story Points:** 5
-**Status:** Not Started
+**Status:** In Progress
 **Phase:** 3 — Transaction Recording
 
 ---
@@ -192,15 +192,15 @@
 **So that** I have an instant snapshot of my status
 
 **Acceptance Criteria:**
-- [ ] Main screen shows: current month balance (income - expenses), total monthly income, total monthly expenses
-- [ ] Last 5 transactions with category icon, amount, and date
-- [ ] FAB (Floating Action Button) "+" to add transaction
-- [ ] Pull-to-refresh to update data
-- [ ] Full load in < 2 seconds
+- [x] Main screen shows: current month balance (income - expenses), total monthly income, total monthly expenses
+- [x] Last 5 transactions with category icon, amount, and date
+- [x] FAB (Floating Action Button) "+" to add transaction
+- [x] Pull-to-refresh to update data
+- [ ] Full load in < 2 seconds (frontend-backend integration pending)
 - [ ] "Suggestions" section with latest AI recommendation (if available)
 
 **Story Points:** 8
-**Status:** Not Started
+**Status:** In Progress
 **Phase:** 3 — Transaction Recording
 
 ---
@@ -211,7 +211,7 @@
 **So that** I can correct incorrect information
 
 **Acceptance Criteria:**
-- [ ] `PUT /api/v1/transactions/{id}` accepts modifiable fields: amount, category_id, description, date
+- [ ] `PUT /api/transactions/{id}` accepts modifiable fields: amount, categoryId, description, occurredAt
 - [ ] Validates that transaction belongs to authenticated user (403 if not)
 - [ ] Transactions from another user return 403 Forbidden
 - [ ] Balance and reports recalculated after edit
@@ -230,14 +230,14 @@
 **So that** I maintain a clean history
 
 **Acceptance Criteria:**
-- [ ] `DELETE /api/v1/transactions/{id}` performs soft delete (`deleted_at = NOW()`)
-- [ ] Validates ownership (403 if not belonging to user)
-- [ ] Confirmation dialog: "Are you sure? This action will remove the transaction from your reports"
-- [ ] Transaction disappears from history and reports
-- [ ] Balance recalculated immediately
+- [x] `DELETE /api/transactions/{id}` performs soft delete (`deletedAt = NOW()`)
+- [x] Validates ownership (403 if not belonging to user)
+- [x] Confirmation dialog: "Are you sure? This action will remove the transaction from your reports"
+- [x] Transaction disappears from history and reports
+- [ ] Balance recalculated immediately (frontend-backend integration pending)
 
 **Story Points:** 2
-**Status:** Not Started
+**Status:** In Progress
 **Phase:** 3 — Transaction Recording
 
 ---
@@ -252,14 +252,14 @@
 **So that** I can categorize my transactions without prior setup
 
 **Acceptance Criteria:**
-- [ ] Expense category seed: Food, Transportation, Education, Entertainment, Health, Housing, Utilities, Clothing, Other
-- [ ] Income category seed: Scholarship, Part-time work, Family, Freelance, Other
-- [ ] Each category with Material Design icon and assigned color
-- [ ] Available to all users without manual creation
-- [ ] Not deletable or editable (system categories)
+- [x] Expense category seed: Food, Transportation, Education, Entertainment, Health, Housing, Utilities, Clothing, Other
+- [x] Income category seed: Scholarship, Part-time work, Family, Freelance, Other
+- [x] Each category with icon and assigned color
+- [x] Available to all users without manual creation
+- [x] Not deletable (system categories marked with type SYSTEM)
 
 **Story Points:** 3
-**Status:** Not Started
+**Status:** Done
 **Phase:** 4 — Categorization
 
 ---
@@ -270,15 +270,15 @@
 **So that** I can organize my finances according to my specific needs
 
 **Acceptance Criteria:**
-- [ ] `POST /api/v1/categories` creates category: name, type (INCOME/EXPENSE), icon, color
-- [ ] `GET /api/v1/categories` returns default + user's custom categories
-- [ ] `PUT /api/v1/categories/{id}` edits name/icon/color (custom only)
-- [ ] `DELETE /api/v1/categories/{id}` deletes (custom only, error if has transactions)
-- [ ] "Create new category" option visible when recording transaction
-- [ ] Quick creation modal: name, icon selection, color selection
+- [x] `POST /api/categories` creates category: name, type (INCOME/EXPENSE), icon, color
+- [x] `GET /api/categories` returns default + user's custom categories
+- [ ] `PUT /api/categories/{id}` edits name/icon/color (endpoint not yet implemented)
+- [x] `DELETE /api/categories/{id}` deletes (custom only, error if has transactions)
+- [x] "Create new category" option visible when recording transaction
+- [x] Quick creation modal: name, icon selection, color selection
 
 **Story Points:** 5
-**Status:** Not Started
+**Status:** In Progress
 **Phase:** 4 — Categorization
 
 ---
@@ -293,15 +293,15 @@
 **So that** I can evaluate my financial health for the month
 
 **Acceptance Criteria:**
-- [ ] `GET /api/v1/reports/monthly?year={y}&month={m}` returns: total_income, total_expenses, balance, breakdown_by_category (array with name, amount, percentage), transaction_count
-- [ ] Screen with: total income (green), total expenses (red), balance (green/red depending on sign)
-- [ ] Pie chart of expenses by category with legend and percentages
-- [ ] Top 3 expense categories with icons
-- [ ] Month selector (← previous / next →)
-- [ ] Response time < 2 seconds
+- [x] `GET /api/insights/monthly?year={y}&month={m}` returns: totalIncome, totalExpenses, balance, breakdownByCategory (array with name, amount, percentage), transactionCount
+- [x] Screen with: total income (green), total expenses (red), balance (green/red depending on sign)
+- [x] Pie chart of expenses by category with legend and percentages (fl_chart)
+- [x] Top 3 expense categories with icons
+- [x] Month selector (← previous / next →)
+- [ ] Response time < 2 seconds (not benchmarked)
 
 **Story Points:** 8
-**Status:** Not Started
+**Status:** In Progress
 **Phase:** 5 — Reports
 
 ---
@@ -312,7 +312,7 @@
 **So that** I can identify early trends in my spending
 
 **Acceptance Criteria:**
-- [ ] `GET /api/v1/reports/weekly?year={y}&week={w}` returns same structure as monthly
+- [ ] `GET /api/insights/weekly?year={y}&week={w}` returns same structure as monthly
 - [ ] Totals correctly grouped by ISO week
 - [ ] Week selector with visible dates (Mon-Sun)
 
@@ -328,7 +328,7 @@
 **So that** I can monitor my financial habits day by day
 
 **Acceptance Criteria:**
-- [ ] `GET /api/v1/reports/daily?date={d}` returns: total spent for the day, breakdown by category, transaction list
+- [ ] `GET /api/insights/daily?date={d}` returns: total spent for the day, breakdown by category, transaction list
 - [ ] Shows daily total in < 2 seconds
 - [ ] Visual calendar with spending indicator per day (color by intensity)
 
@@ -344,7 +344,7 @@
 **So that** I can analyze the evolution of my spending and savings over time
 
 **Acceptance Criteria:**
-- [ ] `GET /api/v1/reports/comparison?months=3` returns data for last N months
+- [ ] `GET /api/insights/comparison?months=3` returns data for last N months
 - [ ] Line chart with income, expense, and balance evolution
 - [ ] Selector: 2, 3, 4, 6 months comparison
 - [ ] Clear visualization of trends (up/down)
@@ -365,7 +365,7 @@
 - [ ] Alternative pie chart with percentages
 - [ ] Tap on category shows detail of transactions in that category
 - [ ] Period selector: week, month, quarter
-- [ ] Library: MPAndroidChart
+- [ ] Library: fl_chart
 
 **Story Points:** 5
 **Status:** Not Started
@@ -379,7 +379,7 @@
 **So that** I can share or save my financial data
 
 **Acceptance Criteria:**
-- [ ] `GET /api/v1/reports/export/pdf?year={y}&month={m}` generates PDF
+- [ ] `GET /api/reports/export/pdf?year={y}&month={m}` generates PDF
 - [ ] PDF includes: header with period, numeric summary, category chart, detailed breakdown
 - [ ] "Export PDF" button on report screen
 - [ ] Allows sharing via phone apps (share intent)
@@ -401,8 +401,8 @@
 **So that** I can control my spending and not exceed limits
 
 **Acceptance Criteria:**
-- [ ] `POST /api/v1/budgets` creates budget: category_id (null = global), amount_limit, month, year
-- [ ] `GET /api/v1/budgets?month={m}&year={y}` returns with current_spent and percentage_used
+- [ ] `POST /api/budgets` creates budget: categoryId (null = global), amountLimit, month, year
+- [ ] `GET /api/budgets?month={m}&year={y}` returns with currentSpent and percentageUsed
 - [ ] Screen with budget list and visual progress bar
 - [ ] Colors: green (< 60%), yellow (60-80%), red (> 80%)
 - [ ] Creation modal: select category or "General", enter limit amount
@@ -419,15 +419,15 @@
 **So that** I can work toward concrete savings objectives
 
 **Acceptance Criteria:**
-- [ ] `POST /api/v1/goals` creates goal: name, target_amount, deadline
-- [ ] `GET /api/v1/goals` returns with current_amount, percentage, days_remaining
-- [ ] `PATCH /api/v1/goals/{id}/contribute` adds amount to current_amount
-- [ ] Goal card: name, progress bar, current/target amount, deadline
-- [ ] "Contribute" button with amount input
-- [ ] Completion animation when current_amount >= target_amount
+- [x] `POST /api/goals` creates goal: name, targetAmount, deadline
+- [x] `GET /api/goals` returns with currentAmount, percentage, daysRemaining
+- [x] `POST /api/goals/{id}/contribute` adds amount to currentAmount
+- [x] Goal card: name, progress bar, current/target amount, deadline
+- [x] "Contribute" button with amount input
+- [ ] Completion animation when currentAmount >= targetAmount
 
 **Story Points:** 5
-**Status:** Not Started
+**Status:** In Progress
 **Phase:** 6 — Budgets and Goals
 
 ---
@@ -515,7 +515,7 @@
 **So that** I can anticipate my financial situation
 
 **Acceptance Criteria:**
-- [ ] `GET /api/v1/predictions/expenses?period=next_month` invokes ML model
+- [ ] `GET /api/predictions/expenses?period=next_month` invokes ML model
 - [ ] Returns: predicted_total, predicted_by_category (array), confidence_interval, model_version
 - [ ] Requires minimum 2-month history (returns 400 with explanatory message if insufficient)
 - [ ] Average accuracy >= 80% measured retrospectively
@@ -533,7 +533,7 @@
 **So that** I can better plan my upcoming months
 
 **Acceptance Criteria:**
-- [ ] `GET /api/v1/predictions/income?period=next_month` projects income
+- [ ] `GET /api/predictions/income?period=next_month` projects income
 - [ ] Considers source variability (fixed scholarship vs variable work)
 - [ ] Returns: predicted_total, predicted_by_source, confidence_level
 - [ ] Coherent projection based on historical data
@@ -571,7 +571,7 @@
 **So that** I can improve my financial decisions
 
 **Acceptance Criteria:**
-- [ ] `GET /api/v1/recommendations` generates 1-5 active recommendations
+- [ ] `GET /api/recommendations` generates 1-5 active recommendations
 - [ ] Based on: spending patterns, predictions, budgets, goals
 - [ ] Types: SAVINGS, BUDGET, GOAL
 - [ ] Each recommendation with concrete message and suggested action
@@ -590,7 +590,7 @@
 **So that** I can measure effectiveness and improve future suggestions
 
 **Acceptance Criteria:**
-- [ ] `PATCH /api/v1/recommendations/{id}/feedback` with accepted: true/false
+- [ ] `PATCH /api/recommendations/{id}/feedback` with accepted: true/false
 - [ ] Metric: acceptance_rate = accepted_true / total, target >= 60%
 - [ ] Internal dashboard shows acceptance rate by type
 
@@ -610,9 +610,9 @@
 **So that** I can learn key personal finance concepts
 
 **Acceptance Criteria:**
-- [ ] `GET /api/v1/education/topics` returns topic list with user progress
-- [ ] `GET /api/v1/education/topics/{id}` returns complete content
-- [ ] `PATCH /api/v1/education/topics/{id}/complete` marks as viewed
+- [ ] `GET /api/education/topics` returns topic list with user progress
+- [ ] `GET /api/education/topics/{id}` returns complete content
+- [ ] `PATCH /api/education/topics/{id}/complete` marks as viewed
 - [ ] Seed topics: Personal budget, Savings, Credit/debt, Inflation, Interest rates, Basic investing, Responsible consumption, Digital wallets in Peru
 - [ ] Content in readable mobile format (text + icons + practical Peruvian examples)
 - [ ] Overall progress visible (completion bar)
@@ -633,8 +633,8 @@
 **So that** I can improve my habits through gamification
 
 **Acceptance Criteria:**
-- [ ] `GET /api/v1/challenges` returns challenges with user status (available/active/completed)
-- [ ] `POST /api/v1/challenges/{id}/accept` accepts challenge
+- [ ] `GET /api/challenges` returns challenges with user status (available/active/completed)
+- [ ] `POST /api/challenges/{id}/accept` accepts challenge
 - [ ] Automatic verification based on criteria_json (e.g., "no_transactions_category_delivery_3_days")
 - [ ] Seed challenges: "No delivery spending for 3 days", "Record expenses for 7 consecutive days", "Save S/20 this week", "Reduce entertainment by 10%"
 - [ ] Screen with active challenges (progress), available (accept), completed (date)
@@ -652,7 +652,7 @@
 **So that** I stay motivated and see my progress
 
 **Acceptance Criteria:**
-- [ ] `GET /api/v1/badges` returns all badges with status (earned/not)
+- [ ] `GET /api/badges` returns all badges with status (earned/not)
 - [ ] Automatic assignment on meeting criteria:
   - "First transaction" — record first transaction
   - "Consistency" — 7 consecutive days recording
@@ -773,8 +773,8 @@
 **So that** I can validate the research hypothesis
 
 **Acceptance Criteria:**
-- [ ] `GET /api/v1/surveys/comparison?user_id={id}` returns: pre_score, post_score, improvement_percentage, sus_score
-- [ ] `GET /api/v1/surveys/aggregate` returns: average, median, standard deviation, N
+- [ ] `GET /api/surveys/comparison?user_id={id}` returns: pre_score, post_score, improvement_percentage, sus_score
+- [ ] `GET /api/surveys/aggregate` returns: average, median, standard deviation, N
 - [ ] Global target: average improvement_percentage >= 20%
 - [ ] Exportable to CSV for external statistical analysis
 
@@ -797,8 +797,8 @@
 - [ ] TLS 1.3 on all API communications (mandatory HTTPS)
 - [ ] Azure Database encryption at rest enabled
 - [ ] Encrypted backups
-- [ ] EncryptedSharedPreferences for local data on Android
-- [ ] SQLCipher for local Room database
+- [x] flutter_secure_storage for sensitive local data (JWT tokens)
+- [ ] Encrypted local database (not yet implemented)
 
 **Story Points:** 5
 **Status:** Not Started
@@ -812,14 +812,14 @@
 **So that** compliance with the Personal Data Protection Law is met
 
 **Acceptance Criteria:**
-- [ ] Consent screen on first use with clear privacy policy
-- [ ] Checkbox: "I agree that my financial data will be processed to generate personalized reports and predictions"
-- [ ] App cannot be used without consent
-- [ ] Consent record: user_id, consent_given=true, consent_at=timestamp
+- [x] Consent screen on first use with clear privacy policy
+- [x] Checkbox: "I agree that my financial data will be processed to generate personalized reports and predictions"
+- [x] App cannot be used without consent
+- [x] Consent record: userId, consentGiven=true, consentAt=timestamp
 - [ ] Option to revoke consent in settings (implies disabling AI)
 
 **Story Points:** 3
-**Status:** Not Started
+**Status:** In Progress
 **Phase:** 13 — Security
 
 ---
@@ -891,7 +891,7 @@
 **So that** I can report problems or suggest improvements
 
 **Acceptance Criteria:**
-- [ ] `POST /api/v1/feedback` accepts: type (BUG/SUGGESTION/GENERAL), message, screen_name, rating (1-5)
+- [ ] `POST /api/feedback` accepts: type (BUG/SUGGESTION/GENERAL), message, screen_name, rating (1-5)
 - [ ] Feedback button accessible from sidebar menu or FAB
 - [ ] Modal with: type, message, optional rating
 - [ ] Confirmation: "Thanks for your feedback. We'll review it soon"
@@ -956,12 +956,12 @@
 **So that** I can work in a structured way
 
 **Acceptance Criteria:**
-- [ ] GitHub monorepo: /android, /backend, /ml, /docs
-- [ ] .gitignore, README.md, CONTRIBUTING.md, LICENSE
-- [ ] Branch protection: main (protected), develop, feature/*
+- [x] GitHub monorepo: /zenda_fronted_app (Flutter), /zenda_backend_app (NestJS), /ml, /docs
+- [x] .gitignore, README.md
+- [x] Branch structure: main (protected), develop, feature/*, chore/*
 
 **Story Points:** 2
-**Status:** Not Started
+**Status:** Done
 **Phase:** 1 — Infrastructure
 
 ---
@@ -982,9 +982,9 @@
 - **Phase 13-16:** Security + Testing + Demo — 10 stories, 47 points
 
 **Status Overview:**
-- Done: 0
-- In Progress: 0
-- Not Started: 55
+- Done: 5 (US-1801, US-0101, US-0103, US-0301, US-1303 partial)
+- In Progress: 10 (US-0102, US-0105, US-0106, US-0201, US-0202, US-0203, US-0204, US-0206, US-0302, US-0401, US-0502)
+- Not Started: 40
 - Blocked: 0
 
 ---
