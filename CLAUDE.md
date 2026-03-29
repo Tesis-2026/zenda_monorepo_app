@@ -1,5 +1,23 @@
 # Zenda (WalletWise) — Project Conventions
 
+## Active Standards
+@skills/assistant/pre-work-audit/SKILL.md
+@skills/universal/core-coding-standards/SKILL.md
+@skills/universal/lang-typescript/SKILL.md
+@skills/platform/platform-backend/SKILL.md
+@skills/platform/platform-backend/domain-driven-design-nestjs/SKILL.md
+@skills/platform/platform-database/SKILL.md
+@skills/platform/platform-testing/SKILL.md
+@skills/platform/platform-mobile/flutter/SKILLS.md
+@skills/assistant/agent-add-rule/SKILL.md
+@skills/assistant/agent-init-deep/SKILL.md
+@skills/assistant/agent-pr-creator/SKILL.md
+@skills/assistant/pr-comments-address/SKILL.md
+@skills/assistant/promptify/SKILL.md
+@skills/assistant/rewrite-commit-history/SKILL.md
+@skills/_drafts/framework/tech-prisma/SKILL.md
+@skills/_drafts/platform/platform-mobile/SKILL.md
+
 ## Overview
 Zenda is an AI-powered mobile finance app (thesis project) targeting Peruvian university students (18-24). The codebase is a monorepo with a NestJS backend and Flutter frontend.
 
@@ -8,6 +26,9 @@ Zenda is an AI-powered mobile finance app (thesis project) targeting Peruvian un
 Tesis2026/
 ├── zenda_backend_app/   # NestJS + Prisma + PostgreSQL API
 ├── zenda_fronted_app/   # Flutter + Riverpod mobile app (note: "fronted" is the actual folder name)
+├── ml/                  # Python ML models (planned, Phase 8+)
+├── docs/                # Architecture documentation
+├── skills/              # Custom Claude Code skills
 └── CLAUDE.md            # This file
 ```
 
@@ -22,7 +43,8 @@ Tesis2026/
 - **API docs**: `http://localhost:3000/api/docs` (Swagger)
 - **Database**: `docker compose up -d`, then `npm run prisma:migrate && npm run prisma:seed`
 - **Conventions**:
-  - Modules in `src/modules/` follow NestJS module pattern (controller, service, DTOs)
+  - 6 feature modules in `src/modules/`: `auth`, `users`, `categories`, `transactions`, `goals`, `insights`
+  - Each module uses DDD layers: `application/use-cases/`, `domain/`, `infrastructure/`, `interface/`
   - All entities use soft deletes (`deletedAt` field)
   - DTOs use `class-validator` decorators
   - Responses use `SuccessResponseDto` wrapper
@@ -120,7 +142,7 @@ Phase specs live in `.claude/specs/<phase>/`. **After implementing any roadmap p
 - Update the **Current phases** list below when a new phase spec is added.
 
 ### Current phases
-- `phase-1a` — Backend scaffolding and core infrastructure (NestJS, Prisma, JWT auth, 5 feature modules)
+- `phase-1a` — Backend scaffolding and core infrastructure (NestJS, Prisma, JWT auth, 6 feature modules)
 - `phase-1b` — Database design (Prisma schema, PostgreSQL)
 
 ## Thesis Success Metrics
