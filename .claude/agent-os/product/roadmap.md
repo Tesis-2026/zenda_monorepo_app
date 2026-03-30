@@ -138,13 +138,13 @@
 
 > **Impact: High** — Prerequisite for intelligent alerts. Goals give purpose to savings.
 
-- [ ] `P0` `backend` `api` -- **Budget CRUD** -- `POST /api/budgets`, `GET /api/budgets` (with `currentSpent` and `percentageUsed`), `PUT /api/budgets/:id`, `DELETE /api/budgets/:id`. Budget model and schema ready (`@@unique([userId, categoryId, month, year])`). Refs: [US-0501](./user_stories.md#US-0501)
+- [x] `P0` `backend` `api` -- **Budget CRUD** -- `POST /api/budgets`, `GET /api/budgets` (with `currentSpent` and `percentageUsed`), `PUT /api/budgets/:id`, `DELETE /api/budgets/:id`. Budget model and schema ready (`@@unique([userId, categoryId, month, year])`). Refs: [US-0501](./user_stories.md#US-0501)
 
-- [ ] `P0` `flutter` `ui` -- **Budget screen** -- List with progress bars (green/yellow/red). Creation modal. Backend integration required. Refs: [US-0501](./user_stories.md#US-0501)
+- [x] `P0` `flutter` `ui` -- **Budget screen** -- List with progress bars (green/yellow/red). Creation modal. Backend integration required. Refs: [US-0501](./user_stories.md#US-0501)
 
 - [x] `P1` `backend` `api` -- **Financial goals CRUD** -- `POST /api/goals`, `GET /api/goals`, `POST /api/goals/:id/contribute`, `DELETE /api/goals/:id`. Ownership validated. Contribution updates `currentAmount` (Decimal arithmetic). Refs: [US-0502](./user_stories.md#US-0502)
 
-- [ ] `P1` `flutter` `ui` -- **Goals screen** -- Cards with progress, contribute button, completion animation. Backend integration required. Refs: [US-0502](./user_stories.md#US-0502)
+- [x] `P1` `flutter` `ui` -- **Goals screen** -- Cards with progress, contribute button, completion animation. Backend integration required. Refs: [US-0502](./user_stories.md#US-0502)
 
 - [ ] `P2` `flutter` `ui` -- **Goal detail** -- Contribution history, progress chart, completion projection. Refs: [US-0503](./user_stories.md#US-0503)
 
@@ -319,7 +319,7 @@
 | 3 | Transaction Recording | Sprint 2-3 | 4 weeks | ✅ Done |
 | 4 | Categorization | Sprint 3 | 2 weeks | ✅ Done |
 | 5 | Reports and Visualization | Sprint 4-5 | 4 weeks | ✅ Done (PDF export deferred to P2) |
-| 6 | Budgets and Goals | Sprint 5-6 | 3 weeks | 🔄 Partial (goals backend done; budgets backend + all frontend pending) |
+| 6 | Budgets and Goals | Sprint 5-6 | 3 weeks | ✅ Done (goal detail screen deferred to P2) |
 | 7 | ML Pipeline (Data) | Sprint 6-7 | 4 weeks | -- |
 | 8 | AI Predictions | Sprint 7-8 | 4 weeks | -- |
 | 9 | Recommendations | Sprint 8-9 | 3 weeks | -- |
