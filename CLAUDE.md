@@ -24,12 +24,63 @@ Zenda is an AI-powered mobile finance app (thesis project) targeting Peruvian un
 ## Structure
 ```
 Tesis2026/
-├── zenda_backend_app/   # NestJS + Prisma + PostgreSQL API
-├── zenda_fronted_app/   # Flutter + Riverpod mobile app (note: "fronted" is the actual folder name)
-├── ml/                  # Python ML models (planned, Phase 8+)
-├── docs/                # Architecture documentation
-├── skills/              # Custom Claude Code skills
-└── CLAUDE.md            # This file
+├── zenda_backend_app/      # NestJS + Prisma + PostgreSQL API
+│   └── src/
+│       ├── health/         # GET /api/health endpoint
+│       ├── infra/          # Cross-cutting infrastructure (not bounded contexts)
+│       │   ├── ai/         # AiModule + LocalRulesProvider stubs (Phase 8+)
+│       │   ├── email/      # EmailModule + EmailService (nodemailer)
+│       │   └── prisma/     # Global PrismaModule + PrismaService
+│       ├── modules/        # DDD bounded contexts (6 modules)
+│       │   ├── auth/       # Register, login, JWT, forgot/reset password
+│       │   ├── categories/ # System + custom categories with soft delete
+│       │   ├── goals/      # Savings goals + contribute endpoint
+│       │   ├── insights/   # Monthly summary aggregation
+│       │   ├── transactions/ # CRUD + filters (type, date, category)
+│       │   └── users/      # User profile read/update
+│       └── shared/         # Shared utilities (not a bounded context)
+│           ├── config/     # Typed ConfigFactory
+│           ├── dto/        # SuccessResponseDto
+│           ├── exceptions/ # GlobalExceptionFilter
+│           ├── guards/     # JwtAuthGuard
+│           ├── logger/     # AppLogger + RequestLoggingInterceptor
+│           └── middleware/ # (reserved)
+│
+├── zenda_fronted_app/      # Flutter + Riverpod mobile app (folder name has typo — keep as-is)
+│   └── lib/
+│       ├── core/
+│       │   ├── models/     # User, Transaction, Account, Streak, Breakdown503020
+│       │   ├── services/   # ApiClient, AuthApiService, UserApiService,
+│       │   │               # AccountsRepository, TransactionsRepository,
+│       │   │               # StreakRepository, AiAdviceService, LocalKvStore, OcrService
+│       │   └── theme/      # AppTheme, LightTheme, DarkTheme
+│       ├── features/
+│       │   ├── auth/       # LoginScreen, RegisterScreen, ForgotPasswordScreen,
+│       │   │               # ResetPasswordScreen, AuthGate, AuthController, LocalAuthService
+│       │   ├── dashboard/  # DashboardScreen + widgets (SummaryCard, StreakCard,
+│       │   │               # BudgetPieChart, ZendaAiCard, AccountCard)
+│       │   ├── onboarding/ # OnboardingScreen, OnboardingPage, SplashDecider, OnboardingPrefs
+│       │   ├── profile/    # ProfileScreen
+│       │   ├── progress/   # ProgressScreen (stub)
+│       │   ├── streak/     # StreakNotifier
+│       │   └── transactions/ # AddTransactionScreen, TransactionCreateScreen,
+│       │                     # TransactionListScreen, NewTransactionController
+│       ├── l10n/           # app_en.arb, app_es.arb + generated AppLocalizations
+│       ├── providers/      # Global Riverpod providers + repository providers
+│       ├── routing/        # AppRouter (GoRouter) — all named routes declared here
+│       └── services/       # Legacy service layer (AuthService, TransactionsService,
+│                           # AiService, OcrService) — being migrated to core/services
+│
+├── ml/                     # Python ML models (planned, Phase 8+)
+├── docs/                   # Architecture docs (most pending Phase 16)
+├── skills/                 # Custom Claude Code skills
+│   ├── assistant/          # pre-work-audit, promptify, agent-pr-creator, etc.
+│   ├── platform/           # platform-backend, platform-mobile, platform-database, platform-testing
+│   ├── universal/          # core-coding-standards, lang-typescript
+│   └── _drafts/            # In-progress skills
+├── .claude/
+│   └── specs/              # Phase implementation specs (phase-1a, phase-1b, ...)
+└── CLAUDE.md               # This file
 ```
 
 ## Language
@@ -43,24 +94,32 @@ Tesis2026/
 - **API docs**: `http://localhost:3000/api/docs` (Swagger)
 - **Database**: `docker compose up -d`, then `npm run prisma:migrate && npm run prisma:seed`
 - **Conventions**:
-  - 6 feature modules in `src/modules/`: `auth`, `users`, `categories`, `transactions`, `goals`, `insights`
-  - Each module uses DDD layers: `application/use-cases/`, `domain/`, `infrastructure/`, `interface/`
+  - 6 bounded contexts in `src/modules/`: `auth`, `users`, `categories`, `transactions`, `goals`, `insights`
+  - Each module uses strict DDD layers: `application/use-cases/`, `domain/`, `infrastructure/`, `interface/`
+  - Cross-cutting infrastructure lives in `src/infra/` (prisma, email, ai) — not bounded contexts
+  - Shared utilities live in `src/shared/` (config, guards, logger, exceptions, dto)
+  - Domain layer has zero NestJS decorators and zero `@prisma/client` imports — pure TypeScript
+  - Domain enums live in `src/modules/<module>/domain/` — never imported from `@prisma/client`
+  - `Decimal` → `number` conversion happens at the repository boundary (infrastructure layer)
+  - Repository ports are abstract classes in `domain/ports/` — implementations in `infrastructure/`
   - All entities use soft deletes (`deletedAt` field)
-  - DTOs use `class-validator` decorators
-  - Responses use `SuccessResponseDto` wrapper
+  - DTOs use `class-validator` decorators; responses use `SuccessResponseDto` wrapper
   - `@UserId()` decorator extracts user from JWT payload
 
 ## Frontend (zenda_fronted_app)
-- **Stack**: Flutter 3.10+, Dart, Riverpod 3, GoRouter, fl_chart
+- **Stack**: Flutter 3.10+, Dart, Riverpod 3, GoRouter 17, fl_chart
 - **Run**: `flutter run` (requires Flutter SDK)
 - **Conventions**:
   - Feature-based directory structure under `lib/features/`
   - State management: Riverpod `Notifier` + `Provider` patterns
-  - Routing: GoRouter in `lib/routing/app_router.dart`
+  - Routing: GoRouter in `lib/routing/app_router.dart` — all routes declared there
   - Local storage: SharedPreferences via `LocalKvStore`
   - Theme: Light/dark themes in `lib/core/theme/`
-  - Models in `lib/core/models/`, services in `lib/core/services/`
-  - Currently local-only (no API integration yet)
+  - Models in `lib/core/models/`, API services in `lib/core/services/`
+  - API client: `ApiClient` in `lib/core/services/api_client.dart` — base HTTP wrapper
+  - i18n: `flutter_localizations` with `app_en.arb` + `app_es.arb`; access via `context.l10n.*` (L10nX extension)
+  - No hardcoded UI strings in `build()` methods — all strings come from `AppLocalizations`
+  - Run `flutter gen-l10n` after adding new ARB keys
 
 ## Key Design Decisions
 - 50/30/20 budget rule: Needs / Wants / Savings
@@ -143,7 +202,8 @@ Phase specs live in `.claude/specs/<phase>/`. **After implementing any roadmap p
 
 ### Current phases
 - `phase-1a` — Backend scaffolding and core infrastructure (NestJS, Prisma, JWT auth, 6 feature modules)
-- `phase-1b` — Database design (Prisma schema, PostgreSQL)
+- `phase-1b` — Database design (full Prisma schema: 19 models, 9 enums, seed data)
+- `phase-2` — Flutter frontend foundation (auth flows, onboarding, dashboard, transactions, profile, i18n EN+ES)
 
 ## Thesis Success Metrics
 | Metric | Target |
@@ -206,7 +266,7 @@ specs/{phase-name}/
 - [`zenda_backend_app/src/common/exceptions/README.md`](zenda_backend_app/src/common/exceptions/README.md) — Exception handling patterns
 - [`zenda_backend_app/src/common/guards/README.md`](zenda_backend_app/src/common/guards/README.md) — Auth guard usage
 - [`zenda_backend_app/src/common/middleware/README.md`](zenda_backend_app/src/common/middleware/README.md) — Middleware conventions
-- [`zenda_backend_app/src/infra/telemetry/README.md`](zenda_backend_app/src/infra/telemetry/README.md) — Logging and telemetry setup
+
 
 ### Feature READMEs (Frontend)
 - [`zenda_fronted_app/README.md`](zenda_fronted_app/README.md) — Frontend setup and overview
