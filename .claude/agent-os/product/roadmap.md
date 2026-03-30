@@ -18,7 +18,7 @@
 - State Management: Riverpod 3 (AsyncNotifierProvider, NotifierProvider, FutureProvider)
 - Navigation: GoRouter 17
 - Charts: fl_chart 1.1.1
-- AI/ML: Python (Scikit-learn, TensorFlow Lite) — models exported for API inference
+- AI/ML: Azure AI Foundry — fine-tuned GPT-4o-mini (or Phi-4-mini) for predictions and advice; statistical moving average layer for numeric forecasts
 - Authentication: JWT (Passport + bcrypt) — no Firebase
 - Notifications: Firebase Cloud Messaging (FCM) — Phase 11
 - CI/CD: GitHub Actions + deployment TBD
@@ -150,35 +150,33 @@
 
 ---
 
-## Phase 7: AI Pipeline — Data Collection and Preparation
+## Phase 7: AI Pipeline — Fine-Tuning Dataset and Azure AI Foundry Setup
 
-> **Impact: Critical** — Without prepared data there is no model. Bridge between transactional app and intelligent app.
+> **Impact: Critical** — Prepares the fine-tuned model that powers predictions and advice. Replaces the custom Python ML pipeline with Azure AI Foundry fine-tuning.
 
-- [ ] `P0` `ml` `backend` -- **Feature extraction pipeline** -- Python script (`ml/src/features.py`) that extracts per-user features: spending by category per month, expense/income ratio, frequency, variability. Output CSV. Refs: [US-0701](./user_stories.md#US-0701)
+- [ ] `P0` `backend` `ai` -- **Synthetic JSONL dataset** -- Generate 1,000+ prompt-completion pairs representing Peruvian university student financial profiles (spending by category, income type, month-over-month trends). Format: `{ "messages": [{ "role": "user", "content": "<spending context>" }, { "role": "assistant", "content": "<structured JSON prediction + advice>" }] }`. Covers all 11 categories, all income types (SCHOLARSHIP, PART_TIME, FAMILY, MIXED), realistic PEN amounts. Stored in `docs/ai-training/`. Refs: [US-0701](./user_stories.md#US-0701), [US-0702](./user_stories.md#US-0702)
 
-- [ ] `P0` `ml` -- **Training dataset** -- Synthetic dataset based on Peruvian student profiles. Minimum 1000 records with realistic distributions. Refs: [US-0702](./user_stories.md#US-0702)
+- [ ] `P0` `ai` -- **Azure AI Foundry fine-tuning run** -- Fine-tune GPT-4o-mini (or Phi-4-mini for cost efficiency) on the JSONL dataset via Azure AI Foundry. Validate on a held-out 20% split. Target: >= 80% prediction accuracy measured as mean absolute percentage error on category spend forecasts. Document model version, training loss, and evaluation metrics in `docs/ai-training/results.md`. Refs: [US-0703](./user_stories.md#US-0703)
 
-- [ ] `P0` `ml` -- **Model selection and training** -- Evaluate: Linear Regression, Random Forest, XGBoost, LSTM. Metrics: MAE, RMSE, R². 5-fold cross-validation. Target: >= 80% accuracy. Refs: [US-0703](./user_stories.md#US-0703)
+- [ ] `P0` `backend` `ai` -- **AiModule wired to Azure endpoint** -- Complete `src/infra/ai/` stub: `AzureFoundryProvider` calls the deployed fine-tuned model endpoint. Config via `AZURE_AI_ENDPOINT` + `AZURE_AI_KEY` env vars. Input: structured spending context (last 3 months per category). Output: `{ predictedTotal, predictedByCategory, confidenceLevel, advice }`. Refs: [US-0704](./user_stories.md#US-0704)
 
-- [ ] `P1` `ml` -- **Export for inference** -- REST API endpoint (Python) or TFLite for on-device. Document model input/output. Refs: [US-0704](./user_stories.md#US-0704)
-
-- [ ] `P1` `ml` -- **Re-training pipeline** -- Monthly script that re-trains with new data. Only deploys if accuracy improves. Refs: [US-0705](./user_stories.md#US-0705)
+- [ ] `P1` `ai` -- **Fine-tuning refresh pipeline** -- Document process for resubmitting a new fine-tuning job when >= 500 new real user records are available. Azure Foundry handles infrastructure; this task is the runbook and automation trigger. Refs: [US-0705](./user_stories.md#US-0705)
 
 ---
 
-## Phase 8: AI Predictions
+## Phase 8: AI Predictions and Advice
 
-> **Impact: Critical** — Main differentiator. Turns the app from reactive to proactive.
+> **Impact: Critical** — Main differentiator. The fine-tuned Azure model provides both numeric forecasts (via statistical trend layer) and natural language spending insights in Spanish.
 
-- [ ] `P0` `backend` `ml` `api` -- **Expense prediction** -- `GET /api/predictions/expenses?period=next_month` invokes ML model. Returns: `predictedTotal`, `predictedByCategory`, `confidenceInterval`, `modelVersion`. Requires >= 2 months of history. Accuracy >= 80%. `Prediction` schema ready. Refs: [US-0801](./user_stories.md#US-0801)
+- [ ] `P0` `backend` `ai` `api` -- **Expense prediction** -- `GET /api/predictions/expenses?period=next_month` computes a 3-month weighted moving average per category (statistical layer) then enriches with confidence level and category narrative from the Azure fine-tuned model. Returns: `predictedTotal`, `predictedByCategory`, `confidenceLevel`, `modelVersion`. Requires >= 2 months of history. Accuracy >= 80%. `Prediction` schema ready. Refs: [US-0801](./user_stories.md#US-0801)
 
-- [ ] `P0` `backend` `ml` `api` -- **Income prediction** -- `GET /api/predictions/income?period=next_month` projects income considering source variability. Refs: [US-0802](./user_stories.md#US-0802)
+- [ ] `P0` `backend` `ai` `api` -- **Income prediction** -- `GET /api/predictions/income?period=next_month` projects income using rolling average weighted by income type variability. Enriched with Azure model narrative. Refs: [US-0802](./user_stories.md#US-0802)
 
-- [ ] `P0` `flutter` `ui` -- **Predictions screen** -- Monthly prediction, breakdown by category, projected balance, confidence indicator. Refs: [US-0801](./user_stories.md#US-0801)
+- [ ] `P0` `flutter` `ui` -- **Predictions screen** -- Monthly expense and income forecast, breakdown by category, projected balance, confidence indicator, and a natural language insight card powered by the fine-tuned model. Refs: [US-0801](./user_stories.md#US-0801)
 
-- [ ] `P1` `backend` `ml` -- **Anomaly detection** -- If spending in a category exceeds >20% of historical average, generates alert. Refs: [US-0803](./user_stories.md#US-0803)
+- [ ] `P1` `backend` `ai` -- **Anomaly detection** -- If spending in a category exceeds >20% of its 3-month rolling average, generates an alert via the Azure model with a contextual explanation. Refs: [US-0803](./user_stories.md#US-0803)
 
-- [ ] `P1` `backend` -- **Real accuracy tracking** -- When period completes, compare predicted vs actual. Store `actualTotal` and `accuracy` in `Prediction` model. Refs: [US-0804](./user_stories.md#US-0804)
+- [ ] `P1` `backend` -- **Real accuracy tracking** -- When period completes, compare predicted vs actual. Store `actualTotal` and `accuracy` in `Prediction` model. Feeds back into dataset for next fine-tuning refresh. Refs: [US-0804](./user_stories.md#US-0804)
 
 ---
 
@@ -186,13 +184,13 @@
 
 > **Impact: High** — Closes the loop: data → analysis → concrete action.
 
-- [ ] `P0` `backend` `ml` `api` -- **Recommendation engine** -- `GET /api/recommendations` generates 1-5 recommendations based on patterns, predictions, budgets, and goals. Types: SAVINGS, BUDGET, GOAL. `Recommendation` schema ready. Refs: [US-0901](./user_stories.md#US-0901)
+- [ ] `P0` `backend` `ai` `api` -- **Recommendation engine** -- `GET /api/recommendations` calls the Azure fine-tuned model with the user's last 30 days of categorized spend, active goals, and budget status. Returns 1-5 recommendations in Spanish. Types: SAVINGS, BUDGET, GOAL. `Recommendation` schema ready. Refs: [US-0901](./user_stories.md#US-0901)
 
 - [ ] `P0` `flutter` `ui` -- **Recommendations section** -- Cards with message, suggested action, feedback button ("Helpful"/"Not relevant"). Integrated into Dashboard. Refs: [US-0901](./user_stories.md#US-0901)
 
 - [ ] `P1` `backend` -- **Acceptance tracking** -- `POST /api/recommendations/:id/feedback`. `RecommendationFeedback` schema ready. Target acceptance rate >= 60%. Refs: [US-0902](./user_stories.md#US-0902)
 
-- [ ] `P2` `backend` `ml` -- **Feedback-driven improvement** -- Engine adjusts priority based on historical feedback. Refs: [US-0903](./user_stories.md#US-0903)
+- [ ] `P2` `backend` `ai` -- **Feedback-driven improvement** -- Accepted/rejected recommendation feedback is included in the next fine-tuning refresh dataset, improving model relevance over time. Refs: [US-0903](./user_stories.md#US-0903)
 
 ---
 
