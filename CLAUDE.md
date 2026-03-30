@@ -204,6 +204,7 @@ Phase specs live in `.claude/specs/<phase>/`. **After implementing any roadmap p
 - `phase-1a` — Backend scaffolding and core infrastructure (NestJS, Prisma, JWT auth, 6 feature modules)
 - `phase-1b` — Database design (full Prisma schema: 19 models, 9 enums, seed data)
 - `phase-2` — Flutter frontend foundation (auth flows, onboarding, dashboard, transactions, profile, i18n EN+ES)
+- `phase-3` — Transaction recording: backend GET/:id + PUT/:id, Flutter TransactionListScreen, fire-and-forget API sync
 
 ## Thesis Success Metrics
 | Metric | Target |

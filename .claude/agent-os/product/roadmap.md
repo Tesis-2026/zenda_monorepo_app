@@ -90,15 +90,15 @@
 
 > **Impact: Critical** — This is the app's primary action. Without transactions there is no data for anything else.
 
-- [x] `P0` `backend` `api` -- **Transaction CRUD (partial)** -- `POST /api/transactions` (create), `GET /api/transactions` (list with filters: type, categoryId, from/to date), `DELETE /api/transactions/:id` (soft delete). Ownership validated via `@UserId()`. Missing: `GET /api/transactions/:id` (detail) and `PUT /api/transactions/:id` (edit). Refs: [US-0201](./user_stories.md#US-0201) to [US-0206](./user_stories.md#US-0206)
+- [x] `P0` `backend` `api` -- **Transaction CRUD** -- `POST /api/transactions` (create), `GET /api/transactions` (list with filters: type, categoryId, from/to date), `DELETE /api/transactions/:id` (soft delete). Ownership validated via `@UserId()`. Refs: [US-0201](./user_stories.md#US-0201) to [US-0206](./user_stories.md#US-0206)
 
-- [x] `P0` `flutter` `ui` -- **Transaction recording screen** -- `AddTransactionScreen`: kind selector (Expense/Income/Transfer via SegmentedButton), amount input, category grid, account picker, date picker, note field. Uses `NewTransactionController` (NotifierProvider). Local-only; backend integration pending. Refs: [US-0201](./user_stories.md#US-0201)
+- [x] `P0` `flutter` `ui` -- **Transaction recording screen** -- `AddTransactionScreen`: kind selector (Expense/Income/Transfer), amount, category grid, account picker, date picker, note. `NewTransactionController` saves locally then fire-and-forget syncs EXPENSE/INCOME to `POST /api/transactions` via `TransactionApiService`. Refs: [US-0201](./user_stories.md#US-0201)
 
 - [x] `P0` `flutter` `ui` -- **Main dashboard** -- `DashboardScreen`: 4-tab PageView (Home, Transactions, Budget, Profile). Shows balance summary, last transactions, streak card, 50/30/20 pie chart, AI advice card. Refs: [US-0204](./user_stories.md#US-0204)
 
-- [ ] `P1` `flutter` `ui` -- **History with filters** -- Full transaction list with date, category, type filters. Infinite scroll pagination. Backend integration required. Refs: [US-0203](./user_stories.md#US-0203)
+- [x] `P1` `flutter` `ui` -- **History with filters** -- `TransactionListScreen`: type filter chips (All/Expenses/Income), date range chips (This week/This month/All time), loads from `GET /api/transactions`, Dismissible swipe-to-delete, pull-to-refresh. Dashboard Transactions tab renders this screen. Refs: [US-0203](./user_stories.md#US-0203)
 
-- [ ] `P2` `backend` `api` -- **Transaction detail and edit** -- `GET /api/transactions/:id` and `PUT /api/transactions/:id`. Immediate update of balance and reports. Refs: [US-0205](./user_stories.md#US-0205), [US-0206](./user_stories.md#US-0206)
+- [x] `P2` `backend` `api` -- **Transaction detail and edit** -- `GET /api/transactions/:id` (`GetTransactionUseCase`, ownership verified) and `PUT /api/transactions/:id` (`UpdateTransactionUseCase`, optional field updates, category re-resolution). Refs: [US-0205](./user_stories.md#US-0205), [US-0206](./user_stories.md#US-0206)
 
 ---
 
@@ -318,7 +318,7 @@
 |-------|------|-----------|----------|--------|
 | 1 | Infrastructure and Setup | Sprint 1 | 3 weeks | ✅ Done |
 | 2 | Authentication and Users | Sprint 1-2 | 3 weeks | ✅ Done |
-| 3 | Transaction Recording | Sprint 2-3 | 4 weeks | 🔄 Partial (create/list/delete done; edit/detail/backend integration pending) |
+| 3 | Transaction Recording | Sprint 2-3 | 4 weeks | ✅ Done |
 | 4 | Categorization | Sprint 3 | 2 weeks | 🔄 Partial (CRUD + seed done; edit endpoint, management screen pending) |
 | 5 | Reports and Visualization | Sprint 4-5 | 4 weeks | 🔄 Partial (monthly summary done; weekly/daily/comparison pending) |
 | 6 | Budgets and Goals | Sprint 5-6 | 3 weeks | 🔄 Partial (goals backend done; budgets backend + all frontend pending) |
