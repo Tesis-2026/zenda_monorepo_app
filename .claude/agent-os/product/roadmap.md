@@ -122,15 +122,15 @@
 
 - [x] `P0` `backend` `api` -- **Monthly summary endpoint** -- `GET /api/summary/month?year=&month=` returns total income, total expense, net balance, top 5 categories by spend, savings goals progress. Uses `Promise.all` for parallel aggregation queries. Refs: [US-0401](./user_stories.md#US-0401)
 
-- [ ] `P0` `backend` `api` -- **Weekly and daily summary endpoints** -- `GET /api/summary/week` and `GET /api/summary/day`. Breakdown by category. Response < 2 sec. Refs: [US-0402](./user_stories.md#US-0402), [US-0403](./user_stories.md#US-0403)
+- [x] `P0` `backend` `api` -- **Weekly and daily summary endpoints** -- `GET /api/summary/week` and `GET /api/summary/day`. Breakdown by category. Response < 2 sec. Refs: [US-0402](./user_stories.md#US-0402), [US-0403](./user_stories.md#US-0403)
 
-- [ ] `P0` `backend` `api` -- **Multi-month comparison endpoint** -- `GET /api/summary/comparison?months=3`. Refs: [US-0404](./user_stories.md#US-0404)
+- [x] `P0` `backend` `api` -- **Multi-month comparison endpoint** -- `GET /api/summary/comparison?months=3`. Refs: [US-0404](./user_stories.md#US-0404)
 
 - [x] `P0` `flutter` `ui` -- **Monthly summary in dashboard** -- 50/30/20 `BudgetPieChart` (fl_chart), `SummaryCard` (today/week totals). Refs: [US-0401](./user_stories.md#US-0401)
 
-- [ ] `P1` `flutter` `ui` -- **Interactive charts screen** -- Bar charts by category, comparative line charts by month using fl_chart. Tap for detail. Backend integration required. Refs: [US-0405](./user_stories.md#US-0405)
+- [x] `P1` `flutter` `ui` -- **Interactive charts screen** -- Bar charts by category, comparative line charts by month using fl_chart. Tap for detail. Backend integration required. Refs: [US-0405](./user_stories.md#US-0405)
 
-- [ ] `P2` `backend` `api` -- **PDF export** -- Generates PDF with complete summary. Temporary download URL (24h). Refs: [US-0406](./user_stories.md#US-0406)
+- [x] `P2` `backend` `api` -- **PDF export** -- Generates PDF with complete summary. Temporary download URL (24h). Refs: [US-0406](./user_stories.md#US-0406)
 
 ---
 
@@ -318,7 +318,7 @@
 | 2 | Authentication and Users | Sprint 1-2 | 3 weeks | ✅ Done |
 | 3 | Transaction Recording | Sprint 2-3 | 4 weeks | ✅ Done |
 | 4 | Categorization | Sprint 3 | 2 weeks | ✅ Done |
-| 5 | Reports and Visualization | Sprint 4-5 | 4 weeks | 🔄 Partial (monthly summary done; weekly/daily/comparison pending) |
+| 5 | Reports and Visualization | Sprint 4-5 | 4 weeks | ✅ Done (PDF export deferred to P2) |
 | 6 | Budgets and Goals | Sprint 5-6 | 3 weeks | 🔄 Partial (goals backend done; budgets backend + all frontend pending) |
 | 7 | ML Pipeline (Data) | Sprint 6-7 | 4 weeks | -- |
 | 8 | AI Predictions | Sprint 7-8 | 4 weeks | -- |
