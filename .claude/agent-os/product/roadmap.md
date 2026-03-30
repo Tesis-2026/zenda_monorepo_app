@@ -146,7 +146,7 @@
 
 - [x] `P1` `flutter` `ui` -- **Goals screen** -- Cards with progress, contribute button, completion animation. Backend integration required. Refs: [US-0502](./user_stories.md#US-0502)
 
-- [ ] `P2` `flutter` `ui` -- **Goal detail** -- Contribution history, progress chart, completion projection. Refs: [US-0503](./user_stories.md#US-0503)
+- [x] `P2` `flutter` `ui` -- **Goal detail** -- Contribution history, progress chart, completion projection. Refs: [US-0503](./user_stories.md#US-0503)
 
 ---
 
@@ -319,7 +319,7 @@
 | 3 | Transaction Recording | Sprint 2-3 | 4 weeks | ✅ Done |
 | 4 | Categorization | Sprint 3 | 2 weeks | ✅ Done |
 | 5 | Reports and Visualization | Sprint 4-5 | 4 weeks | ✅ Done (PDF export deferred to P2) |
-| 6 | Budgets and Goals | Sprint 5-6 | 3 weeks | ✅ Done (goal detail screen deferred to P2) |
+| 6 | Budgets and Goals | Sprint 5-6 | 3 weeks | ✅ Done |
 | 7 | ML Pipeline (Data) | Sprint 6-7 | 4 weeks | -- |
 | 8 | AI Predictions | Sprint 7-8 | 4 weeks | -- |
 | 9 | Recommendations | Sprint 8-9 | 3 weeks | -- |

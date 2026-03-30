@@ -4,7 +4,7 @@
 
 Before this phase, users could record transactions and view reports (Phases 3–5), but had no way to set spending limits or track savings targets. The Budget model and `@@unique` constraint had been defined in Phase 1B, and the Goals backend (create, list, contribute, delete) was implemented in Phase 3. Phase 6 closes the gap by adding the Budget CRUD backend, and building dedicated Flutter screens for both budgets and goals.
 
-User stories covered: US-0501 (budget management), US-0502 (savings goals frontend).
+User stories covered: US-0501 (budget management), US-0502 (savings goals frontend), US-0503 (goal detail screen).
 
 ## Tasks Completed
 
@@ -25,13 +25,14 @@ User stories covered: US-0501 (budget management), US-0502 (savings goals fronte
 15. `zenda_fronted_app/lib/core/models/budget.dart` — New: `Budget` model with `fromJson` factory
 16. `zenda_fronted_app/lib/core/models/savings_goal.dart` — New: `SavingsGoal` model with `fromJson` factory and computed `progressPercent`
 17. `zenda_fronted_app/lib/core/services/budget_api_service.dart` — New: `BudgetApiService` — `getAll`, `create`, `update`, `delete`
-18. `zenda_fronted_app/lib/core/services/goals_api_service.dart` — New: `GoalsApiService` — `getAll`, `create`, `contribute`, `delete`
+18. `zenda_fronted_app/lib/core/services/goals_api_service.dart` — New: `GoalsApiService` — `getAll`, `create`, `contribute`, `delete`, `getContributions`; includes `GoalContribution` model
 19. `zenda_fronted_app/lib/features/budget/budget_screen.dart` — New: `BudgetScreen` — month/year selector, progress bars (green/yellow/red), create modal, edit modal, delete confirm
-20. `zenda_fronted_app/lib/features/goals/goals_screen.dart` — New: `GoalsScreen` — goal cards with progress bars, contribute modal, create modal, delete confirm
-21. `zenda_fronted_app/lib/routing/app_router.dart` — Added `/budgets` and `/goals` routes
-22. `zenda_fronted_app/lib/features/dashboard/dashboard_screen.dart` — Added Budgets and Goals navigation tiles to `_PerfilSection`
-23. `zenda_fronted_app/lib/l10n/app_en.arb` — 22 new keys: `profileBudgets`, `profileGoals`, `budget*` (14), `goals*` (8)
-24. `zenda_fronted_app/lib/l10n/app_es.arb` — Same 22 keys in Spanish
+20. `zenda_fronted_app/lib/features/goals/goals_screen.dart` — New: `GoalsScreen` — goal cards with progress bars, contribute modal, create modal, delete confirm; card tap navigates to goal detail
+21. `zenda_fronted_app/lib/features/goals/goal_detail_screen.dart` — New: `GoalDetailScreen` — summary card, cumulative fl_chart, contribution history list, completion projection banner, alert banner for overdue goals
+22. `zenda_fronted_app/lib/routing/app_router.dart` — Added `/budgets`, `/goals`, and `/goals/:id` (goal detail) routes; imports `GoalDetailScreen` and `SavingsGoal`
+23. `zenda_fronted_app/lib/features/dashboard/dashboard_screen.dart` — Added Budgets and Goals navigation tiles to `_PerfilSection`
+24. `zenda_fronted_app/lib/l10n/app_en.arb` — 29 new keys: `profileBudgets`, `profileGoals`, `budget*` (14), `goals*` (8), `goalsDetail*` (7)
+25. `zenda_fronted_app/lib/l10n/app_es.arb` — Same 29 keys in Spanish
 
 ## What Was Built
 
@@ -77,3 +78,14 @@ Accessible via `/goals`, linked from the Profile tab.
 - Completed goals (100%) show a green checkmark and hide the contribute button
 - FAB opens creation modal: name field, target amount field
 - Delete icon with confirm dialog
+- Tapping a card navigates to `/goals/:id` (GoalDetailScreen), passing the `SavingsGoal` object via GoRouter `extra`
+
+### GoalDetailScreen (US-0503)
+
+Accessible via `/goals/:id`, reached by tapping any goal card in GoalsScreen.
+
+- Summary card: goal name, progress bar (indigo/green), S/ current of S/ target, percentage
+- Cumulative progress chart (fl_chart LineChart): actual savings vs target line, shows growth over time; hidden when no contributions
+- Projection banner: computes average daily contribution rate; shows projected completion date or an overdue alert when a `dueDate` is set
+- Contribution history: reversed list of all `GoalContribution` records fetched from `GET /api/goals/:id/contributions`; shows amount and date
+- Empty state text when no contributions yet
