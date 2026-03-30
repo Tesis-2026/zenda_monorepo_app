@@ -76,13 +76,13 @@
 
 - [x] `P0` `backend` `security` -- **JWT authentication middleware** -- `JwtAuthGuard` protects all routes under `/api/*` except `/api/auth/*` and `/api/health`. Validates signature and expiration. Injects `userId` via `@UserId()` decorator. Returns 401 if invalid. Refs: [US-0103](./user_stories.md#US-0103)
 
-- [x] `P0` `flutter` `ui` -- **Registration and login screens** -- Forms with real-time validation, loading states, error handling. Currently uses local auth service (`LocalAuthService`). Backend JWT integration pending (Phase 2 completion). JWT to be stored in `flutter_secure_storage`. Refs: [US-0101](./user_stories.md#US-0101), [US-0102](./user_stories.md#US-0102)
+- [x] `P0` `flutter` `ui` -- **Registration and login screens** -- Forms with real-time validation, loading states, error handling. `AuthApiService` calls `/auth/register` and `/auth/login`. JWT stored in `flutter_secure_storage`. Profile fetched from `/users/me` after login. Refs: [US-0101](./user_stories.md#US-0101), [US-0102](./user_stories.md#US-0102)
 
-- [ ] `P1` `backend` -- **Password recovery** -- `POST /api/auth/forgot-password` sends email with reset token (1h expiry). `POST /api/auth/reset-password` accepts token + new password. Refs: [US-0104](./user_stories.md#US-0104)
+- [x] `P1` `backend` -- **Password recovery** -- `POST /api/auth/forgot-password` generates a 32-byte token (1h expiry), stores it, sends email via `EmailService`. `POST /api/auth/reset-password` validates token, hashes new password, deletes token. Both rate-limited (5 req/min). Refs: [US-0104](./user_stories.md#US-0104)
 
 - [x] `P1` `flutter` `ui` -- **Initial profile onboarding** -- Multi-page onboarding screen after first launch. Captures age, university, income type, average income. Saves `profileCompleted = true`. Refs: [US-0105](./user_stories.md#US-0105)
 
-- [ ] `P1` `flutter` `ui` -- **Profile editing** -- Allows editing personal data and currency. `GET /api/users/me`, `PUT /api/users/me` backend endpoints pending. Refs: [US-0106](./user_stories.md#US-0106)
+- [x] `P1` `flutter` `ui` -- **Profile editing** -- `ProfileScreen` displays and edits full name, age, university, currency, income type, monthly income, financial literacy. Calls `UserApiService.updateProfile()` → `PUT /api/users/me`. Backend: `GetProfileUseCase` (`GET /api/users/me`) and `UpdateProfileUseCase` (`PUT /api/users/me`) fully wired with DDD layers. Refs: [US-0106](./user_stories.md#US-0106)
 
 ---
 
@@ -317,7 +317,7 @@
 | Phase | Name | Sprint(s) | Duration | Status |
 |-------|------|-----------|----------|--------|
 | 1 | Infrastructure and Setup | Sprint 1 | 3 weeks | ✅ Done |
-| 2 | Authentication and Users | Sprint 1-2 | 3 weeks | 🔄 Partial (backend auth done; profile editing, password recovery pending) |
+| 2 | Authentication and Users | Sprint 1-2 | 3 weeks | ✅ Done |
 | 3 | Transaction Recording | Sprint 2-3 | 4 weeks | 🔄 Partial (create/list/delete done; edit/detail/backend integration pending) |
 | 4 | Categorization | Sprint 3 | 2 weeks | 🔄 Partial (CRUD + seed done; edit endpoint, management screen pending) |
 | 5 | Reports and Visualization | Sprint 4-5 | 4 weeks | 🔄 Partial (monthly summary done; weekly/daily/comparison pending) |
