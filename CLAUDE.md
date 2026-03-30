@@ -205,6 +205,7 @@ Phase specs live in `.claude/specs/<phase>/`. **After implementing any roadmap p
 - `phase-1b` — Database design (full Prisma schema: 19 models, 9 enums, seed data)
 - `phase-2` — Flutter frontend foundation (auth flows, onboarding, dashboard, transactions, profile, i18n EN+ES)
 - `phase-3` — Transaction recording: backend GET/:id + PUT/:id, Flutter TransactionListScreen, fire-and-forget API sync
+- `phase-4` — Categorization: backend PUT /api/categories/:id (rename), Flutter CategoryManagementScreen (create/rename/delete custom categories)
 
 ## Thesis Success Metrics
 | Metric | Target |

@@ -108,11 +108,11 @@
 
 - [x] `P0` `backend` -- **Default categories (seed)** -- 9 expense categories (comida, transporte, vivienda, servicios, salud, ocio, compras, suscripciones, antojos) and 5 income categories seeded via `prisma/seed.ts`. Idempotent seeding. Refs: [US-0301](./user_stories.md#US-0301)
 
-- [x] `P0` `backend` `api` -- **Custom categories CRUD (partial)** -- `POST /api/categories` (create), `GET /api/categories` (list system + user custom), `DELETE /api/categories/:id` (soft delete). `ResolveCategoryUseCase` creates on-the-fly during transaction creation. Missing: `PUT /api/categories/:id` (edit). Refs: [US-0302](./user_stories.md#US-0302)
+- [x] `P0` `backend` `api` -- **Custom categories CRUD** -- `POST /api/categories` (create), `GET /api/categories` (list system + user custom), `PUT /api/categories/:id` (rename, ownership + name-collision guard), `DELETE /api/categories/:id` (soft delete). `ResolveCategoryUseCase` creates on-the-fly during transaction creation. Refs: [US-0302](./user_stories.md#US-0302)
 
 - [x] `P0` `flutter` `ui` -- **Category selector** -- Grid with icons/colors in `AddTransactionScreen`. Maps to 50/30/20 buckets via `bucketForCategory()`. Refs: [US-0301](./user_stories.md#US-0301)
 
-- [ ] `P1` `flutter` `ui` -- **Category management screen** -- Custom category administration. Backend integration required. Refs: [US-0302](./user_stories.md#US-0302)
+- [x] `P1` `flutter` `ui` -- **Category management screen** -- `CategoryManagementScreen`: lists system (read-only) and custom categories. FAB to create, edit icon to rename, swipe-to-delete. Routes to `/categories` from `ProfileScreen`. `CategoryApiService` calls `GET/POST/PUT/DELETE /api/categories`. Refs: [US-0302](./user_stories.md#US-0302)
 
 ---
 
@@ -319,7 +319,7 @@
 | 1 | Infrastructure and Setup | Sprint 1 | 3 weeks | ✅ Done |
 | 2 | Authentication and Users | Sprint 1-2 | 3 weeks | ✅ Done |
 | 3 | Transaction Recording | Sprint 2-3 | 4 weeks | ✅ Done |
-| 4 | Categorization | Sprint 3 | 2 weeks | 🔄 Partial (CRUD + seed done; edit endpoint, management screen pending) |
+| 4 | Categorization | Sprint 3 | 2 weeks | ✅ Done |
 | 5 | Reports and Visualization | Sprint 4-5 | 4 weeks | 🔄 Partial (monthly summary done; weekly/daily/comparison pending) |
 | 6 | Budgets and Goals | Sprint 5-6 | 3 weeks | 🔄 Partial (goals backend done; budgets backend + all frontend pending) |
 | 7 | ML Pipeline (Data) | Sprint 6-7 | 4 weeks | -- |
