@@ -9,9 +9,10 @@ Phase specs live in `.claude/specs/<phase>/`. See [CLAUDE.md](../CLAUDE.md) for 
 
 | Phase | Title | Status |
 |-------|-------|--------|
-| 1A | Dev Environment Setup | Complete |
-| 1B | Database Design | Complete |
-| 2–15 | Feature phases | Planned |
+| 1A | Backend Scaffolding and Core Infrastructure | Complete |
+| 1B | Database Design (19 models, 9 enums, seed data) | Complete |
+| 2 | Flutter Frontend Foundation (auth, onboarding, dashboard, i18n) | Complete |
+| 3–15 | Feature phases | Planned |
 
 ## API
 Swagger UI: `http://localhost:3000/api/docs` (backend must be running)

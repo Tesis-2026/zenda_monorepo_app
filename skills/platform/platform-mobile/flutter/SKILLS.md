@@ -289,6 +289,108 @@ class ProfileScreen extends StatelessWidget {
 }
 ```
 
+### 4. **Internationalization (i18n)**
+
+Every user-facing string must come from `AppLocalizations`. Never hardcode UI text.
+
+#### Setup — `pubspec.yaml`
+```yaml
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.20.2        # already required by flutter_localizations
+
+flutter:
+  generate: true       # enables flutter gen-l10n
+```
+
+#### Setup — `l10n.yaml` (project root)
+```yaml
+arb-dir: lib/l10n
+template-arb-file: app_en.arb
+output-localization-file: app_localizations.dart
+output-dir: lib/l10n
+nullable-getter: false
+```
+
+#### ARB file structure — `lib/l10n/app_en.arb`
+```json
+{
+  "@@locale": "en",
+  "appTitle": "Zenda",
+  "commonCancel": "Cancel",
+  "authLoginTitle": "Welcome to Zenda",
+  "dashboardGreeting": "Hi, {name} 👋",
+  "@dashboardGreeting": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "streakLabel": "{count, plural, =1{1-day streak} other{{count}-day streak}}",
+  "@streakLabel": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  }
+}
+```
+
+Mirror every key in `lib/l10n/app_es.arb` with `"@@locale": "es"`.
+
+#### Context extension — `lib/l10n/l10n_extension.dart`
+```dart
+import 'package:flutter/material.dart';
+import 'app_localizations.dart';
+
+extension L10nX on BuildContext {
+  AppLocalizations get l10n => AppLocalizations.of(this);
+}
+```
+
+#### Wire in `MaterialApp.router`
+```dart
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'l10n/app_localizations.dart';
+
+MaterialApp.router(
+  localizationsDelegates: const [
+    AppLocalizations.delegate,
+    GlobalMaterialLocalizations.delegate,
+    GlobalWidgetsLocalizations.delegate,
+    GlobalCupertinoLocalizations.delegate,
+  ],
+  supportedLocales: const [
+    Locale('en'),
+    Locale('es'),
+  ],
+  // ...
+)
+```
+
+#### Usage in widgets
+```dart
+import '../../../l10n/l10n_extension.dart';
+
+// In build():
+Text(context.l10n.authLoginTitle)
+Text(context.l10n.dashboardGreeting(user.firstName))
+Text(context.l10n.streakLabel(streakDays))
+```
+
+#### Key naming convention
+- Prefix by feature: `auth_`, `dashboard_`, `tx_`, `onboarding_`, `profile_`, `common_`
+- Use camelCase (ARB requirement)
+- Interpolated strings use named `{placeholders}`
+- Plural strings use ICU syntax: `{count, plural, =1{...} other{...}}`
+
+#### Rules
+- No `String` literals in widget `build()` methods — use `context.l10n.*`
+- ARB keys must exist in BOTH `app_en.arb` and `app_es.arb` before use
+- Run `flutter gen-l10n` after adding new keys
+- Locale preference persisted via `SharedPreferences` key `locale`
+
 ## Best Practices
 
 ### ✅ DO
