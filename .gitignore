@@ -1,2 +1,66 @@
-# Claude Code local settings
+# Sub-repositories — each has its own git repo; monorepo only tracks docs/skills
+zenda_backend_app/
+zenda_fronted_app/
+ml/
+
+# Claude
 .claude/settings.local.json
+
+# Node.js
+node_modules/
+dist/
+build/
+.npm
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+.pnpm-debug.log*
+
+# Environment files
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+
+# Flutter / Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+*.g.dart
+*.freezed.dart
+build/
+.packages
+pubspec.lock
+.pub-cache/
+*.iml
+
+# Python / ML
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+.venv/
+venv/
+env/
+*.pkl
+*.h5
+*.model
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*.DS_Store
+Thumbs.db
+
+# Testing
+coverage/
+.nyc_output/
+lcov.info
+
+# Docker
+*.override.yml
