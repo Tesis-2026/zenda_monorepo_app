@@ -155,7 +155,7 @@ Zenda succeeds when:
 
 - **Real banking integration:** MVP does not connect with real banking systems
 - **iOS:** Android only in the initial version
-- **Multiple languages:** Spanish only
+- **Multiple languages:** Spanish is the primary language; English UI strings are included for localization infrastructure (EN/ES via Flutter gen-l10n) but the product targets Spanish-speaking users only
 - **Self-hosted servers:** Cloud services (Azure) will be used
 - **Credit scoring system:** No credit score is generated
 - **E-commerce integration:** Does not connect with online stores

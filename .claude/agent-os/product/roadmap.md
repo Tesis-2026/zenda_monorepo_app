@@ -12,14 +12,16 @@
 
 ## Technical Foundation
 
-**Stack:**
-- Mobile Frontend: Android native (Kotlin) — Android 9+ (API 28)
-- Backend: Node.js/Express or Spring Boot + PostgreSQL
-- AI/ML: Python (Scikit-learn, TensorFlow Lite) — models exported for mobile inference
+**Stack (as implemented — supersedes original proposal):**
+- Mobile Frontend: Flutter 3.10+ / Dart — cross-platform (Android primary target)
+- Backend: NestJS 11 + Prisma ORM + PostgreSQL 15 (Docker)
+- AI/ML: Python (Scikit-learn, TensorFlow Lite) — models exported for mobile/API inference
 - Cloud: Azure (cloud services, storage, AI APIs)
-- Authentication: Firebase Auth (email/password)
-- Notifications: Firebase Cloud Messaging (FCM)
+- Authentication: JWT (access + refresh tokens) — bcrypt password hashing
+- Notifications: Firebase Cloud Messaging (FCM) — not yet integrated
 - CI/CD: GitHub Actions + Google Play Internal Testing
+
+> **Note:** The original proposal specified Android native (Kotlin) + Firebase Auth. The team pivoted to Flutter + NestJS/JWT for faster cross-platform development. All references to Kotlin, Hilt, Room, Retrofit, EncryptedSharedPreferences, SQLCipher, and Firebase Auth in this document should be interpreted in their Flutter/NestJS equivalents.
 
 **Standards:**
 - ISO 25010: Software product quality
@@ -36,17 +38,17 @@
 
 > **Impact: Critical** — Without infrastructure there is no development. Blocks all subsequent phases.
 
-- [ ] `P0` `infra` `backend` -- **Git repository setup** -- Create monorepo on GitHub with structure: `/android` (mobile app), `/backend` (REST API), `/ml` (AI models), `/docs` (documentation). Include `.gitignore`, `README.md`, `CONTRIBUTING.md`, `LICENSE`. Configure branch protection: `main` (protected), `develop` (integration), `feature/*` (development). Refs: [US-1801](./user_stories.md#US-1801)
+- [x] `P0` `infra` `backend` -- **Git repository setup** -- GitHub monorepo (`zenda_monorepo_app`) with `zenda_backend_app` and `zenda_fronted_app` subfolders. Branch structure: `main` (protected). Refs: [US-1801](./user_stories.md#US-1801)
 
-- [ ] `P0` `infra` `backend` -- **PostgreSQL database setup** -- Provision PostgreSQL instance on Azure. Create initial schema with tables: `users`, `transactions`, `categories`, `budgets`, `goals`, `educational_content`, `challenges`, `badges`, `user_badges`, `predictions`, `recommendations`, `surveys`, `survey_responses`, `notification_preferences`, `analytics_events`, `audit_logs`, `feedback`. Include indexes, foreign keys, check constraints, enums. Script: `database/schema.sql`. Refs: [US-1802](./user_stories.md#US-1802)
+- [x] `P0` `infra` `backend` -- **PostgreSQL database setup** -- PostgreSQL 15 via Docker Compose. Prisma schema covers: `User`, `Transaction`, `Category`, `Budget`, `SavingsGoal`, `GoalContribution`, `RefreshToken`, `PasswordResetToken`. Migrations managed by Prisma. Refs: [US-1802](./user_stories.md#US-1802)
 
-- [ ] `P0` `infra` `android` -- **Base Android project** -- Create Android Studio project with Kotlin, minSdkVersion 28 (Android 9). Configure: MVVM architecture, Room (local SQLite), Retrofit (HTTP client), Hilt (dependency injection), Navigation Component, Material Design 3. Package structure: `ui/`, `data/`, `domain/`, `di/`, `utils/`. Refs: [US-1803](./user_stories.md#US-1803)
+- [x] `P0` `infra` `flutter` -- **Base Flutter project** -- Flutter 3.10+ project with Riverpod 3, GoRouter, feature-based structure (`lib/features/`), theme (light/dark), localization (EN/ES via gen-l10n). Replaces original Kotlin/Android native plan. Refs: [US-1803](./user_stories.md#US-1803)
 
-- [ ] `P0` `infra` `backend` -- **Base REST API** -- Configure backend server with health-check endpoints: `GET /api/v1/health` returns `{ status: "ok", version: "1.0.0" }`. Configure CORS, global rate limiting, logging, centralized error handling. Document with OpenAPI/Swagger. Refs: [US-1804](./user_stories.md#US-1804)
+- [x] `P0` `infra` `backend` -- **Base REST API** -- NestJS 11 server with health-check endpoint, Swagger docs at `/api/docs`, CORS, global exception filter, structured logging, `SuccessResponseDto` wrapper. Refs: [US-1804](./user_stories.md#US-1804)
 
 - [ ] `P1` `infra` -- **CI/CD setup** -- GitHub Actions workflow: lint → test → build on each PR. Automatic deployment to Azure (backend) and Google Play Internal Testing (APK) on merge to `main`. Refs: Best practices
 
-- [ ] `P1` `infra` -- **Environment variables and secrets** -- Create `.env.example` with all required variables. Configure GitHub Secrets for CI/CD. Document in `SETUP.md`. Refs: Security best practices
+- [x] `P1` `infra` -- **Environment variables and secrets** -- `.env.example` documented with all required variables. Refs: Security best practices
 
 ---
 
@@ -56,9 +58,9 @@
 
 - [ ] `P0` `backend` `database` -- **Users schema** -- Table `users`: `id` (UUID PK), `email` (UNIQUE NOT NULL), `password_hash` (TEXT NOT NULL), `name` (VARCHAR 100), `age` (INT), `university` (VARCHAR 200), `income_type` (ENUM: SCHOLARSHIP, PART_TIME, FAMILY, MIXED), `average_monthly_income` (DECIMAL), `financial_literacy_level` (ENUM: LOW, MEDIUM, HIGH), `profile_completed` (BOOLEAN DEFAULT false), `currency` (VARCHAR 3 DEFAULT 'PEN'), `consent_given` (BOOLEAN DEFAULT false), `consent_at` (TIMESTAMP), `created_at` (TIMESTAMP), `updated_at` (TIMESTAMP). Refs: [US-0101](./user_stories.md#US-0101)
 
-- [ ] `P0` `backend` `database` -- **Transactions schema** -- Table `transactions`: `id` (UUID PK), `user_id` (FK → users), `type` (ENUM: INCOME, EXPENSE), `amount` (DECIMAL NOT NULL CHECK > 0), `category_id` (FK → categories), `description` (TEXT), `date` (DATE NOT NULL), `deleted_at` (TIMESTAMP nullable), `created_at` (TIMESTAMP), `updated_at` (TIMESTAMP). Indexes: `(user_id, date)`, `(user_id, category_id)`, `(user_id, type, date)`. Refs: [US-0201](./user_stories.md#US-0201)
+- [x] `P0` `backend` `database` -- **Transactions schema** -- Prisma model `Transaction` with `id`, `userId`, `type` (INCOME/EXPENSE enum), `amount`, `categoryId`, `description`, `date`, `deletedAt`, `createdAt`, `updatedAt`. Refs: [US-0201](./user_stories.md#US-0201)
 
-- [ ] `P0` `backend` `database` -- **Categories, budgets, goals schema** -- Tables `categories`, `budgets`, `goals` per specification in Phase 4 and 6. Foreign keys with ON DELETE CASCADE where appropriate. Check constraints for enums. Refs: [US-0301](./user_stories.md#US-0301)
+- [x] `P0` `backend` `database` -- **Categories, budgets, goals schema** -- Prisma models: `Category`, `Budget`, `SavingsGoal`, `GoalContribution`. Soft deletes via `deletedAt`. Refs: [US-0301](./user_stories.md#US-0301)
 
 - [ ] `P1` `backend` `database` -- **Gamification, AI, and evaluation schema** -- Tables: `educational_content`, `challenges`, `badges`, `user_badges`, `predictions`, `recommendations`, `surveys`, `survey_responses`, `analytics_events`, `audit_logs`, `feedback`. Refs: [US-0901](./user_stories.md#US-0901)
 
@@ -68,19 +70,19 @@
 
 > **Impact: Critical** — Without authentication there is no access to the app. Blocks all user functions.
 
-- [ ] `P0` `backend` `security` -- **Registration endpoint** -- `POST /api/v1/auth/register` accepts `email`, `password`, `name`. Validates correct email format, password >= 8 characters with uppercase, lowercase, and number. Creates user with active status. Returns JWT token. Hashing with bcrypt (cost factor 12). Refs: [US-0101](./user_stories.md#US-0101)
+- [x] `P0` `backend` `security` -- **Registration endpoint** -- `POST /api/v1/auth/register` with email/password/name. Bcrypt hashing. Returns access + refresh JWT tokens. Refs: [US-0101](./user_stories.md#US-0101)
 
-- [ ] `P0` `backend` `security` -- **Login endpoint** -- `POST /api/v1/auth/login` accepts `email`, `password`. Validates credentials. Returns JWT (expires in 30 days). Temporary lockout after 3 failed attempts (15 min lockout). Refs: [US-0102](./user_stories.md#US-0102)
+- [x] `P0` `backend` `security` -- **Login endpoint** -- `POST /api/v1/auth/login`. Returns access + refresh tokens. Logout and token refresh endpoints also implemented. Refs: [US-0102](./user_stories.md#US-0102)
 
-- [ ] `P0` `backend` `security` -- **JWT authentication middleware** -- Intercepts routes `/api/v1/*` (except `/auth/*`). Validates signature, expiration. Loads `user_id` into request context. Returns 401 if invalid. Refs: [US-0103](./user_stories.md#US-0103)
+- [x] `P0` `backend` `security` -- **JWT authentication middleware** -- Passport JWT strategy + `JwtAuthGuard`. `@UserId()` decorator extracts user from payload. Refs: [US-0103](./user_stories.md#US-0103)
 
-- [ ] `P0` `android` `ui` -- **Registration and login screens** -- Forms with real-time validation. Loading states. Error handling. JWT stored in EncryptedSharedPreferences. Refs: [US-0101](./user_stories.md#US-0101), [US-0102](./user_stories.md#US-0102)
+- [x] `P0` `flutter` `ui` -- **Registration and login screens** -- `login_screen.dart`, `register_screen.dart` with form validation. Token stored locally via `AuthApiService`. Refs: [US-0101](./user_stories.md#US-0101), [US-0102](./user_stories.md#US-0102)
 
-- [ ] `P1` `backend` -- **Password recovery** -- `POST /api/v1/auth/forgot-password` sends email with reset token (1h expiry). `POST /api/v1/auth/reset-password` accepts token + new password. Refs: [US-0104](./user_stories.md#US-0104)
+- [x] `P1` `backend` -- **Password recovery** -- `POST /api/v1/auth/forgot-password` sends email via `EmailService`. `POST /api/v1/auth/reset-password` accepts token + new password. Single-use token with expiry. Refs: [US-0104](./user_stories.md#US-0104)
 
-- [ ] `P1` `android` `ui` -- **Initial profile onboarding** -- After first login: age, university, income type, average income, currency. Saves `profile_completed = true`. Optional skip with importance message. Refs: [US-0105](./user_stories.md#US-0105)
+- [x] `P1` `flutter` `ui` -- **Initial profile onboarding** -- `onboarding_screen.dart` with multi-step flow. Refs: [US-0105](./user_stories.md#US-0105)
 
-- [ ] `P1` `android` `ui` -- **Profile editing** -- Allows editing personal data, currency, number format. Refs: [US-0106](./user_stories.md#US-0106)
+- [x] `P1` `flutter` `ui` -- **Profile editing** -- `profile_screen.dart` + `PUT /api/v1/users/me` via `UserApiService`. Refs: [US-0106](./user_stories.md#US-0106)
 
 ---
 
@@ -88,15 +90,15 @@
 
 > **Impact: Critical** — This is the app's primary action. Without transactions there is no data for anything else.
 
-- [ ] `P0` `backend` `api` -- **Transaction CRUD** -- `POST /api/v1/transactions` (create), `GET /api/v1/transactions` (list with filters and pagination), `GET /api/v1/transactions/{id}` (detail), `PUT /api/v1/transactions/{id}` (edit), `DELETE /api/v1/transactions/{id}` (soft delete). Ownership validation. Balance updated on each operation. Refs: [US-0201](./user_stories.md#US-0201) to [US-0206](./user_stories.md#US-0206)
+- [x] `P0` `backend` `api` -- **Transaction CRUD** -- Full CRUD in `transactions.controller.ts` with use-cases. Soft delete via `deletedAt`. Ownership validated via `@UserId()`. Refs: [US-0201](./user_stories.md#US-0201) to [US-0206](./user_stories.md#US-0206)
 
-- [ ] `P0` `android` `ui` -- **Transaction recording screen** -- Type selector (Income/Expense), numeric amount input, category selector (grid), date picker (default today), optional description. "Save" button. Confirmation message. Refs: [US-0201](./user_stories.md#US-0201)
+- [x] `P0` `flutter` `ui` -- **Transaction recording screen** -- `add_transaction_screen.dart` with type selector, amount, category, date picker, description. Refs: [US-0201](./user_stories.md#US-0201)
 
-- [ ] `P0` `android` `ui` -- **Main dashboard** -- Current month balance, last 5 transactions, FAB "+" to add. Pull-to-refresh. Loads in < 2 sec. Refs: [US-0204](./user_stories.md#US-0204)
+- [x] `P0` `flutter` `ui` -- **Main dashboard** -- `dashboard_screen.dart` with balance, recent transactions, FAB. Refs: [US-0204](./user_stories.md#US-0204)
 
-- [ ] `P1` `android` `ui` -- **History with filters** -- Complete transaction list. Filters: dates, category, type, amount. Search by description. Infinite scroll pagination. Refs: [US-0203](./user_stories.md#US-0203)
+- [x] `P1` `flutter` `ui` -- **History with filters** -- `transaction_list_screen.dart` with filters and pagination via `TransactionApiService`. Refs: [US-0203](./user_stories.md#US-0203)
 
-- [ ] `P2` `android` `ui` -- **Edit and delete** -- Tap on transaction opens editable detail. Delete button with confirmation. Immediate update of balance and reports. Refs: [US-0205](./user_stories.md#US-0205), [US-0206](./user_stories.md#US-0206)
+- [x] `P2` `flutter` `ui` -- **Edit and delete** -- Edit and delete flows implemented in transaction list and detail. Refs: [US-0205](./user_stories.md#US-0205), [US-0206](./user_stories.md#US-0206)
 
 ---
 
@@ -104,13 +106,13 @@
 
 > **Impact: High** — Foundation for reports, predictions, and budgets.
 
-- [ ] `P0` `backend` -- **Default categories (seed)** -- Expenses: Food, Transportation, Education, Entertainment, Health, Housing, Utilities, Clothing, Other. Income: Scholarship, Part-time work, Family, Freelance, Other. With assigned icons and colors. Refs: [US-0301](./user_stories.md#US-0301)
+- [x] `P0` `backend` -- **Default categories (seed)** -- Seeded via `prisma/seed.ts` with EXPENSE and INCOME categories including icon/color metadata. Refs: [US-0301](./user_stories.md#US-0301)
 
-- [ ] `P0` `backend` `api` -- **Custom categories CRUD** -- Create, list, edit, delete custom categories. Validate that categories with transactions cannot be deleted. Refs: [US-0302](./user_stories.md#US-0302)
+- [x] `P0` `backend` `api` -- **Custom categories CRUD** -- Full CRUD in `categories.controller.ts`. `resolve-category` use-case handles system vs user-owned logic. Refs: [US-0302](./user_stories.md#US-0302)
 
-- [ ] `P0` `android` `ui` -- **Category selector** -- Grid with icons/colors. "Create new" option. Quick creation modal. Refs: [US-0301](./user_stories.md#US-0301)
+- [x] `P0` `flutter` `ui` -- **Category selector** -- Category grid integrated in transaction recording screen via `CategoryApiService`. Refs: [US-0301](./user_stories.md#US-0301)
 
-- [ ] `P1` `android` `ui` -- **Category management** -- Custom category administration screen. Refs: [US-0302](./user_stories.md#US-0302)
+- [x] `P1` `flutter` `ui` -- **Category management** -- `category_management_screen.dart` for custom category administration. Refs: [US-0302](./user_stories.md#US-0302)
 
 ---
 
@@ -118,13 +120,13 @@
 
 > **Impact: High** — Visibility into financial habits. Prerequisite for predictions to have context.
 
-- [ ] `P0` `backend` `api` -- **Report endpoints** -- Monthly, weekly, daily summary. Multi-month comparison. Each returns totals, breakdown by category with percentages. Response < 2 sec. Refs: [US-0401](./user_stories.md#US-0401) to [US-0404](./user_stories.md#US-0404)
+- [x] `P0` `backend` `api` -- **Report endpoints** -- `summary.controller.ts` for daily/weekly/monthly/comparison. `InsightsApiService` (frontend). Refs: [US-0401](./user_stories.md#US-0401) to [US-0404](./user_stories.md#US-0404)
 
-- [ ] `P0` `android` `ui` -- **Monthly summary screen** -- Total income/expenses/balance, pie chart by category, top 3 categories. Month selector. Refs: [US-0401](./user_stories.md#US-0401)
+- [x] `P0` `flutter` `ui` -- **Monthly summary screen** -- `reports_screen.dart` with income/expense breakdown and charts via `fl_chart`. Refs: [US-0401](./user_stories.md#US-0401)
 
-- [ ] `P1` `android` `ui` -- **Interactive charts** -- Bar charts by category, comparative line charts by month. MPAndroidChart library. Tap for detail. Refs: [US-0405](./user_stories.md#US-0405)
+- [x] `P1` `flutter` `ui` -- **Interactive charts** -- Charts implemented with `fl_chart` (replaces MPAndroidChart from original Kotlin plan). Refs: [US-0405](./user_stories.md#US-0405)
 
-- [ ] `P2` `backend` `api` -- **PDF export** -- Generates PDF with complete summary. Temporary download URL (24h). Refs: [US-0406](./user_stories.md#US-0406)
+- [x] `P2` `backend` `api` -- **PDF export** -- `generate-pdf-report.use-case.ts` + `reports.controller.ts`. Refs: [US-0406](./user_stories.md#US-0406)
 
 ---
 
@@ -132,15 +134,15 @@
 
 > **Impact: High** — Prerequisite for intelligent alerts. Goals give purpose to savings.
 
-- [ ] `P0` `backend` `api` -- **Budget CRUD** -- Create budget by category or global. List with `current_spent` and `percentage_used`. Edit and delete. Refs: [US-0501](./user_stories.md#US-0501)
+- [x] `P0` `backend` `api` -- **Budget CRUD** -- `budgets.controller.ts` with `current_spent` and `percentage_used` computed in `prisma-budgets.repository.ts`. Refs: [US-0501](./user_stories.md#US-0501)
 
-- [ ] `P0` `android` `ui` -- **Budget screen** -- List with progress bars (green/yellow/red). Creation modal. Refs: [US-0501](./user_stories.md#US-0501)
+- [x] `P0` `flutter` `ui` -- **Budget screen** -- `budget_screen.dart` with progress bars and creation flow via `BudgetApiService`. Refs: [US-0501](./user_stories.md#US-0501)
 
-- [ ] `P1` `backend` `api` -- **Financial goals CRUD** -- Create goal with name, target amount, deadline. List with progress. Contribute to goal. Refs: [US-0502](./user_stories.md#US-0502)
+- [x] `P1` `backend` `api` -- **Financial goals CRUD** -- `goals.controller.ts` with contribute endpoint. `GoalContribution` records tracked. Refs: [US-0502](./user_stories.md#US-0502)
 
-- [ ] `P1` `android` `ui` -- **Goals screen** -- Cards with progress, contribute button, completion animation. Refs: [US-0502](./user_stories.md#US-0502)
+- [x] `P1` `flutter` `ui` -- **Goals screen** -- `goals_screen.dart` with progress cards and contribute button via `GoalsApiService`. Refs: [US-0502](./user_stories.md#US-0502)
 
-- [ ] `P2` `android` `ui` -- **Goal detail** -- Contribution history, progress chart, completion projection. Refs: [US-0503](./user_stories.md#US-0503)
+- [x] `P2` `flutter` `ui` -- **Goal detail** -- `goal_detail_screen.dart` with contribution history and progress. Refs: [US-0503](./user_stories.md#US-0503)
 
 ---
 
@@ -310,22 +312,22 @@
 
 | Phase | Name | Sprint(s) | Duration | Status |
 |-------|------|-----------|----------|--------|
-| 1 | Infrastructure and Setup | Sprint 1 | 3 weeks | -- |
-| 2 | Authentication and Users | Sprint 1-2 | 3 weeks | -- |
-| 3 | Transaction Recording | Sprint 2-3 | 4 weeks | -- |
-| 4 | Categorization | Sprint 3 | 2 weeks | -- |
-| 5 | Reports and Visualization | Sprint 4-5 | 4 weeks | -- |
-| 6 | Budgets and Goals | Sprint 5-6 | 3 weeks | -- |
-| 7 | ML Pipeline (Data) | Sprint 6-7 | 4 weeks | -- |
-| 8 | AI Predictions | Sprint 7-8 | 4 weeks | -- |
-| 9 | Recommendations | Sprint 8-9 | 3 weeks | -- |
-| 10 | Education and Gamification | Sprint 9-10 | 4 weeks | -- |
-| 11 | Notifications | Sprint 10 | 2 weeks | -- |
-| 12 | Pre/Post Evaluation | Sprint 11 | 3 weeks | -- |
-| 13 | Security and Compliance | Sprint 11-12 | 3 weeks | -- |
-| 14 | Testing and Quality | Sprint 12-13 | 3 weeks | -- |
-| 15 | Feedback and Analytics | Sprint 13 | 2 weeks | -- |
-| 16 | Demo Readiness | Sprint 14 | 2 weeks | -- |
+| 1 | Infrastructure and Setup | Sprint 1 | 3 weeks | Done (CI/CD pending) |
+| 2 | Authentication and Users | Sprint 1-2 | 3 weeks | Done |
+| 3 | Transaction Recording | Sprint 2-3 | 4 weeks | Done |
+| 4 | Categorization | Sprint 3 | 2 weeks | Done |
+| 5 | Reports and Visualization | Sprint 4-5 | 4 weeks | Done |
+| 6 | Budgets and Goals | Sprint 5-6 | 3 weeks | Done |
+| 7 | ML Pipeline (Data) | Sprint 6-7 | 4 weeks | Not Started |
+| 8 | AI Predictions | Sprint 7-8 | 4 weeks | Not Started |
+| 9 | Recommendations | Sprint 8-9 | 3 weeks | Not Started |
+| 10 | Education and Gamification | Sprint 9-10 | 4 weeks | Not Started |
+| 11 | Notifications | Sprint 10 | 2 weeks | Not Started |
+| 12 | Pre/Post Evaluation | Sprint 11 | 3 weeks | Not Started |
+| 13 | Security and Compliance | Sprint 11-12 | 3 weeks | Not Started |
+| 14 | Testing and Quality | Sprint 12-13 | 3 weeks | Not Started |
+| 15 | Feedback and Analytics | Sprint 13 | 2 weeks | Not Started |
+| 16 | Demo Readiness | Sprint 14 | 2 weeks | Not Started |
 
 ---
 
