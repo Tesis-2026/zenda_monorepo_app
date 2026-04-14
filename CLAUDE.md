@@ -38,8 +38,7 @@ Tesis2026/
   - Local storage: SharedPreferences via `LocalKvStore`
   - Theme: Light/dark themes in `lib/core/theme/`
   - Models in `lib/core/models/`, services in `lib/core/services/`
-  - API services in `lib/core/services/` — one service per backend module (auth, transactions, budgets, goals, categories, insights, users)
-  - Localization: `lib/l10n/` with English and Spanish via Flutter gen-l10n (`AppLocalizations`)
+  - Currently local-only (no API integration yet)
 
 ## Key Design Decisions
 - 50/30/20 budget rule: Needs / Wants / Savings

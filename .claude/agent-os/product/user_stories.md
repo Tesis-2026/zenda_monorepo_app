@@ -26,7 +26,7 @@
 - [ ] Registration screen with real-time validation
 
 **Story Points:** 5
-**Status:** Done
+**Status:** Not Started
 **Phase:** 2 — Authentication
 
 ---
@@ -45,7 +45,7 @@
 - [ ] Auto-login if valid JWT exists when opening app
 
 **Story Points:** 5
-**Status:** Done
+**Status:** Not Started
 **Phase:** 2 — Authentication
 
 ---
@@ -64,7 +64,7 @@
 - [ ] Logging of unauthorized access attempts
 
 **Story Points:** 3
-**Status:** Done
+**Status:** Not Started
 **Phase:** 2 — Authentication
 
 ---
@@ -83,7 +83,7 @@
 - [ ] Confirmation message: "Check your email"
 
 **Story Points:** 3
-**Status:** Done
+**Status:** Not Started
 **Phase:** 2 — Authentication
 
 ---
@@ -102,7 +102,7 @@
 - [ ] Data editable later in profile
 
 **Story Points:** 5
-**Status:** Done
+**Status:** Not Started
 **Phase:** 2 — Authentication
 
 ---
@@ -121,7 +121,7 @@
 - [ ] Changes saved with visual confirmation
 
 **Story Points:** 3
-**Status:** Done
+**Status:** Not Started
 **Phase:** 2 — Authentication
 
 ---
@@ -144,7 +144,7 @@
 - [ ] Balance on main screen updates immediately
 
 **Story Points:** 5
-**Status:** Done
+**Status:** Not Started
 **Phase:** 3 — Transaction Recording
 
 ---
@@ -162,7 +162,7 @@
 - [ ] If expense exceeds category average (>20%), triggers anomaly detection
 
 **Story Points:** 5
-**Status:** Done
+**Status:** Not Started
 **Phase:** 3 — Transaction Recording
 
 ---
@@ -181,7 +181,7 @@
 - [ ] Response time < 2 seconds with 1000+ transactions
 
 **Story Points:** 5
-**Status:** Done
+**Status:** Not Started
 **Phase:** 3 — Transaction Recording
 
 ---
@@ -200,7 +200,7 @@
 - [ ] "Suggestions" section with latest AI recommendation (if available)
 
 **Story Points:** 8
-**Status:** Done
+**Status:** Not Started
 **Phase:** 3 — Transaction Recording
 
 ---
@@ -219,7 +219,7 @@
 - [ ] "Save changes" button with confirmation
 
 **Story Points:** 3
-**Status:** Done
+**Status:** Not Started
 **Phase:** 3 — Transaction Recording
 
 ---
@@ -237,7 +237,7 @@
 - [ ] Balance recalculated immediately
 
 **Story Points:** 2
-**Status:** Done
+**Status:** Not Started
 **Phase:** 3 — Transaction Recording
 
 ---
@@ -259,7 +259,7 @@
 - [ ] Not deletable or editable (system categories)
 
 **Story Points:** 3
-**Status:** Done
+**Status:** Not Started
 **Phase:** 4 — Categorization
 
 ---
@@ -278,7 +278,7 @@
 - [ ] Quick creation modal: name, icon selection, color selection
 
 **Story Points:** 5
-**Status:** Done
+**Status:** Not Started
 **Phase:** 4 — Categorization
 
 ---
@@ -301,7 +301,7 @@
 - [ ] Response time < 2 seconds
 
 **Story Points:** 8
-**Status:** Done
+**Status:** Not Started
 **Phase:** 5 — Reports
 
 ---
@@ -317,7 +317,7 @@
 - [ ] Week selector with visible dates (Mon-Sun)
 
 **Story Points:** 3
-**Status:** Done
+**Status:** Not Started
 **Phase:** 5 — Reports
 
 ---
@@ -333,7 +333,7 @@
 - [ ] Visual calendar with spending indicator per day (color by intensity)
 
 **Story Points:** 3
-**Status:** Done
+**Status:** Not Started
 **Phase:** 5 — Reports
 
 ---
@@ -350,7 +350,7 @@
 - [ ] Clear visualization of trends (up/down)
 
 **Story Points:** 5
-**Status:** Done
+**Status:** Not Started
 **Phase:** 5 — Reports
 
 ---
@@ -368,7 +368,7 @@
 - [ ] Library: MPAndroidChart
 
 **Story Points:** 5
-**Status:** Done
+**Status:** Not Started
 **Phase:** 5 — Reports
 
 ---
@@ -386,7 +386,7 @@
 - [ ] Temporary download URL (24 hours)
 
 **Story Points:** 5
-**Status:** Done
+**Status:** Not Started
 **Phase:** 5 — Reports
 
 ---
@@ -408,7 +408,7 @@
 - [ ] Creation modal: select category or "General", enter limit amount
 
 **Story Points:** 8
-**Status:** Done
+**Status:** Not Started
 **Phase:** 6 — Budgets and Goals
 
 ---
@@ -427,7 +427,7 @@
 - [ ] Completion animation when current_amount >= target_amount
 
 **Story Points:** 5
-**Status:** Done
+**Status:** Not Started
 **Phase:** 6 — Budgets and Goals
 
 ---
@@ -444,7 +444,7 @@
 - [ ] Alert if projection indicates it won't be met before deadline
 
 **Story Points:** 5
-**Status:** Done
+**Status:** Not Started
 **Phase:** 6 — Budgets and Goals
 
 ---
@@ -982,9 +982,9 @@
 - **Phase 13-16:** Security + Testing + Demo — 10 stories, 47 points
 
 **Status Overview:**
-- Done: 23 (Epics 1–5: Auth, Transactions, Categories, Reports, Budgets/Goals)
+- Done: 0
 - In Progress: 0
-- Not Started: 32 (Epics 6–18: ML, Predictions, Recommendations, Education, Gamification, Notifications, Evaluation, Security, Testing, Feedback, Analytics, Demo)
+- Not Started: 55
 - Blocked: 0
 
 ---
