@@ -11,7 +11,7 @@
 ' DIAGRAM 1 -- System Context (C4 Level 1)
 ' ─────────────────────────────────────────────────────────────
 @startuml ZendaSystemContext
-!theme plain
+
 skinparam backgroundColor #FAFAFA
 
 title Zenda -- System Context
@@ -40,7 +40,7 @@ Dev --> API : Swagger UI (/api/docs)
 ' DIAGRAM 2 -- Backend Module Architecture (C4 Level 2)
 ' ─────────────────────────────────────────────────────────────
 @startuml ZendaBackendModules
-!theme plain
+
 skinparam backgroundColor #FAFAFA
 skinparam componentStyle rectangle
 
@@ -103,7 +103,7 @@ Guard ..> Insights : protects
 ' DIAGRAM 3 -- DDD Layer Internals (Auth module)
 ' ─────────────────────────────────────────────────────────────
 @startuml ZendaAuthDDD
-!theme plain
+
 skinparam backgroundColor #FAFAFA
 skinparam packageStyle rectangle
 skinparam linetype ortho
@@ -173,7 +173,7 @@ PrismaRefreshTokenRepository ..|> IRefreshTokenRepository
 ' DIAGRAM 4 -- Auth Flow (Sequence)
 ' ─────────────────────────────────────────────────────────────
 @startuml ZendaAuthFlow
-!theme plain
+
 skinparam backgroundColor #FAFAFA
 
 title Zenda -- Full Authentication Flow
@@ -255,7 +255,7 @@ App --> Student : navigate to /auth/login
 ' DIAGRAM 5 -- Flutter Frontend Architecture
 ' ─────────────────────────────────────────────────────────────
 @startuml ZendaFlutterArch
-!theme plain
+
 skinparam backgroundColor #FAFAFA
 skinparam linetype ortho
 
@@ -365,7 +365,7 @@ GoalsScreen --> GoalsProv
 ' DIAGRAM 6 -- Database ERD (Core Models)
 ' ─────────────────────────────────────────────────────────────
 @startuml ZendaERD
-!theme plain
+
 skinparam backgroundColor #FAFAFA
 skinparam linetype ortho
 
@@ -540,7 +540,7 @@ Badge ||--o{ UserBadge : "awarded via"
 ' DIAGRAM 7 -- Request Lifecycle (Authenticated API Call)
 ' ─────────────────────────────────────────────────────────────
 @startuml ZendaRequestLifecycle
-!theme plain
+
 skinparam backgroundColor #FAFAFA
 
 title Zenda -- Authenticated API Request Lifecycle
