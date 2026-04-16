@@ -272,7 +272,7 @@
 **Acceptance Criteria:**
 - [x] `POST /api/categories` creates category: name, type (INCOME/EXPENSE), icon, color
 - [x] `GET /api/categories` returns default + user's custom categories
-- [ ] `PUT /api/categories/{id}` edits name/icon/color (endpoint not yet implemented)
+- [x] `PUT /api/categories/{id}` edits name/icon/color (ownership validated)
 - [x] `DELETE /api/categories/{id}` deletes (custom only, error if has transactions)
 - [x] "Create new category" option visible when recording transaction
 - [x] Quick creation modal: name, icon selection, color selection
