@@ -1,0 +1,44 @@
+@startuml ZendaRequestLifecycle
+skinparam backgroundColor #FAFAFA
+
+title Zenda -- Authenticated API Request Lifecycle
+
+participant "Flutter\nApiClient" as Client
+participant "ThrottlerGuard\n(120 req/min)" as Throttle
+participant "Helmet +\nCORS Middleware" as Security
+participant "RequestLogging\nInterceptor" as Logger
+participant "JwtAuthGuard\n(Passport)" as JWT
+participant "ValidationPipe\n(class-validator)" as Validate
+participant "Controller" as Ctrl
+participant "UseCase" as UC
+participant "Repository\n(Infrastructure)" as Repo
+participant "PrismaService" as Prisma
+participant "GlobalException\nFilter" as ErrFilter
+participant "PostgreSQL" as DB
+
+Client -> Throttle : incoming request
+Throttle -> Security : passes rate limit check
+Security -> Logger : sets security headers + CORS
+Logger -> JWT : logs request start + timer
+JWT -> JWT : verifies Bearer token, extracts userId
+JWT -> Validate : injects userId into req.user
+Validate -> Ctrl : validates DTO shape + constraints
+Ctrl -> UC : calls use case with DTO + userId
+UC -> Repo : calls repository port (abstract class)
+Repo -> Prisma : Prisma query (includes deletedAt: null)
+Prisma -> DB : SQL
+DB --> Prisma : rows
+Prisma --> Repo : raw Prisma result
+Repo --> UC : mapped domain entity
+UC --> Ctrl : domain result
+Ctrl -> Logger : wraps in SuccessResponseDto
+Logger --> Client : 200 { data, success } + elapsed logged
+
+note over ErrFilter
+  On any thrown exception,
+  GlobalExceptionFilter catches it
+  and maps to structured error JSON
+  before the response is sent.
+end note
+
+@enduml

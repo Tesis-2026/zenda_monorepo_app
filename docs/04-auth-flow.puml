@@ -1,0 +1,76 @@
+@startuml ZendaAuthFlow
+skinparam backgroundColor #FAFAFA
+
+title Zenda -- Full Authentication Flow
+
+actor Student
+participant "Flutter App\n(AuthNotifier)" as App
+participant "ApiClient\n(flutter_secure_storage)" as Client
+participant "NestJS API\n/api/auth" as API
+participant "PostgreSQL" as DB
+participant "SMTP / Email" as Mail
+
+== Registration ==
+Student -> App : fill name / email / password
+App -> Client : POST /auth/register
+Client -> API : { fullName, email, password }
+API -> API : validate DTO (class-validator)
+API -> API : bcrypt.hash(password, 10)
+API -> DB : INSERT User (consentGiven=true)
+API -> API : sign accessToken (15 min JWT)\nsign refreshToken (7 d JWT)
+API -> DB : INSERT RefreshToken
+API --> Client : { accessToken, refreshToken, user }
+Client -> Client : secureStorage.write\n(access + refresh tokens)
+Client --> App : AuthState.authenticated(user)
+App --> Student : navigate to /dashboard
+
+== Login (returning user) ==
+Student -> App : email + password
+App -> Client : POST /auth/login
+Client -> API : { email, password }
+API -> DB : SELECT User WHERE email
+API -> API : bcrypt.compare(password, hash)
+API -> API : sign new token pair
+API -> DB : INSERT RefreshToken (revoke old ones)
+API --> Client : { accessToken, refreshToken, user }
+Client -> Client : persist tokens
+Client --> App : AuthState.authenticated(user)
+
+== Silent Token Refresh (on 401) ==
+App -> Client : any authenticated request
+Client -> API : Bearer [accessToken]
+API --> Client : 401 Unauthorized (token expired)
+Client -> API : POST /auth/refresh { refreshToken }
+API -> DB : SELECT RefreshToken WHERE token
+API -> API : validate not expired, sign new pair
+API -> DB : DELETE old / INSERT new RefreshToken
+API --> Client : { accessToken, refreshToken }
+Client -> Client : overwrite stored tokens
+Client -> API : retry original request
+API --> Client : 200 OK
+
+== Password Reset ==
+Student -> App : Forgot password - enter email
+App -> Client : POST /auth/forgot-password
+Client -> API : { email }
+API -> DB : INSERT PasswordResetToken (32-byte, 1h TTL)
+API -> Mail : send reset link with token
+Mail --> Student : email with reset link
+Student -> App : click link - enter new password
+App -> Client : POST /auth/reset-password { token, newPassword }
+API -> DB : SELECT token, check not expired / not used
+API -> API : bcrypt.hash(newPassword)
+API -> DB : UPDATE User.passwordHash, mark token used
+API --> Client : 204 No Content
+
+== Logout ==
+Student -> App : tap Logout
+App -> Client : POST /auth/logout (Bearer)
+Client -> API : revoke all refresh tokens for userId
+API -> DB : DELETE RefreshTokens WHERE userId
+API --> Client : 204 No Content
+Client -> Client : secureStorage delete tokens
+Client --> App : AuthState.unauthenticated()
+App --> Student : navigate to /auth/login
+
+@enduml

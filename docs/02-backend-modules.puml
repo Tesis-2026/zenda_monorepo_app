@@ -1,0 +1,57 @@
+@startuml ZendaBackendModules
+skinparam backgroundColor #FAFAFA
+skinparam componentStyle rectangle
+
+title Zenda Backend -- NestJS Module Architecture
+
+package "AppModule (root)" {
+
+  package "infra/ (Cross-cutting)" {
+    [PrismaModule\nGlobal PrismaService] as Prisma
+    [EmailModule\nEmailService (nodemailer)] as MailMod
+    [AiModule\nLocalRulesProvider stub\n(Phase 8+)] as AiMod
+  }
+
+  package "shared/ (Utilities)" {
+    [GlobalExceptionFilter] as Filter
+    [JwtAuthGuard] as Guard
+    [AppLogger +\nRequestLoggingInterceptor] as Logger
+    [ConfigFactory] as Config
+    [SuccessResponseDto] as RespDto
+  }
+
+  package "modules/ (7 Bounded Contexts)" {
+    [AuthModule\nRegister / Login / JWT\nForgotPwd / ResetPwd\nRefresh / Logout] as Auth
+    [UsersModule\nGET /users/me\nPUT /users/me] as Users
+    [TransactionsModule\nCRUD + filters\nGET/POST/PUT/DELETE] as Tx
+    [CategoriesModule\nSystem + custom\nCRUD + soft-delete] as Cat
+    [BudgetsModule\nMonthly budgets\nunique(user+cat+month+year)] as Budgets
+    [GoalsModule\nSavings goals\ncontribute endpoint] as Goals
+    [InsightsModule\nMonthly/weekly/daily\nsummary aggregation] as Insights
+  }
+
+  [HealthController\nGET /api/health] as Health
+  [ThrottlerModule\n120 req/min global] as Throttler
+}
+
+database "PostgreSQL 15\n(Docker)" as DB
+
+Auth --> Prisma
+Auth --> MailMod
+Users --> Prisma
+Tx --> Prisma
+Cat --> Prisma
+Budgets --> Prisma
+Goals --> Prisma
+Insights --> Prisma
+Prisma --> DB
+
+Auth ..> Guard : exports JwtAuthGuard
+Guard ..> Users : protects
+Guard ..> Tx : protects
+Guard ..> Cat : protects
+Guard ..> Budgets : protects
+Guard ..> Goals : protects
+Guard ..> Insights : protects
+
+@enduml

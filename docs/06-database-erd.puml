@@ -1,0 +1,169 @@
+@startuml ZendaERD
+skinparam backgroundColor #FAFAFA
+skinparam linetype ortho
+
+title Zenda -- Database ERD (Core Models)
+
+entity User {
+  * id : UUID PK
+  --
+  * email : TEXT UNIQUE
+  * passwordHash : TEXT
+  * fullName : TEXT
+  age : INT nullable
+  university : TEXT nullable
+  incomeType : ENUM nullable
+  averageMonthlyIncome : Decimal(12,2) nullable
+  financialLiteracyLevel : ENUM nullable
+  profileCompleted : BOOL
+  currency : VARCHAR(3)
+  consentGiven : BOOL
+  consentAt : DateTime nullable
+  deletedAt : DateTime nullable
+}
+
+entity Transaction {
+  * id : UUID PK
+  --
+  * userId : UUID FK
+  categoryId : UUID FK nullable
+  * type : INCOME | EXPENSE
+  * amount : Decimal(12,2)
+  description : TEXT nullable
+  occurredAt : DateTime
+  deletedAt : DateTime nullable
+}
+
+entity Category {
+  * id : UUID PK
+  --
+  * name : TEXT
+  * type : SYSTEM | CUSTOM
+  transactionType : ENUM nullable
+  userId : UUID FK nullable (null = system)
+  deletedAt : DateTime nullable
+}
+
+entity Budget {
+  * id : UUID PK
+  --
+  * userId : UUID FK
+  categoryId : UUID FK nullable
+  * amountLimit : Decimal(12,2)
+  * month : INT
+  * year : INT
+  deletedAt : DateTime nullable
+  .. unique: userId + categoryId + month + year ..
+}
+
+entity SavingsGoal {
+  * id : UUID PK
+  --
+  * userId : UUID FK
+  * name : TEXT
+  * targetAmount : Decimal(12,2)
+  currentAmount : Decimal(12,2)
+  targetDate : DateTime nullable
+  deletedAt : DateTime nullable
+}
+
+entity GoalContribution {
+  * id : UUID PK
+  --
+  * goalId : UUID FK
+  * amount : Decimal(12,2)
+  createdAt : DateTime
+}
+
+entity PasswordResetToken {
+  * id : UUID PK
+  --
+  * userId : UUID FK
+  * token : TEXT UNIQUE
+  * expiresAt : DateTime
+  usedAt : DateTime nullable
+}
+
+entity RefreshToken {
+  * id : UUID PK
+  --
+  * userId : UUID FK
+  * token : TEXT UNIQUE
+  * expiresAt : DateTime
+}
+
+entity Prediction {
+  * id : UUID PK
+  --
+  * userId : UUID FK
+  * period : TEXT (YYYY-MM)
+  * type : INCOME | EXPENSE
+  * predictedTotal : Decimal(12,2)
+  predictedByCategory : JSON nullable
+  confidenceInterval : JSON nullable
+  actualTotal : Decimal(12,2) nullable
+  accuracy : Decimal(5,2) nullable
+  .. unique: userId + period + type ..
+}
+
+entity Recommendation {
+  * id : UUID PK
+  --
+  * userId : UUID FK
+  * type : SAVINGS | BUDGET | GOAL
+  * message : TEXT
+  suggestedAction : TEXT nullable
+}
+
+entity Challenge {
+  * id : UUID PK
+  --
+  title : TEXT
+  criteriaJson : JSON
+}
+
+entity UserChallenge {
+  * id : UUID PK
+  --
+  * userId : UUID FK
+  * challengeId : UUID FK
+  * status : AVAILABLE | ACTIVE | COMPLETED
+  acceptedAt : DateTime nullable
+  completedAt : DateTime nullable
+}
+
+entity Badge {
+  * id : UUID PK
+  --
+  * name : TEXT UNIQUE
+  description : TEXT
+  criteria : TEXT
+}
+
+entity UserBadge {
+  * id : UUID PK
+  --
+  * userId : UUID FK
+  * badgeId : UUID FK
+  earnedAt : DateTime
+}
+
+User ||--o{ Transaction : "has"
+User ||--o{ Category : "creates custom"
+User ||--o{ Budget : "defines"
+User ||--o{ SavingsGoal : "sets"
+User ||--o{ PasswordResetToken : "owns"
+User ||--o{ RefreshToken : "owns"
+User ||--o{ Prediction : "has"
+User ||--o{ Recommendation : "receives"
+User ||--o{ UserChallenge : "participates"
+User ||--o{ UserBadge : "earns"
+
+Transaction }o--|| Category : "classified by"
+Budget }o--o| Category : "targets"
+SavingsGoal ||--o{ GoalContribution : "receives"
+
+Challenge ||--o{ UserChallenge : "assigned via"
+Badge ||--o{ UserBadge : "awarded via"
+
+@enduml
