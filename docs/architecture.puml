@@ -1,18 +1,20 @@
 ' ============================================================
-' Zenda — Full Architecture Diagrams
+' Zenda -- Full Architecture Diagrams
 ' Generated: 2026-04-15
 ' Render with PlantUML (https://plantuml.com) or the VS Code
 ' PlantUML extension (jebbs.plantuml).
+' Each @startuml block is a separate diagram (7 total).
+' In VS Code: Alt+D to preview, use arrows to page between diagrams.
 ' ============================================================
 
 ' ─────────────────────────────────────────────────────────────
-' DIAGRAM 1 — System Context (C4 Level 1)
+' DIAGRAM 1 -- System Context (C4 Level 1)
 ' ─────────────────────────────────────────────────────────────
 @startuml ZendaSystemContext
 !theme plain
 skinparam backgroundColor #FAFAFA
 
-title Zenda — System Context
+title Zenda -- System Context
 
 actor "University Student\n(18-24, Lima)" as User
 actor "Developer / Admin" as Dev
@@ -35,14 +37,14 @@ Dev --> API : Swagger UI (/api/docs)
 
 
 ' ─────────────────────────────────────────────────────────────
-' DIAGRAM 2 — Backend Module Architecture (C4 Level 2)
+' DIAGRAM 2 -- Backend Module Architecture (C4 Level 2)
 ' ─────────────────────────────────────────────────────────────
 @startuml ZendaBackendModules
 !theme plain
 skinparam backgroundColor #FAFAFA
 skinparam componentStyle rectangle
 
-title Zenda Backend — NestJS Module Architecture
+title Zenda Backend -- NestJS Module Architecture
 
 package "AppModule (root)" {
 
@@ -65,7 +67,7 @@ package "AppModule (root)" {
     [UsersModule\nGET /users/me\nPUT /users/me] as Users
     [TransactionsModule\nCRUD + filters\nGET/POST/PUT/DELETE] as Tx
     [CategoriesModule\nSystem + custom\nCRUD + soft-delete] as Cat
-    [BudgetsModule\nMonthly budgets\n@@unique(user+cat+month+year)] as Budgets
+    [BudgetsModule\nMonthly budgets\nunique(user+cat+month+year)] as Budgets
     [GoalsModule\nSavings goals\ncontribute endpoint] as Goals
     [InsightsModule\nMonthly/weekly/daily\nsummary aggregation] as Insights
   }
@@ -98,7 +100,7 @@ Guard ..> Insights : protects
 
 
 ' ─────────────────────────────────────────────────────────────
-' DIAGRAM 3 — DDD Layer Internals (Auth module)
+' DIAGRAM 3 -- DDD Layer Internals (Auth module)
 ' ─────────────────────────────────────────────────────────────
 @startuml ZendaAuthDDD
 !theme plain
@@ -106,7 +108,7 @@ skinparam backgroundColor #FAFAFA
 skinparam packageStyle rectangle
 skinparam linetype ortho
 
-title Auth Module — DDD Layers (pattern applies to all 7 modules)
+title Auth Module -- DDD Layers (pattern applies to all 7 modules)
 
 package "interface/ (HTTP boundary)" {
   class AuthController {
@@ -132,7 +134,7 @@ package "application/ (Orchestration)" {
   class LogoutUseCase
 }
 
-package "domain/ (Pure TypeScript — zero NestJS decorators)" {
+package "domain/ (Pure TypeScript -- zero NestJS decorators)" {
   abstract class IUserRepository <<port>>
   abstract class IPasswordResetTokenRepository <<port>>
   abstract class IRefreshTokenRepository <<port>>
@@ -168,13 +170,13 @@ PrismaRefreshTokenRepository ..|> IRefreshTokenRepository
 
 
 ' ─────────────────────────────────────────────────────────────
-' DIAGRAM 4 — Auth Flow (Sequence)
+' DIAGRAM 4 -- Auth Flow (Sequence)
 ' ─────────────────────────────────────────────────────────────
 @startuml ZendaAuthFlow
 !theme plain
 skinparam backgroundColor #FAFAFA
 
-title Zenda — Full Authentication Flow
+title Zenda -- Full Authentication Flow
 
 actor Student
 participant "Flutter App\n(AuthNotifier)" as App
@@ -211,7 +213,7 @@ Client --> App : AuthState.authenticated(user)
 
 == Silent Token Refresh (on 401) ==
 App -> Client : any authenticated request
-Client -> API : Bearer <accessToken>
+Client -> API : Bearer [accessToken]
 API --> Client : 401 Unauthorized (token expired)
 Client -> API : POST /auth/refresh\n{ refreshToken }
 API -> DB : SELECT RefreshToken WHERE token
@@ -223,13 +225,13 @@ Client -> API : retry original request
 API --> Client : 200 OK
 
 == Password Reset ==
-Student -> App : "Forgot password" — enter email
+Student -> App : "Forgot password" - enter email
 App -> Client : POST /auth/forgot-password
 Client -> API : { email }
 API -> DB : INSERT PasswordResetToken\n(32-byte token, 1 h TTL)
 API -> Mail : send reset link with token
 Mail --> Student : email with reset link
-Student -> App : click link — enter new password
+Student -> App : click link - enter new password
 App -> Client : POST /auth/reset-password\n{ token, newPassword }
 API -> DB : SELECT PasswordResetToken WHERE token\ncheck not expired / not used
 API -> API : bcrypt.hash(newPassword)
@@ -250,14 +252,14 @@ App --> Student : navigate to /auth/login
 
 
 ' ─────────────────────────────────────────────────────────────
-' DIAGRAM 5 — Flutter Frontend Architecture
+' DIAGRAM 5 -- Flutter Frontend Architecture
 ' ─────────────────────────────────────────────────────────────
 @startuml ZendaFlutterArch
 !theme plain
 skinparam backgroundColor #FAFAFA
 skinparam linetype ortho
 
-title Zenda Flutter — Feature Architecture
+title Zenda Flutter -- Feature Architecture
 
 package "main.dart + MaterialApp.router" {
   [routerProvider\n(GoRouter + Riverpod)] as Router
@@ -316,7 +318,7 @@ package "core/services/ (API Layer)" {
 }
 
 package "providers/ (Riverpod)" {
-  [authNotifierProvider\nNotifier<AuthState>] as AuthProv
+  [authNotifierProvider\nNotifier of AuthState] as AuthProv
   [budgetProvider\nAsyncNotifier] as BudgetProv
   [goalsProvider\nAsyncNotifier] as GoalsProv
   [streakNotifier] as StreakProv
@@ -360,14 +362,14 @@ GoalsScreen --> GoalsProv
 
 
 ' ─────────────────────────────────────────────────────────────
-' DIAGRAM 6 — Database ERD (Core Models)
+' DIAGRAM 6 -- Database ERD (Core Models)
 ' ─────────────────────────────────────────────────────────────
 @startuml ZendaERD
 !theme plain
 skinparam backgroundColor #FAFAFA
 skinparam linetype ortho
 
-title Zenda — Database ERD (Core Models)
+title Zenda -- Database ERD (Core Models)
 
 entity User {
   * id : UUID PK
@@ -375,51 +377,50 @@ entity User {
   * email : TEXT UNIQUE
   * passwordHash : TEXT
   * fullName : TEXT
-  age : INT?
-  university : TEXT?
-  incomeType : ENUM?
-  averageMonthlyIncome : Decimal(12,2)?
-  financialLiteracyLevel : ENUM?
+  age : INT nullable
+  university : TEXT nullable
+  incomeType : ENUM nullable
+  averageMonthlyIncome : Decimal(12,2) nullable
+  financialLiteracyLevel : ENUM nullable
   profileCompleted : BOOL
   currency : VARCHAR(3)
   consentGiven : BOOL
-  consentAt : DateTime?
-  deletedAt : DateTime?
+  consentAt : DateTime nullable
+  deletedAt : DateTime nullable
 }
 
 entity Transaction {
   * id : UUID PK
   --
   * userId : UUID FK
-  categoryId : UUID FK?
-  * type : INCOME|EXPENSE
+  categoryId : UUID FK nullable
+  * type : INCOME | EXPENSE
   * amount : Decimal(12,2)
-  description : TEXT?
+  description : TEXT nullable
   occurredAt : DateTime
-  deletedAt : DateTime?
+  deletedAt : DateTime nullable
 }
 
 entity Category {
   * id : UUID PK
   --
   * name : TEXT
-  * type : SYSTEM|CUSTOM
-  transactionType : ENUM?
-  userId : UUID FK? (null = system)
-  deletedAt : DateTime?
+  * type : SYSTEM | CUSTOM
+  transactionType : ENUM nullable
+  userId : UUID FK nullable (null = system)
+  deletedAt : DateTime nullable
 }
 
 entity Budget {
   * id : UUID PK
   --
   * userId : UUID FK
-  categoryId : UUID FK?
+  categoryId : UUID FK nullable
   * amountLimit : Decimal(12,2)
   * month : INT
   * year : INT
-  deletedAt : DateTime?
-  .. unique constraint ..
-  userId + categoryId + month + year
+  deletedAt : DateTime nullable
+  .. unique: userId + categoryId + month + year ..
 }
 
 entity SavingsGoal {
@@ -429,8 +430,8 @@ entity SavingsGoal {
   * name : TEXT
   * targetAmount : Decimal(12,2)
   currentAmount : Decimal(12,2)
-  targetDate : DateTime?
-  deletedAt : DateTime?
+  targetDate : DateTime nullable
+  deletedAt : DateTime nullable
 }
 
 entity GoalContribution {
@@ -447,7 +448,7 @@ entity PasswordResetToken {
   * userId : UUID FK
   * token : TEXT UNIQUE
   * expiresAt : DateTime
-  usedAt : DateTime?
+  usedAt : DateTime nullable
 }
 
 entity RefreshToken {
@@ -463,23 +464,22 @@ entity Prediction {
   --
   * userId : UUID FK
   * period : TEXT (YYYY-MM)
-  * type : INCOME|EXPENSE
+  * type : INCOME | EXPENSE
   * predictedTotal : Decimal(12,2)
-  predictedByCategory : JSON?
-  confidenceInterval : JSON?
-  actualTotal : Decimal(12,2)?
-  accuracy : Decimal(5,2)?
-  .. unique constraint ..
-  userId + period + type
+  predictedByCategory : JSON nullable
+  confidenceInterval : JSON nullable
+  actualTotal : Decimal(12,2) nullable
+  accuracy : Decimal(5,2) nullable
+  .. unique: userId + period + type ..
 }
 
 entity Recommendation {
   * id : UUID PK
   --
   * userId : UUID FK
-  * type : SAVINGS|BUDGET|GOAL
+  * type : SAVINGS | BUDGET | GOAL
   * message : TEXT
-  suggestedAction : TEXT?
+  suggestedAction : TEXT nullable
 }
 
 entity Challenge {
@@ -494,9 +494,9 @@ entity UserChallenge {
   --
   * userId : UUID FK
   * challengeId : UUID FK
-  * status : AVAILABLE|ACTIVE|COMPLETED
-  acceptedAt : DateTime?
-  completedAt : DateTime?
+  * status : AVAILABLE | ACTIVE | COMPLETED
+  acceptedAt : DateTime nullable
+  completedAt : DateTime nullable
 }
 
 entity Badge {
@@ -537,13 +537,13 @@ Badge ||--o{ UserBadge : "awarded via"
 
 
 ' ─────────────────────────────────────────────────────────────
-' DIAGRAM 7 — Request Lifecycle (Authenticated API Call)
+' DIAGRAM 7 -- Request Lifecycle (Authenticated API Call)
 ' ─────────────────────────────────────────────────────────────
 @startuml ZendaRequestLifecycle
 !theme plain
 skinparam backgroundColor #FAFAFA
 
-title Zenda — Authenticated API Request Lifecycle
+title Zenda -- Authenticated API Request Lifecycle
 
 participant "Flutter\nApiClient" as Client
 participant "ThrottlerGuard\n(120 req/min)" as Throttle
