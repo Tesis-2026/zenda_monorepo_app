@@ -1,6 +1,6 @@
 # Zenda — AI-Powered Finance App
 
-Zenda (working title: WalletWise) is a thesis project: an AI-powered mobile finance app for Peruvian university students (18–24). It helps users track income and expenses, follow the 50/30/20 budget rule, and improve financial literacy through personalized recommendations and gamification.
+Zenda is a thesis project: an AI-powered mobile finance app for Peruvian university students (18–24). It helps users track income and expenses, follow the 50/30/20 budget rule, and improve financial literacy through personalized recommendations and gamification.
 
 ## Monorepo Structure
 
@@ -37,13 +37,6 @@ flutter pub get
 flutter run
 ```
 
-### ML
-```bash
-cd ml
-python -m venv .venv
-source .venv/bin/activate   # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-```
 
 ## API Documentation
 Swagger UI is available at `http://localhost:3000/api/docs` when the backend is running.

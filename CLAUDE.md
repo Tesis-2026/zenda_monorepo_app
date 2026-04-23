@@ -1,4 +1,4 @@
-# Zenda (WalletWise) — Project Conventions
+# Zenda  — Project Conventions
 
 ## Active Standards
 @skills/assistant/pre-work-audit/SKILL.md
@@ -31,8 +31,9 @@ Tesis2026/
 │       │   ├── ai/         # AiModule + LocalRulesProvider stubs (Phase 8+)
 │       │   ├── email/      # EmailModule + EmailService (nodemailer)
 │       │   └── prisma/     # Global PrismaModule + PrismaService
-│       ├── modules/        # DDD bounded contexts (6 modules)
+│       ├── modules/        # DDD bounded contexts (7 modules)
 │       │   ├── auth/       # Register, login, JWT, forgot/reset password
+│       │   ├── budgets/    # Monthly budgets per category with progress tracking
 │       │   ├── categories/ # System + custom categories with soft delete
 │       │   ├── goals/      # Savings goals + contribute endpoint
 │       │   ├── insights/   # Monthly summary aggregation
@@ -57,14 +58,18 @@ Tesis2026/
 │       ├── features/
 │       │   ├── auth/       # LoginScreen, RegisterScreen, ForgotPasswordScreen,
 │       │   │               # ResetPasswordScreen, AuthGate, AuthController, LocalAuthService
+│       │   ├── budget/     # BudgetScreen, BudgetCard, budget providers
+│       │   ├── categories/ # CategoryManagementScreen
 │       │   ├── dashboard/  # DashboardScreen + widgets (SummaryCard, StreakCard,
 │       │   │               # BudgetPieChart, ZendaAiCard, AccountCard)
+│       │   ├── goals/      # GoalsScreen, GoalDetailScreen, goal providers
 │       │   ├── onboarding/ # OnboardingScreen, OnboardingPage, SplashDecider, OnboardingPrefs
 │       │   ├── profile/    # ProfileScreen
 │       │   ├── progress/   # ProgressScreen (stub)
+│       │   ├── reports/    # ReportsScreen with monthly summary + PDF export
 │       │   ├── streak/     # StreakNotifier
-│       │   └── transactions/ # AddTransactionScreen, TransactionCreateScreen,
-│       │                     # TransactionListScreen, NewTransactionController
+│       │   └── transactions/ # AddTransactionScreen, TransactionListScreen,
+│       │                     # NewTransactionController (TransactionCreateScreen is stub)
 │       ├── l10n/           # app_en.arb, app_es.arb + generated AppLocalizations
 │       ├── providers/      # Global Riverpod providers + repository providers
 │       ├── routing/        # AppRouter (GoRouter) — all named routes declared here
@@ -93,7 +98,7 @@ Tesis2026/
 - **API docs**: `http://localhost:3000/api/docs` (Swagger)
 - **Database**: `docker compose up -d`, then `npm run prisma:migrate && npm run prisma:seed`
 - **Conventions**:
-  - 6 bounded contexts in `src/modules/`: `auth`, `users`, `categories`, `transactions`, `goals`, `insights`
+  - 7 bounded contexts in `src/modules/`: `auth`, `budgets`, `categories`, `goals`, `insights`, `transactions`, `users`
   - Each module uses strict DDD layers: `application/use-cases/`, `domain/`, `infrastructure/`, `interface/`
   - Cross-cutting infrastructure lives in `src/infra/` (prisma, email, ai) — not bounded contexts
   - Shared utilities live in `src/shared/` (config, guards, logger, exceptions, dto)
@@ -205,6 +210,8 @@ Phase specs live in `.claude/specs/<phase>/`. **After implementing any roadmap p
 - `phase-2` — Flutter frontend foundation (auth flows, onboarding, dashboard, transactions, profile, i18n EN+ES)
 - `phase-3` — Transaction recording: backend GET/:id + PUT/:id, Flutter TransactionListScreen, fire-and-forget API sync
 - `phase-4` — Categorization: backend PUT /api/categories/:id (rename), Flutter CategoryManagementScreen (create/rename/delete custom categories)
+- `phase-5` — Reports: backend monthly insights aggregation, Flutter ReportsScreen with pie chart + PDF export
+- `phase-6` — Budgets and goals: backend BudgetsModule + GoalsModule, Flutter BudgetScreen + GoalsScreen + GoalDetailScreen
 
 ## Thesis Success Metrics
 | Metric | Target |

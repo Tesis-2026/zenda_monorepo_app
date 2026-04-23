@@ -6,7 +6,7 @@
 **Team:** 2 part-time developers (20 hrs/week each)
 **Budget:** S/ 14,241 (general expenses + goods and subcontracting)
 
-**Critical Path:** Infrastructure → Auth → Transaction Recording → Categorization → Reports → Budgets → ML Pipeline → Predictions → Recommendations → Education/Gamification → Notifications → Pre/Post Evaluation → User Validation → Demo
+**Critical Path:** Infrastructure → Auth → Transaction Recording → Categorization → Reports → Budgets → AI Integration → Predictions → Recommendations → Education/Gamification → Notifications → Pre/Post Evaluation → User Validation → Demo
 
 ---
 
@@ -18,7 +18,7 @@
 - State Management: Riverpod 3 (AsyncNotifierProvider, NotifierProvider, FutureProvider)
 - Navigation: GoRouter 17
 - Charts: fl_chart 1.1.1
-- AI/ML: Azure AI Foundry — fine-tuned GPT-4o-mini (or Phi-4-mini) for predictions and advice; statistical moving average layer for numeric forecasts
+- AI: Azure AI Foundry — GPT-4o-mini (or Phi-4-mini) external API for predictions, advice, anomaly detection, and recommendations
 - Authentication: JWT (Passport + bcrypt) — no Firebase
 - Notifications: Firebase Cloud Messaging (FCM) — Phase 11
 - CI/CD: GitHub Actions + deployment TBD
@@ -150,17 +150,15 @@
 
 ---
 
-## Phase 7: AI Pipeline — Fine-Tuning Dataset and Azure AI Foundry Setup
+## Phase 7: AI Integration — Azure AI Foundry Setup
 
-> **Impact: Critical** — Prepares the fine-tuned model that powers predictions and advice. Replaces the custom Python ML pipeline with Azure AI Foundry fine-tuning.
+> **Impact: Critical** — Connects the backend to the Azure AI external API that powers predictions, advice, anomaly detection, and recommendations.
 
-- [ ] `P0` `backend` `ai` -- **Synthetic JSONL dataset** -- Generate 1,000+ prompt-completion pairs representing Peruvian university student financial profiles (spending by category, income type, month-over-month trends). Format: `{ "messages": [{ "role": "user", "content": "<spending context>" }, { "role": "assistant", "content": "<structured JSON prediction + advice>" }] }`. Covers all 11 categories, all income types (SCHOLARSHIP, PART_TIME, FAMILY, MIXED), realistic PEN amounts. Stored in `docs/ai-training/`. Refs: [US-0701](./user_stories.md#US-0701), [US-0702](./user_stories.md#US-0702)
+- [ ] `P0` `backend` `ai` -- **AiModule wired to Azure endpoint** -- Complete `src/infra/ai/` stub: `AzureFoundryProvider` calls the Azure AI API endpoint. Config via `AZURE_AI_ENDPOINT` + `AZURE_AI_KEY` env vars. Input: structured spending context (last 3 months per category). Output: `{ predictedTotal, predictedByCategory, confidenceLevel, advice }`. Error handling: timeout, quota exceeded, malformed response. Refs: [US-0701](./user_stories.md#US-0701)
 
-- [ ] `P0` `ai` -- **Azure AI Foundry fine-tuning run** -- Fine-tune GPT-4o-mini (or Phi-4-mini for cost efficiency) on the JSONL dataset via Azure AI Foundry. Validate on a held-out 20% split. Target: >= 80% prediction accuracy measured as mean absolute percentage error on category spend forecasts. Document model version, training loss, and evaluation metrics in `docs/ai-training/results.md`. Refs: [US-0703](./user_stories.md#US-0703)
+- [ ] `P0` `backend` `ai` -- **JSONL prompt dataset for context** -- Generate 1,000+ prompt-completion pairs representing Peruvian university student financial profiles to use as few-shot examples in API calls. Format: `{ "messages": [{ "role": "user", "content": "<spending context>" }, { "role": "assistant", "content": "<structured JSON prediction + advice>" }] }`. Stored in `docs/ai-training/`. Refs: [US-0701](./user_stories.md#US-0701)
 
-- [ ] `P0` `backend` `ai` -- **AiModule wired to Azure endpoint** -- Complete `src/infra/ai/` stub: `AzureFoundryProvider` calls the deployed fine-tuned model endpoint. Config via `AZURE_AI_ENDPOINT` + `AZURE_AI_KEY` env vars. Input: structured spending context (last 3 months per category). Output: `{ predictedTotal, predictedByCategory, confidenceLevel, advice }`. Refs: [US-0704](./user_stories.md#US-0704)
-
-- [ ] `P1` `ai` -- **Fine-tuning refresh pipeline** -- Document process for resubmitting a new fine-tuning job when >= 500 new real user records are available. Azure Foundry handles infrastructure; this task is the runbook and automation trigger. Refs: [US-0705](./user_stories.md#US-0705)
+- [ ] `P1` `ai` -- **API context refresh** -- Document process for updating few-shot examples when >= 500 new real user records are available to improve response quality. Refs: [US-0701](./user_stories.md#US-0701)
 
 ---
 
@@ -270,7 +268,7 @@
 
 - [ ] `P0` `backend` `testing` -- **Integration tests** -- Complete pipeline: registration → login → transaction → summary → goal. Refs: [US-1402](./user_stories.md#US-1402)
 
-- [ ] `P0` `ml` `testing` -- **Model validation** -- Accuracy >= 80%, no overfitting, coherent predictions. Refs: [US-1403](./user_stories.md#US-1403)
+- [ ] `P0` `backend` `testing` -- **AI API integration validation** -- Response accuracy >= 80% against historical data, coherent predictions (non-negative, within PEN ranges), fallback behavior tested. Refs: [US-1403](./user_stories.md#US-1403)
 
 - [ ] `P0` `flutter` `testing` -- **Usability tests** -- 30 students, 4-8 weeks, SUS >= 4.0/5.0. Refs: [US-1404](./user_stories.md#US-1404)
 
@@ -320,7 +318,7 @@
 | 4 | Categorization | Sprint 3 | 2 weeks | ✅ Done |
 | 5 | Reports and Visualization | Sprint 4-5 | 4 weeks | ✅ Done (PDF export deferred to P2) |
 | 6 | Budgets and Goals | Sprint 5-6 | 3 weeks | ✅ Done |
-| 7 | ML Pipeline (Data) | Sprint 6-7 | 4 weeks | -- |
+| 7 | AI Integration (Azure AI Foundry) | Sprint 6-7 | 4 weeks | -- |
 | 8 | AI Predictions | Sprint 7-8 | 4 weeks | -- |
 | 9 | Recommendations | Sprint 8-9 | 3 weeks | -- |
 | 10 | Education and Gamification | Sprint 9-10 | 4 weeks | -- |
@@ -337,13 +335,13 @@
 
 | Risk | Prob. | Impact | Mitigation | Owner |
 |------|-------|--------|------------|-------|
-| **Cloud AI integration failures** | Medium | High | REST API inference endpoint as primary; TFLite fallback | Fernando |
-| **ML complexity delays** | High | High | Short sprints, rapid prototyping, MVP prioritization | Fernando |
+| **Azure AI API unavailability** | Medium | High | Graceful degradation: disable AI features, notify user, retry on next request | Fernando |
+| **AI API response quality** | Medium | High | Few-shot prompting with validated examples, response schema validation, fallback message | Fernando |
 | **Team availability** | Medium | Medium | Fixed schedules, backup plan, workload monitoring | Both |
 | **Data vulnerabilities** | Medium | High | E2E encryption, security audits, Law 29733 compliance | Paolo |
-| **Low model accuracy** | Medium | High | Cross-validation, data augmentation | Fernando |
+| **AI API cost overrun** | Low | Medium | Rate limit per user, cache responses where appropriate, monitor usage | Fernando |
 | **Requirement changes** | High | Medium | Formal change process | Both |
-| **Insufficient data** | Low | High | Synthetic data, university collaboration | Fernando |
+| **Low API response accuracy** | Medium | High | Improve few-shot examples, adjust prompt context window | Fernando |
 | **Low adoption** | Medium | Medium | Early pilot tests, gamification | Paolo |
 | **Frontend-backend integration lag** | Medium | High | Integrate early (Phase 2 completion), not at end | Paolo |
 | **Library obsolescence** | Low | Medium | Continuous updates | Fernando |

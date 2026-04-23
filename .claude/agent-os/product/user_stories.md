@@ -272,7 +272,7 @@
 **Acceptance Criteria:**
 - [x] `POST /api/categories` creates category: name, type (INCOME/EXPENSE), icon, color
 - [x] `GET /api/categories` returns default + user's custom categories
-- [ ] `PUT /api/categories/{id}` edits name/icon/color (endpoint not yet implemented)
+- [x] `PUT /api/categories/{id}` edits name/icon/color (ownership validated)
 - [x] `DELETE /api/categories/{id}` deletes (custom only, error if has transactions)
 - [x] "Create new category" option visible when recording transaction
 - [x] Quick creation modal: name, icon selection, color selection
@@ -391,6 +391,24 @@
 
 ---
 
+### US-0407: Financial Progress Indicator
+**As a** student
+**I want to** see a financial evolution indicator comparing my current habits with previous months, showing whether I reduced expenses, increased savings, or improved my balance
+**So that** I can understand whether my financial behavior is improving thanks to the app and have concrete evidence of my progress over time
+
+**Acceptance Criteria:**
+- [ ] `GET /api/insights/progress` returns current vs previous month comparison: total expenses, total savings, net balance, top categories
+- [ ] Shows improvement or decline percentage per metric
+- [ ] Visual up/down indicator with color (green = improved, red = declined) per metric
+- [ ] Requires minimum 2-month history (returns informative empty state if insufficient)
+- [ ] Accessible from reports screen
+
+**Story Points:** 5
+**Status:** Not Started
+**Phase:** 5 — Reports
+
+---
+
 ## Epic 5: Budgets and Goals
 
 **Goal:** Users define spending limits and savings objectives with visual tracking.
@@ -449,59 +467,44 @@
 
 ---
 
-## Epic 6: AI Pipeline
+## Epic 6: AI Integration
 
-**Goal:** User data is transformed into features, models are trained, and exported for inference.
+**Goal:** The backend connects to the external Azure AI API to enable predictions, anomaly detection, and personalized recommendations.
 
-### US-0701: Feature Extraction
-**As an** ML system
-**I want to** extract financial features from each user
-**So that** prediction models can be fed
+### US-0701: Azure AI API Integration
+**As a** developer
+**I want to** connect the backend to the Azure AI external API
+**So that** AI-powered features (predictions, recommendations, anomaly detection) are available to users
 
 **Acceptance Criteria:**
-- [ ] Python script extracts per user: total_spending_per_category_per_month, total_income_per_month, expense_income_ratio, transaction_frequency, income_variability, peak_spending_day_of_week, top_3_categories
-- [ ] Output: CSV with one row per user per month
-- [ ] Documentation of each feature and its calculation
-- [ ] Executable as periodic job
+- [ ] `AzureFoundryProvider` in `src/infra/ai/` calls the deployed Azure AI endpoint
+- [ ] Config via `AZURE_AI_ENDPOINT` + `AZURE_AI_KEY` env vars
+- [ ] Input: structured spending context (last 3 months per category)
+- [ ] Output: `{ predictedTotal, predictedByCategory, confidenceLevel, advice }`
+- [ ] Error handling: timeout, invalid response, API quota exceeded
+- [ ] Integration documented in `docs/ai-integration.md`
 
 **Story Points:** 8
 **Status:** Not Started
-**Phase:** 7 — ML Pipeline
+**Phase:** 7 — AI Integration
 
 ---
 
-### US-0702: Training Dataset
-**As a** data scientist
-**I want to** have a realistic synthetic dataset
-**So that** I can train models when there isn't enough real data
+### US-0702: AI Auto-Categorization
+**As a** student
+**I want to** have the AI analyze the description or amount of a transaction I am recording and automatically suggest the most appropriate category
+**So that** I can reduce the time and effort of manual categorization, avoid classification errors, and keep my reports consistently organized without relying solely on memory
 
 **Acceptance Criteria:**
-- [ ] Minimum 1000 simulated records based on Peruvian university student profiles
-- [ ] Realistic distributions: income S/ 500-2000, spending concentrated in food (30-40%), transportation (15-25%)
-- [ ] Monthly variability incorporated (semester start = more education spending)
-- [ ] Documentation of variables, distributions, and assumptions
+- [ ] When recording a transaction, description and amount are sent to Azure AI API for category inference
+- [ ] Returns suggested categoryId with confidence level
+- [ ] Pre-selects the suggested category in the transaction form (user can override at any time)
+- [ ] Falls back gracefully (no suggestion shown) if API is unavailable or confidence < 60%
+- [ ] Suggestion logged for accuracy tracking; target >= 80% accuracy retrospectively
 
 **Story Points:** 5
 **Status:** Not Started
-**Phase:** 7 — ML Pipeline
-
----
-
-### US-0703: Model Training and Selection
-**As a** data scientist
-**I want to** evaluate multiple prediction models
-**So that** I can select the most accurate for our use case
-
-**Acceptance Criteria:**
-- [ ] Models evaluated: Linear Regression, Random Forest, XGBoost, LSTM
-- [ ] Metrics: MAE, RMSE, R², Accuracy (defined as 1 - |pred-actual|/actual)
-- [ ] 5-fold cross-validation
-- [ ] Target: predict next month's total spending with accuracy >= 80%
-- [ ] Documentation of results and justification for selected model
-
-**Story Points:** 13
-**Status:** Not Started
-**Phase:** 7 — ML Pipeline
+**Phase:** 7 — AI Integration
 
 ---
 
@@ -515,30 +518,13 @@
 **So that** I can anticipate my financial situation
 
 **Acceptance Criteria:**
-- [ ] `GET /api/predictions/expenses?period=next_month` invokes ML model
-- [ ] Returns: predicted_total, predicted_by_category (array), confidence_interval, model_version
+- [ ] `GET /api/predictions/expenses?period=next_month` calls Azure AI external API
+- [ ] Returns: predicted_total, predicted_by_category (array), confidence_level, api_version
 - [ ] Requires minimum 2-month history (returns 400 with explanatory message if insufficient)
 - [ ] Average accuracy >= 80% measured retrospectively
 - [ ] Screen shows prediction with confidence indicator (high/medium/low)
 
 **Story Points:** 8
-**Status:** Not Started
-**Phase:** 8 — Predictions
-
----
-
-### US-0802: Income Prediction
-**As a** student
-**I want to** receive predictions of my income
-**So that** I can better plan my upcoming months
-
-**Acceptance Criteria:**
-- [ ] `GET /api/predictions/income?period=next_month` projects income
-- [ ] Considers source variability (fixed scholarship vs variable work)
-- [ ] Returns: predicted_total, predicted_by_source, confidence_level
-- [ ] Coherent projection based on historical data
-
-**Story Points:** 5
 **Status:** Not Started
 **Phase:** 8 — Predictions
 
@@ -616,6 +602,25 @@
 - [ ] Seed topics: Personal budget, Savings, Credit/debt, Inflation, Interest rates, Basic investing, Responsible consumption, Digital wallets in Peru
 - [ ] Content in readable mobile format (text + icons + practical Peruvian examples)
 - [ ] Overall progress visible (completion bar)
+
+**Story Points:** 8
+**Status:** Not Started
+**Phase:** 10 — Education and Gamification
+
+---
+
+### US-1004: Financial Knowledge Quizzes
+**As a** student
+**I want to** complete financial knowledge quizzes with practical questions about budgeting, savings, debt, and interest, and receive immediate feedback after each answer
+**So that** I can learn personal finance concepts actively and progressively within the app, improving my financial decision-making through deliberate practice of key concepts
+
+**Acceptance Criteria:**
+- [ ] `GET /api/education/quizzes` returns available quiz sets grouped by topic
+- [ ] `POST /api/education/quizzes/{id}/answer` submits answer and returns: correct/incorrect, explanation, and correct answer
+- [ ] Minimum 5 multiple-choice questions per topic
+- [ ] Immediate feedback with explanation shown after each answer
+- [ ] Score and attempt history tracked per user per quiz
+- [ ] Quiz progress integrated with overall educational content completion bar
 
 **Story Points:** 8
 **Status:** Not Started
@@ -845,17 +850,16 @@
 
 ---
 
-### US-1403: ML Model Validation
+### US-1403: AI API Integration Validation
 **As a** developer
-**I want to** validate the accuracy of prediction models
-**So that** reliable predictions are guaranteed
+**I want to** validate the responses from the Azure AI external API
+**So that** predictions and recommendations returned to users are reliable and coherent
 
 **Acceptance Criteria:**
-- [ ] Test verifying accuracy >= 80% on test dataset
-- [ ] No overfitting: train vs test accuracy difference < 10%
-- [ ] Coherent predictions: not negative, within reasonable ranges
-- [ ] Documented metrics: accuracy, MAE, RMSE, confusion matrix
-- [ ] Validation pipeline executable with `python ml/validate.py`
+- [ ] Integration test verifying API response accuracy >= 80% against historical data
+- [ ] Coherent predictions: not negative, within reasonable ranges for PEN amounts
+- [ ] Documented response schema validation
+- [ ] Fallback behavior tested: timeout, API unavailable, malformed response
 
 **Story Points:** 8
 **Status:** Not Started
@@ -969,22 +973,22 @@
 ## Summary Statistics
 
 **Total Epics:** 18
-**Total User Stories:** 55
-**Total Story Points:** 302
+**Total User Stories:** 57
+**Total Story Points:** 321
 
 **By Phase:**
 - **Phase 1-2:** Infra + Auth — 12 stories, 54 points
 - **Phase 3-4:** Transactions + Categories — 8 stories, 33 points
-- **Phase 5-6:** Reports + Budgets — 11 stories, 60 points
-- **Phase 7-8:** ML + Predictions — 8 stories, 52 points
-- **Phase 9-10:** Recommendations + Education — 8 stories, 48 points
+- **Phase 5-6:** Reports + Budgets — 13 stories, 73 points
+- **Phase 7-8:** AI Integration + Predictions — 8 stories, 56 points
+- **Phase 9-10:** Recommendations + Education — 10 stories, 64 points
 - **Phase 11-12:** Notifications + Evaluation — 8 stories, 37 points
 - **Phase 13-16:** Security + Testing + Demo — 10 stories, 47 points
 
 **Status Overview:**
 - Done: 5 (US-1801, US-0101, US-0103, US-0301, US-1303 partial)
 - In Progress: 10 (US-0102, US-0105, US-0106, US-0201, US-0202, US-0203, US-0204, US-0206, US-0302, US-0401, US-0502)
-- Not Started: 40
+- Not Started: 42
 - Blocked: 0
 
 ---
