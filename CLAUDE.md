@@ -1,4 +1,4 @@
-# Zenda (WalletWise) — Project Conventions
+# Zenda  — Project Conventions
 
 ## Active Standards
 @skills/assistant/pre-work-audit/SKILL.md

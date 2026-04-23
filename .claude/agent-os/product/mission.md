@@ -34,7 +34,7 @@ Financial education in Peru is alarmingly low, especially among young university
 
 ## The Opportunity
 
-Artificial intelligence and machine learning technologies have matured to the point where it is possible to:
+Artificial intelligence technologies, now accessible via external APIs, make it possible to:
 
 - Automatically classify spending patterns by category
 - Predict future expenses based on personal history
@@ -136,7 +136,7 @@ Zenda succeeds when:
 
 2. **Predictions are reliable**
    - Average expense prediction accuracy >= 80%
-   - Models are trained with real data from pilot users
+   - AI responses improve as more real user context is provided
    - Recommendations have an acceptance rate >= 60%
 
 3. **Educational impact is demonstrated**
@@ -167,7 +167,7 @@ Zenda succeeds when:
 
 ### AI Suggests, The User Decides
 
-The ML model can:
+The external AI API can:
 - Analyze historical spending patterns
 - Generate future expense predictions
 - Recommend budget adjustments
