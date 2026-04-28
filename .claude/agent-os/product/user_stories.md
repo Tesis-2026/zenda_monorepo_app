@@ -831,7 +831,7 @@
 
 ## Epic 14: Testing
 
-**Goal:** Quality verified with unit, integration, ML, and usability tests.
+**Goal:** Quality verified with unit, integration, AI integration, and usability tests.
 
 ### US-1401: Service Unit Tests
 **As a** developer
@@ -960,7 +960,7 @@
 **So that** I can work in a structured way
 
 **Acceptance Criteria:**
-- [x] GitHub monorepo: /zenda_fronted_app (Flutter), /zenda_backend_app (NestJS), /ml, /docs
+- [x] GitHub monorepo: /zenda_fronted_app (Flutter), /zenda_backend_app (NestJS), /docs
 - [x] .gitignore, README.md
 - [x] Branch structure: main (protected), develop, feature/*, chore/*
 

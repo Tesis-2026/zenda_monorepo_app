@@ -1,7 +1,6 @@
 # Sub-repositories — each has its own git repo; monorepo only tracks docs/skills
 zenda_backend_app/
 zenda_fronted_app/
-ml/
 
 # Claude
 .claude/settings.local.json
@@ -35,19 +34,6 @@ build/
 pubspec.lock
 .pub-cache/
 *.iml
-
-# Python / ML
-__pycache__/
-*.py[cod]
-*$py.class
-*.egg-info/
-dist/
-.venv/
-venv/
-env/
-*.pkl
-*.h5
-*.model
 
 # IDE
 .idea/

@@ -12,7 +12,7 @@
 
 - **`FCM_SERVER_KEY` added to `.env.example` now rather than Phase 11** — environment variable examples are best set up once so developers know what secrets to provision from the start. Adding it in Phase 11 would require every developer to revisit setup mid-project.
 
-- **`ml/` and `docs/` created as empty placeholder structures** — these folders are referenced in `README.md`, `CONTRIBUTING.md`, and `CLAUDE.md`. Creating them now prevents broken links and makes the intended project structure legible before any ML or architecture work begins.
+- **`docs/` created as an empty placeholder structure** — this folder is referenced in `README.md`, `CONTRIBUTING.md`, and `CLAUDE.md`. Creating it now prevents broken links and makes the intended project structure legible before architecture documentation begins.
 
 ## Constraints
 

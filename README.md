@@ -8,7 +8,6 @@ Zenda is a thesis project: an AI-powered mobile finance app for Peruvian univers
 |--------|-------|---------|
 | `zenda_backend_app/` | NestJS 11, Prisma, PostgreSQL 15 | REST API |
 | `zenda_fronted_app/` | Flutter 3.10+, Riverpod 3 | Mobile app (iOS/Android) |
-| `ml/` | Python 3.11, scikit-learn | Prediction and recommendation models |
 | `docs/` | Markdown | Architecture and design docs |
 
 ## Quick Start
@@ -17,7 +16,6 @@ Zenda is a thesis project: an AI-powered mobile finance app for Peruvian univers
 - Node.js 20+
 - Docker Desktop
 - Flutter SDK 3.10+
-- Python 3.11+
 
 ### Backend
 ```bash
