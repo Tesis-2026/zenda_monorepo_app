@@ -24,7 +24,7 @@
 
 - **Separate `configuration.ts` factory over reading `process.env` directly in services** — a typed factory function lets `ConfigService` inject strongly-typed config objects anywhere. Reading `process.env` directly in services makes them harder to test (requires mutating the process environment) and makes the full config surface invisible.
 
-- **`AiModule` as a placeholder in Phase 1A** — the AI/ML features (Phase 8) depend on the same NestJS module system. Registering a stub module now lets later phases inject AI providers without modifying `AppModule`. The alternative — adding the module only in Phase 8 — would require touching the root module mid-project.
+- **`AiModule` as a placeholder in Phase 1A** — the AI features (Phase 8) depend on the same NestJS module system. Registering a stub module now lets later phases inject AI providers without modifying `AppModule`. The alternative — adding the module only in Phase 8 — would require touching the root module mid-project.
 
 - **`/api` global prefix** — all routes live under `/api`, making it unambiguous that the server is an API, not a web app. This also makes routing proxies (nginx, API Gateway) straightforward: one prefix rule routes all API traffic. The alternative — no prefix — risks route collisions if a static file server is ever served from the same host.
 

@@ -39,7 +39,7 @@ Added fields:
 | `age` | `Int?` | Onboarding profile |
 | `university` | `String?` | Onboarding profile |
 | `incomeType` | `IncomeType?` | Onboarding profile |
-| `averageMonthlyIncome` | `Decimal?` | Onboarding profile; feeds ML feature extraction |
+| `averageMonthlyIncome` | `Decimal?` | Onboarding profile; used in AI spending context |
 | `financialLiteracyLevel` | `FinancialLiteracyLevel?` | Set from survey score; drives content difficulty |
 | `profileCompleted` | `Boolean` | `false` until onboarding finished |
 | `currency` | `String` | Default `"PEN"`; US-0106 allows `"USD"` |
@@ -103,9 +103,9 @@ Badge name is globally unique. `UserBadge` is the earned-badge record. Unique pe
 
 Seven badges seeded: First Transaction, Consistency, Goal Achieved, Challenger, Financial Sage, Predictor, Budgeter.
 
-#### `Prediction` (US-0801, US-0802)
+#### `Prediction` (US-0801)
 
-ML model output per user per period per type. `period` stored as `"YYYY-MM"` string. `actualTotal` and `accuracy` written back after the period ends for retrospective accuracy tracking.
+AI model output per user per period per type. `period` stored as `"YYYY-MM"` string. `actualTotal` and `accuracy` written back after the period ends for retrospective accuracy tracking.
 
 Unique: `@@unique([userId, period, type])` — one prediction per direction per month.
 

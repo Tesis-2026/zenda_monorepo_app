@@ -76,7 +76,7 @@ Tesis2026/
 │       └── services/       # Legacy service layer (AuthService, TransactionsService,
 │                           # AiService, OcrService) — being migrated to core/services
 │
-├── docs/                   # Architecture docs + AI training datasets (docs/ai-training/)
+├── docs/                   # Architecture docs + AI integration docs
 ├── skills/                 # Custom Claude Code skills
 │   ├── assistant/          # pre-work-audit, promptify, agent-pr-creator, etc.
 │   ├── platform/           # platform-backend, platform-mobile, platform-database, platform-testing

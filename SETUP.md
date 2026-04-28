@@ -52,11 +52,3 @@ npm run test
 npm run test:e2e
 ```
 
-## ML Setup
-
-```bash
-cd ml
-python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-```

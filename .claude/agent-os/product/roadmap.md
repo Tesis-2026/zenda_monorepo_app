@@ -38,7 +38,7 @@
 
 > **Impact: Critical** — Without infrastructure there is no development. Blocks all subsequent phases.
 
-- [x] `P0` `infra` `backend` -- **Git repository setup** -- Monorepo on GitHub: `zenda_backend_app/` (NestJS API), `zenda_fronted_app/` (Flutter app), `ml/` (AI models), `docs/` (documentation). Includes `.gitignore`, `README.md`, `CONTRIBUTING.md`, `SETUP.md`, `LICENSE`. Branch strategy: `main` (protected), `feature/*`, `chore/*`. Refs: [US-1801](./user_stories.md#US-1801)
+- [x] `P0` `infra` `backend` -- **Git repository setup** -- Monorepo on GitHub: `zenda_backend_app/` (NestJS API), `zenda_fronted_app/` (Flutter app), `docs/` (documentation). Includes `.gitignore`, `README.md`, `CONTRIBUTING.md`, `SETUP.md`, `LICENSE`. Branch strategy: `main` (protected), `feature/*`, `chore/*`. Refs: [US-1801](./user_stories.md#US-1801)
 
 - [x] `P0` `infra` `backend` -- **PostgreSQL database setup** -- PostgreSQL 15 via Docker Compose (`docker-compose.yml`). Prisma ORM manages schema (`prisma/schema.prisma`). Migrations via `npx prisma migrate dev`. Azure provisioning deferred to production deployment. Refs: [US-1802](./user_stories.md#US-1802)
 
@@ -156,25 +156,19 @@
 
 - [ ] `P0` `backend` `ai` -- **AiModule wired to Azure endpoint** -- Complete `src/infra/ai/` stub: `AzureFoundryProvider` calls the Azure AI API endpoint. Config via `AZURE_AI_ENDPOINT` + `AZURE_AI_KEY` env vars. Input: structured spending context (last 3 months per category). Output: `{ predictedTotal, predictedByCategory, confidenceLevel, advice }`. Error handling: timeout, quota exceeded, malformed response. Refs: [US-0701](./user_stories.md#US-0701)
 
-- [ ] `P0` `backend` `ai` -- **JSONL prompt dataset for context** -- Generate 1,000+ prompt-completion pairs representing Peruvian university student financial profiles to use as few-shot examples in API calls. Format: `{ "messages": [{ "role": "user", "content": "<spending context>" }, { "role": "assistant", "content": "<structured JSON prediction + advice>" }] }`. Stored in `docs/ai-training/`. Refs: [US-0701](./user_stories.md#US-0701)
-
-- [ ] `P1` `ai` -- **API context refresh** -- Document process for updating few-shot examples when >= 500 new real user records are available to improve response quality. Refs: [US-0701](./user_stories.md#US-0701)
-
 ---
 
 ## Phase 8: AI Predictions and Advice
 
-> **Impact: Critical** — Main differentiator. The fine-tuned Azure model provides both numeric forecasts (via statistical trend layer) and natural language spending insights in Spanish.
+> **Impact: Critical** — Main differentiator. The Azure AI model provides both numeric forecasts (via statistical trend layer) and natural language spending insights in Spanish.
 
-- [ ] `P0` `backend` `ai` `api` -- **Expense prediction** -- `GET /api/predictions/expenses?period=next_month` computes a 3-month weighted moving average per category (statistical layer) then enriches with confidence level and category narrative from the Azure fine-tuned model. Returns: `predictedTotal`, `predictedByCategory`, `confidenceLevel`, `modelVersion`. Requires >= 2 months of history. Accuracy >= 80%. `Prediction` schema ready. Refs: [US-0801](./user_stories.md#US-0801)
+- [ ] `P0` `backend` `ai` `api` -- **Expense prediction** -- `GET /api/predictions/expenses?period=next_month` computes a 3-month weighted moving average per category (statistical layer) then enriches with confidence level and category narrative from the Azure AI model. Returns: `predictedTotal`, `predictedByCategory`, `confidenceLevel`, `modelVersion`. Requires >= 2 months of history. Accuracy >= 80%. `Prediction` schema ready. Refs: [US-0801](./user_stories.md#US-0801)
 
-- [ ] `P0` `backend` `ai` `api` -- **Income prediction** -- `GET /api/predictions/income?period=next_month` projects income using rolling average weighted by income type variability. Enriched with Azure model narrative. Refs: [US-0802](./user_stories.md#US-0802)
+- [ ] `P0` `flutter` `ui` -- **Predictions screen** -- Monthly expense forecast, breakdown by category, projected balance, confidence indicator, and a natural language insight card powered by the Azure AI model. Refs: [US-0801](./user_stories.md#US-0801)
 
-- [ ] `P0` `flutter` `ui` -- **Predictions screen** -- Monthly expense and income forecast, breakdown by category, projected balance, confidence indicator, and a natural language insight card powered by the fine-tuned model. Refs: [US-0801](./user_stories.md#US-0801)
+- [ ] `P1` `backend` `ai` -- **Anomaly detection** -- If spending in a category exceeds >20% of its 3-month rolling average, generates an alert via the Azure AI model with a contextual explanation. Refs: [US-0803](./user_stories.md#US-0803)
 
-- [ ] `P1` `backend` `ai` -- **Anomaly detection** -- If spending in a category exceeds >20% of its 3-month rolling average, generates an alert via the Azure model with a contextual explanation. Refs: [US-0803](./user_stories.md#US-0803)
-
-- [ ] `P1` `backend` -- **Real accuracy tracking** -- When period completes, compare predicted vs actual. Store `actualTotal` and `accuracy` in `Prediction` model. Feeds back into dataset for next fine-tuning refresh. Refs: [US-0804](./user_stories.md#US-0804)
+- [ ] `P1` `backend` -- **Real accuracy tracking** -- When period completes, compare predicted vs actual. Store `actualTotal` and `accuracy` in `Prediction` model. Refs: [US-0804](./user_stories.md#US-0804)
 
 ---
 
@@ -182,13 +176,11 @@
 
 > **Impact: High** — Closes the loop: data → analysis → concrete action.
 
-- [ ] `P0` `backend` `ai` `api` -- **Recommendation engine** -- `GET /api/recommendations` calls the Azure fine-tuned model with the user's last 30 days of categorized spend, active goals, and budget status. Returns 1-5 recommendations in Spanish. Types: SAVINGS, BUDGET, GOAL. `Recommendation` schema ready. Refs: [US-0901](./user_stories.md#US-0901)
+- [ ] `P0` `backend` `ai` `api` -- **Recommendation engine** -- `GET /api/recommendations` calls the Azure AI model with the user's last 30 days of categorized spend, active goals, and budget status. Returns 1-5 recommendations in Spanish. Types: SAVINGS, BUDGET, GOAL. `Recommendation` schema ready. Refs: [US-0901](./user_stories.md#US-0901)
 
 - [ ] `P0` `flutter` `ui` -- **Recommendations section** -- Cards with message, suggested action, feedback button ("Helpful"/"Not relevant"). Integrated into Dashboard. Refs: [US-0901](./user_stories.md#US-0901)
 
 - [ ] `P1` `backend` -- **Acceptance tracking** -- `POST /api/recommendations/:id/feedback`. `RecommendationFeedback` schema ready. Target acceptance rate >= 60%. Refs: [US-0902](./user_stories.md#US-0902)
-
-- [ ] `P2` `backend` `ai` -- **Feedback-driven improvement** -- Accepted/rejected recommendation feedback is included in the next fine-tuning refresh dataset, improving model relevance over time. Refs: [US-0903](./user_stories.md#US-0903)
 
 ---
 
@@ -336,12 +328,12 @@
 | Risk | Prob. | Impact | Mitigation | Owner |
 |------|-------|--------|------------|-------|
 | **Azure AI API unavailability** | Medium | High | Graceful degradation: disable AI features, notify user, retry on next request | Fernando |
-| **AI API response quality** | Medium | High | Few-shot prompting with validated examples, response schema validation, fallback message | Fernando |
+| **AI API response quality** | Medium | High | Prompt engineering with validated examples, response schema validation, fallback message | Fernando |
 | **Team availability** | Medium | Medium | Fixed schedules, backup plan, workload monitoring | Both |
 | **Data vulnerabilities** | Medium | High | E2E encryption, security audits, Law 29733 compliance | Paolo |
 | **AI API cost overrun** | Low | Medium | Rate limit per user, cache responses where appropriate, monitor usage | Fernando |
 | **Requirement changes** | High | Medium | Formal change process | Both |
-| **Low API response accuracy** | Medium | High | Improve few-shot examples, adjust prompt context window | Fernando |
+| **Low API response accuracy** | Medium | High | Improve prompt context, adjust system prompt and spending context window | Fernando |
 | **Low adoption** | Medium | Medium | Early pilot tests, gamification | Paolo |
 | **Frontend-backend integration lag** | Medium | High | Integrate early (Phase 2 completion), not at end | Paolo |
 | **Library obsolescence** | Low | Medium | Continuous updates | Fernando |
