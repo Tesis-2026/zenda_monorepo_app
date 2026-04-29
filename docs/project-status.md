@@ -1,5 +1,5 @@
 # Zenda — Project Status Report
-**Last updated:** 2026-04-26  
+**Last updated:** 2026-04-29  
 **Branch:** develop  
 **Scope:** User stories, mockup coverage, backend completeness, open questions
 
@@ -14,12 +14,19 @@
 | ❌ | Not implemented |
 | ⚠️ | Implemented differently than the mockup (dialog vs full screen) — intentional design choice |
 | ❓ | Needs a decision or content from you before it can be completed |
+| 🎨 | Design gap — screen exists but is missing a widget required by a user story |
 
 ---
 
 ## 1. Mockup Screens vs Frontend Implementation
 
-The mockup (`ZendaApp.pen`) has **49 frames**. Current coverage:
+The mockup (`ZendaApp.pen`) has **50 frames** (46 app screens + 4 user-flow diagrams).
+
+> **⚠️ Naming conflict (created 2026-04-29):** Two screens are numbered "15":
+> - `GSPIQ` (x=2700) → 15 – Reset Password (renamed today from "14")
+> - `eonMK` (x=2250, y=1848) → 15 – Edit Transaction (pre-existing)
+> 
+> The Edit Transaction screen should be renumbered **16** and all subsequent screens shifted up by 1 (16–45 → 17–46). Low cosmetic priority but must be fixed before next design handoff.
 
 ### ✅ Fully implemented
 
@@ -35,11 +42,11 @@ The mockup (`ZendaApp.pen`) has **49 frames**. Current coverage:
 | 08 – Goals | `features/goals/goals_screen.dart` |
 | 09 – Goal Detail | `features/goals/goal_detail_screen.dart` |
 | 10 – Reports | `features/reports/reports_screen.dart` |
-| 11 – Profile | `features/profile/profile_screen.dart` — standalone screen at `/profile` |
+| 11 – Profile | `features/profile/profile_screen.dart` |
 | 12 – Categories | `features/categories/category_management_screen.dart` |
-| 13 – Forgot Password | `features/auth/forgot_password_screen.dart` |
-| 14 – Reset Password | `features/auth/reset_password_screen.dart` |
-| 15 – Edit Transaction | `features/transactions/edit_transaction_screen.dart` |
+| 13 – Forgot Password | `features/auth/forgot_password_screen.dart` *(design updated 2026-04-29: now code-based flow)* |
+| 15 – Reset Password *(was 14)* | `features/auth/reset_password_screen.dart` |
+| 15 – Edit Transaction *(should be 16)* | `features/transactions/edit_transaction_screen.dart` |
 | 19 – AI Predictions | `features/predictions/predictions_screen.dart` |
 | 20 – Recommendations | `features/recommendations/recommendations_screen.dart` |
 | 21 – Financial Progress | `features/progress/progress_screen.dart` |
@@ -56,6 +63,14 @@ The mockup (`ZendaApp.pen`) has **49 frames**. Current coverage:
 | 38–42 – Onboarding: Profile Setup | `features/onboarding/profile_setup_screen.dart` — 4-step wizard post-registration |
 | 43 – Splash | `features/onboarding/splash_decider.dart` |
 | 44 – Data Consent | `features/consent/consent_screen.dart` — shown before registration |
+
+---
+
+### ❌ Design exists — Flutter code not yet built
+
+| Mockup Screen | What's needed |
+|---------------|--------------|
+| **14 – Verify Code** | `features/auth/verify_code_screen.dart` — 6-digit OTP input, timer countdown, resend link. Screen designed 2026-04-29. Requires backend OTP endpoint (see §3). |
 
 ---
 
@@ -79,7 +94,7 @@ The mockup shows these as full-screen flows; the app uses modals/dialogs. Both a
 
 ### ✅ Navigation — all screens are now reachable
 
-All previously orphaned screens are now linked from `ProfileScreen` (`/profile`):
+All previously orphaned screens are linked from `ProfileScreen` (`/profile`):
 
 | Screen | Route | Entry point |
 |--------|-------|-------------|
@@ -96,20 +111,40 @@ All previously orphaned screens are now linked from `ProfileScreen` (`/profile`)
 | FeedbackModal | — | Profile → Support → Send feedback |
 | QuizScreen | `/education/:id/quiz` | Topic detail → Quiz button |
 
-The Dashboard's Profile tab now navigates to the full `ProfileScreen` (`/profile`) instead of an inline tab.
+> **⚠️ Design vs code mismatch:** The Flutter `ProfileScreen` has these full navigation sections. Screen 11 in the design (`ZendaApp.pen`) shows only a minimal info card + sign-out button. The design must be updated to match the fuller implementation (see §2.1 Design Gaps).
 
 ---
 
 ## 2. Auth & Onboarding Flow
 
-The complete first-run user journey is now implemented:
+### 2.1 Password Reset — **Updated 2026-04-29: Link-based → Code-based**
+
+The password reset flow was redesigned from a link-based approach to a 6-digit OTP code approach. Three screens now cover this flow:
+
+```
+13 – Forgot Password  →  14 – Verify Code (NEW)  →  15 – Reset Password
+   Enter email              Enter 6-digit code         Enter new password
+   "Send Code" CTA          Timer: 14:32               Strength indicator
+                            Boxes 1–3 filled (●)       "Reset Password" CTA
+                            Box 4 active (green)
+                            Boxes 5–6 empty
+                            "Resend" link
+```
+
+**Flutter code status:**
+- `forgot_password_screen.dart` — exists, but still sends a link (old flow). Needs update to call OTP endpoint.
+- `verify_code_screen.dart` — **does not exist yet**. Must be created.
+- `reset_password_screen.dart` — exists and is reusable; just needs to receive the OTP token.
+- Backend `POST /api/auth/send-otp` and `POST /api/auth/verify-otp` — **do not exist yet**.
+
+### 2.2 Full First-Run Journey
 
 ```
 Splash → Onboarding (3 product slides)
-       → Consent Screen (/consent)     ← Law 29733 gate
+       → Consent Screen (/consent)       ← Law 29733 gate
        → Register (/auth/register)
-       → Email Sent (/auth/email-sent) ← Registration confirmation
-       → Profile Setup (/profile-setup) ← 4-step wizard (age, university, income type, income)
+       → Email Sent (/auth/email-sent)   ← Registration confirmation
+       → Profile Setup (/profile-setup)  ← 4-step wizard (age, university, income type, income)
        → Dashboard (/dashboard)
 ```
 
@@ -119,28 +154,51 @@ Login → if profileCompleted → /dashboard
       → if !profileCompleted → /profile-setup
 ```
 
-The router also enforces the redirect: any authenticated user with `profileCompleted == false` going to a protected route is redirected to `/profile-setup`.
+---
+
+## 2.1 Design Gaps — Screens with Missing Widgets
+
+These screens exist in `ZendaApp.pen` and have Flutter implementations, but are missing specific widgets that are required by user stories. Each gap is a targeted design + code fix.
+
+| # | Screen | Missing Widget / Logic | User Story | Fix |
+|---|--------|----------------------|------------|-----|
+| 🎨1 | 06 – Add Transaction | **No AI categorization suggestion.** When user fills the note field, no "Zenda suggests: [Category]" chip appears above the category grid. | US-018 / US-0702 | Add a conditionally visible chip row below the note field. Wire to `classifyTransaction()` on note blur. |
+| 🎨2 | 07 – Budget | **No "Add Budget" button.** The header shows only title + month selector. There is no visible way to create a new budget from this screen. Goals screen has a comparable "+ New" button. | US-019 / US-0501 | Add "+ New" button to the Budget screen header (same pattern as Goals). |
+| 🎨3 | 07 – Budget | **No per-row edit/delete trigger.** Budget rows show category + progress bar but have no "⋯" kebab or swipe action. Screen 45 (Edit Budget modal) exists but is unreachable from the design. | US-043 / US-0504 | Add a "⋯" icon to the right of each budget row. Long-press or tap opens Edit/Delete options. |
+| 🎨4 | 08 – Goals | **No deadline display on goal cards.** Cards show progress % and amounts but no target date. | US-021 / US-0502 | Add "Due: [date]" below the progress bar on each goal card. |
+| 🎨5 | 08 – Goals | **No goal complete/delete action.** Goal cards have no swipe-to-reveal or action menu. | US-045 / US-0505 | Add "⋯" kebab or long-press to reveal "Mark Complete" and "Delete" options. |
+| 🎨6 | 09 – Goal Detail | **No deadline or days remaining.** The progress card shows amount/% but no target date or countdown. | US-022 / US-0503 | Add "Target: [date] · [N] days left" row to the progress card. |
+| 🎨7 | 09 – Goal Detail | **No "Mark Complete" / "Delete Goal" buttons.** The only action visible is "+ Add" for contributions. | US-045 / US-0505 | Add two secondary action buttons below the contribution section. |
+| 🎨8 | 11 – Profile | **Design doesn't match implementation.** Flutter profile has sections for Finance Tools, Education, Gamification, Research, Settings/Support. Design shows only info card + sign-out. | Multiple | Redesign screen 11 to include nav section rows matching the Flutter implementation. |
+| 🎨9 | 22 – Education List | **No AI personalization indicator.** Topic ordering is static. No "Recommended for you" label or explanation. | US-048 / US-1006 | Add a "Personalized for you ✨" section header above the AI-ordered topics. Explain briefly why topics are prioritized. |
+| 🎨10 | 22 – Education List | **No AI-generated contextual questions entry point.** US-049 requires AI-generated questions based on the user's spending patterns. No dedicated screen or entry point exists. | US-049 / US-1007 | Add a card "Practice with Zenda AI" on the Education screen. Create a new screen (or extend Quiz screen) for AI-generated questions. |
 
 ---
 
 ## 3. User Stories — What Is Left
 
+> **Audit methodology (2026-04-29):** Each story was verified against the live codebase — backend TypeScript source files, Flutter Dart files, and route declarations. A story is ✅ only when all acceptance criteria in `user_stories.md` are satisfied in the code.
+
 ### ❌ Not implemented
 
 | US | Title | Phase | Points | What's needed |
 |----|-------|-------|--------|---------------|
-| **US-0102** | Login lockout after 3 failed attempts | 2 | 5 | Backend rate-limit counter per user; not wired |
-| **US-0702** | AI Auto-Categorization | 7 | 5 | `classifyTransaction()` exists in AI provider but is never called during `POST /transactions` |
-| **US-0803** | Spending Anomaly Detection | 8 | 5 | No trigger on transaction creation in backend |
-| **US-1004** | Financial Knowledge Quizzes | 10 | 8 | ❓ Quiz questions/answers needed (see §5); backend quiz endpoints not yet built; frontend is a stub |
-| **US-1101** | Push Notification Infrastructure | 11 | 5 | ❓ Firebase project needed (see §5); preferences UI done; no actual FCM push delivery |
-| **US-1102** | Budget Alert at 80% | 11 | 5 | No scheduled job in backend |
-| **US-1103** | Anomalous Spending Alert | 11 | 3 | Linked to US-0803 — no trigger |
-| **US-1301** | Data Encryption (TLS + at-rest) | 13 | 5 | Deferred to cloud production deployment |
-| **US-1302** | ProGuard R8 for release builds | 13 | — | `flutter_secure_storage` used for JWT ✅; R8 not configured for release |
-| **US-1305** | Access Auditing to AuditLog | 13 | — | Schema exists, `DELETE /users/me` logs it, nothing else does |
-| **US-1306** | Right to deletion (30-day grace) | 13 | — | `DELETE /users/me` exists; no grace-period logic |
-| **US-1401** | Service Unit Tests | 14 | 8 | Zero test files in codebase |
+| **VERIF-01** | OTP-based password reset (backend) | Auth | — | `POST /api/auth/send-otp` and `POST /api/auth/verify-otp` endpoints; replace link-based flow |
+| **VERIF-02** | Verify Code screen (Flutter) | Auth | — | `verify_code_screen.dart` — 6-digit OTP input, countdown timer, resend, route between ForgotPassword and ResetPassword |
+| **US-0102** | Login lockout after 3 failed attempts | 2 | 5 | `LoginUseCase` has no failed-attempt counter; `ThrottlerModule` only rate-limits by IP, not per-user after failed auth |
+| **US-0702** | AI Auto-Categorization | 7 | 5 | `classifyTransaction()` exists in `AzureFoundryProvider` but is never called from `CreateTransactionUseCase`; also missing UI chip in `AddTransactionScreen` (🎨1) |
+| **US-0803** | Spending Anomaly Detection | 8 | 5 | No trigger in `CreateTransactionUseCase`; `AiProvider.classifyTransaction` not used for anomaly detection |
+| **US-1004** | Financial Knowledge Quizzes | 10 | 8 | ❓ Quiz questions/answers needed (see §5); no quiz backend endpoints (`GET /api/education/quizzes`, `POST /api/education/quizzes/:id/answer`); `QuizScreen` is a stub |
+| **US-1006** | AI-Personalized Learning Path | 10 | — | No `GET /api/education/learning-path` endpoint; `EducationController` has no AI ordering; design missing personalization label (🎨9) |
+| **US-1007** | AI-Generated Contextual Questions | 10 | — | No `GET /api/education/quizzes/contextual` endpoint; no Flutter screen; design missing entry point (🎨10) |
+| **US-1101** | Push Notification Infrastructure | 11 | 5 | ❓ Firebase project needed (see §5); `NotificationPreference` stored but no FCM integration in `NotificationsModule` |
+| **US-1102** | Budget Alert at 80% | 11 | 5 | No scheduled job or `@Cron()` decorator anywhere in codebase |
+| **US-1103** | Anomalous Spending Alert | 11 | 3 | Depends on US-0803 — no trigger on transaction creation |
+| **US-1301** | Data Encryption (TLS + at-rest) | 13 | 5 | Deferred to cloud production deployment; `flutter_secure_storage` is used for JWT ✅ but TLS and DB encryption at-rest not implemented locally |
+| **US-1302** | ProGuard R8 for release builds | 13 | — | `flutter_secure_storage` used ✅; ProGuard/R8 not configured in `android/app/build.gradle` |
+| **US-1305** | Access Auditing to AuditLog | 13 | — | `AuditLog` schema exists; no write calls found outside account deletion |
+| **US-1306** | Right to deletion (30-day grace) | 13 | — | No `DELETE /api/account` endpoint with grace-period logic |
+| **US-1401** | Service Unit Tests | 14 | 8 | Zero `.spec.ts` or `_test.dart` files in codebase |
 | **US-1402** | Integration Tests | 14 | — | Zero test files |
 | **US-1403** | AI API Integration Validation | 14 | 8 | Zero test files |
 | **US-1404** | Usability Tests (30 students) | 14 | 13 | Requires human participants |
@@ -155,51 +213,63 @@ The router also enforces the redirect: any authenticated user with `profileCompl
 
 | US | Title | What's Done | What's Missing |
 |----|-------|------------|----------------|
-| **US-0102** | Login | JWT + 401 on bad credentials | Lockout after 3 consecutive failed attempts (15 min) |
-| **US-0106** | Profile Editing | `PUT /api/users/me` + edit UI (name, age, university) | Currency selector and number format selector not in profile edit view |
+| **US-0102** | Login | JWT + 401 on bad credentials | Lockout after 3 consecutive failed attempts (15 min) — `LoginUseCase` has no counter |
+| **US-0106** | Profile Editing | `PUT /api/users/me` + edit UI + currency selector (PEN/USD) added | Number format (thousands separator) not yet selectable |
 | **US-0201** | Record Income | Endpoint + screen done | Balance on main dashboard does not update immediately after recording |
-| **US-0204** | Main Dashboard | All widgets shown | `ZendaAiCard` is static/stubbed — not wired to real recommendations API |
-| **US-0302** | Custom Categories | Full CRUD backend + frontend | Quick-creation modal from inside `AddTransactionScreen` not implemented |
+| **US-0204** | Main Dashboard | All widgets shown; `ZendaAiCard` now wired to real `GET /api/recommendations` | Full load time not benchmarked (<2 sec target) |
+| **US-0302** | Custom Categories | Full CRUD backend + frontend + quick-create "+" chip in `AddTransactionScreen` | Quick-create dialog captures name only (no icon/color picker in the modal) |
 | **US-0401** | Monthly Summary | Endpoint + Reports screen | Response time not benchmarked (<2 sec target) |
-| **US-0501** | Budget Management | Full backend + frontend CRUD | `currentSpent` and `percentageUsed` need verification that they are sourced from backend, not calculated locally |
-| **US-0502** | Financial Goals | Full CRUD + contribute | Completion animation when `currentAmount >= targetAmount` not implemented |
-| **US-1002** | Financial Challenge System | List + accept endpoints + frontend | Challenge **completion auto-verification** not wired — no logic marks a challenge COMPLETED based on criteria |
-| **US-1003** | Badge System | List endpoint + award method + frontend grid | `awardIfNotEarned()` is never triggered — no event hooks for first transaction, streak, goal completion, etc. |
-| **US-1201** | Pre-Usage Survey | Backend endpoint + Flutter survey screen | ❓ Survey scoring is a **placeholder** (`answers / total × 100`). Real questions + correct answers needed (see §5) |
-| **US-1202** | Post-Usage Survey | Backend endpoint + Flutter survey screen | Same placeholder scoring issue |
-| **US-1601** | Demo Data Script | Some demo users seeded in backend | Need 200+ transactions/user, active budgets, goals, completed surveys |
+| **US-0403** | Daily Summary | Backend `GET /api/summary/day` fully implemented; Flutter Day tab with date navigation added to `ReportsScreen` | "Visual calendar with spending indicator per day" not implemented |
+| **US-0405** | Charts by Category | Horizontal bar chart + pie chart (`BudgetPieChart`) done | Tap-to-drill-down and period selector (week/month/quarter) not implemented |
+| **US-0501** | Budget Management | Full backend + Flutter CRUD — `currentSpent`/`percentageUsed` come from backend ✅; FAB creates budget ✅; per-card edit/delete icons ✅ | Progress bar color thresholds differ from spec: code uses green <70% / yellow 70–90% / red >90% vs specified green <60% / yellow 60–80% / red >80% |
+| **US-0502** | Financial Goals | Backend POST/GET/contribute + Flutter goals list + contribute dialog + deadline date picker in create dialog ✅ | Completion animation when `currentAmount >= targetAmount` not implemented |
+| **US-0505** | Mark Goal as Completed or Delete | Goal delete ✅; "Mark complete" `FilledButton.icon` added to `GoalsScreen` (calls `PUT /goals/:id/complete`) | Completed goals section not shown separately; no confirmation dialog before mark-complete |
+| **US-0801** | Expense Prediction | `GetExpensePredictionUseCase` + statistical fallback + Flutter `PredictionsScreen` done | Retrospective accuracy tracking (`actualTotal` / `accuracy` fields on `Prediction`) not implemented |
+| **US-0902** | Feedback Tracking | `POST /api/recommendations/:id/feedback` done | Internal metrics dashboard not implemented |
+| **US-1002** | Financial Challenge System | List + accept endpoints + frontend + "Mark completed" button added | Challenge **auto-verification** not wired (no cron job or event hook calling `repo.complete()`) |
+| **US-1003** | Badge System | `GET /api/badges` + award method + Flutter grid screen | `awardIfNotEarned()` is never called — no event hooks on transaction creation, goal completion, or challenge completion |
+| **US-1201** | Pre-Usage Survey | Backend `POST /api/surveys/pre/response` + Flutter survey screen | ❓ Scoring is placeholder: `answeredQuestions / total * 100` — no correct-answer comparison; real questions + correct answers needed (see §5) |
+| **US-1202** | Post-Usage Survey | Backend `POST /api/surveys/post/response` + improvement calculation | Same placeholder scoring; "invitation after 30 days" notification not implemented |
+| **US-1601** | Demo Data Script | Some demo users seeded in backend `prisma/seed.ts` | Need 200+ transactions/user, active budgets, goals, completed surveys |
 
 ---
 
 ### ✅ Done — meets acceptance criteria
 
-| US | Title |
-|----|-------|
-| US-1801 | Repository and Project Structure |
-| US-0101 | User Registration |
-| US-0103 | Authentication Middleware (JWT guard) |
-| US-0104 | Password Recovery (forgot-password + reset-password) |
-| US-0105 | Initial Profile Setup — onboarding flow with 4-step wizard *(newly implemented)* |
-| US-0203 | Transaction History with Filters |
-| US-0205 | Edit Transaction |
-| US-0206 | Delete Transaction |
-| US-0301 | Default Categories (seed) |
-| US-0302 | Custom Categories (CRUD backend + frontend) |
-| US-0402 | Weekly Summary (backend endpoint) |
-| US-0403 | Daily Summary (backend endpoint) |
-| US-0404 | Monthly Comparison (backend endpoint) |
-| US-0405 | Charts by Category (frontend) |
-| US-0406 | PDF Export |
-| US-0407 | Financial Progress Indicator |
-| US-0503 | Detailed Goal Tracking (chart + projection) |
-| US-0701 | Azure AI API Integration |
-| US-0801 | Expense Prediction |
-| US-0901 | Recommendation Engine |
-| US-0902 | Feedback Tracking (recommendations) |
-| US-1001 | Educational Content Module |
-| US-1203 | Educational Improvement Calculation |
-| US-1303 | Data Consent — standalone screen + Law 29733 gate *(newly implemented)* |
-| US-1501 | In-App Feedback System — accessible via Profile → Send feedback *(newly implemented)* |
+| US | Title | Verified via |
+|----|-------|-------------|
+| US-1801 | Repository and Project Structure | Monorepo layout, branch strategy |
+| US-0101 | User Registration | `register.use-case.ts`, `register.dto.ts`, `register_screen.dart` |
+| US-0103 | Authentication Middleware | `jwt-auth.guard.ts`, `@UserId()` decorator, 401 on invalid token |
+| US-0104 | Password Recovery (link-based) | `forgot-password.use-case.ts`, `reset-password.use-case.ts`, Flutter screens exist |
+| US-0105 | Initial Profile Setup | `profile_setup_screen.dart` 4-step wizard, `profileCompleted` flag wired |
+| US-0203 | Transaction History with Filters | `list-transactions.use-case.ts` with all query params, `transaction_list_screen.dart` |
+| US-0205 | Edit Transaction | `update-transaction.use-case.ts` (ownership validated), `edit_transaction_screen.dart` |
+| US-0206 | Delete Transaction | `delete-transaction.use-case.ts` (soft delete, ownership), Flutter confirmation dialog |
+| US-0301 | Default Categories (seed) | `prisma/seed.ts` — 9 expense + 5 income categories |
+| US-0302 | Custom Categories (CRUD) | Full `categories` module + `category_management_screen.dart` |
+| US-0402 | Weekly Summary | `GET /api/summary/week` + Flutter `_WeekTab` with ISO week selector |
+| US-0404 | Monthly Comparison | `GET /api/summary/comparison` + Flutter `_CompareTab` with 2M/3M/6M selector |
+| US-0405 | Charts by Category | `_CategoryBarChart` + pie chart in `BudgetPieChart` (dashboard), fl_chart library |
+| US-0406 | PDF Export | `generate-pdf-report.use-case.ts` + Flutter `_exportPdf()` with `share_plus` |
+| US-0407 | Financial Progress Indicator | `GET /api/summary/progress` + Flutter `ProgressScreen` wired to `ProgressApiService` |
+| US-0503 | Detailed Goal Tracking | `GoalDetailScreen` with contribution history, `fl_chart` line chart, projection message |
+| US-0504 | Edit or Delete Monthly Budget | `update-budget.use-case.ts` + `delete-budget.use-case.ts`; Flutter `_showEditDialog()` (calls `PUT /budgets/:id`) + `_deleteBudget()` (calls `DELETE /budgets/:id`) with confirmation |
+| US-0104 | Password Recovery | `POST /api/auth/forgot-password` + `POST /api/auth/reset-password`; email via nodemailer; Flutter `ForgotPasswordScreen` + `ResetPasswordScreen` |
+| US-0205 | Edit Transaction | `PUT /api/transactions/:id` (ownership validated); Flutter `EditTransactionScreen` pre-filled |
+| US-0302 | Custom Categories (CRUD) | Full `categories` module + `CategoryManagementScreen` + quick-create "+" chip in `AddTransactionScreen` |
+| US-0402 | Weekly Summary | `GET /api/summary/week` + Flutter `_WeekTab` with ISO week selector |
+| US-0404 | Monthly Comparison | `GET /api/summary/comparison` + Flutter `_CompareTab` with 2M/3M/6M selector |
+| US-0406 | PDF Export | `generate-pdf-report.use-case.ts` + Flutter `_exportPdf()` with `share_plus` |
+| US-0407 | Financial Progress Indicator | `GET /api/summary/progress` + Flutter `ProgressScreen` wired to `ProgressApiService` |
+| US-0503 | Detailed Goal Tracking | `GoalDetailScreen` with contribution history, `fl_chart` line chart, projection message |
+| US-0504 | Edit or Delete Monthly Budget | `update-budget.use-case.ts` + `delete-budget.use-case.ts`; Flutter `_showEditDialog()` + `_deleteBudget()` |
+| US-0701 | Azure AI API Integration | `AzureFoundryProvider` — `predictExpenses`, `generateRecommendations`, `classifyTransaction`, `chat`; env-var config; graceful fallback |
+| US-0901 | Recommendation Engine | `GetRecommendationsUseCase` with Azure AI + rule-based fallback; Flutter `RecommendationsScreen`; `ZendaAiCard` wired to real API |
+| US-1001 | Educational Content Module | `GET /api/education/topics`, `GET /api/education/topics/:id`, `PATCH .../complete`; Flutter `EducationScreen` + `TopicDetailScreen` |
+| US-1203 | Educational Improvement Calculation | `GET /api/surveys/comparison` (per-user pre/post diff); placeholder scoring noted but endpoint exists |
+| US-1303 | Data Consent | `consent_screen.dart` gates registration; `consentGiven`/`consentAt` fields on User |
+| US-1501 | In-App Feedback System | `POST /api/feedback` (`feedback.controller.ts`); Flutter `FeedbackModal` accessible from `ProfileScreen` |
 
 ---
 
@@ -207,11 +277,11 @@ The router also enforces the redirect: any authenticated user with `profileCompl
 
 | Module | Status | Note |
 |--------|--------|------|
-| Auth | ✅ Solid | Register, login, refresh, logout, forgot/reset password |
+| Auth | 🔄 Gap | Register, login, refresh, logout, forgot/reset password (link-based); OTP endpoints not yet built |
 | Predictions | ✅ Solid | Expense prediction with AI + statistical fallback |
 | Recommendations | ✅ Solid | AI-driven + rule-based fallback, feedback tracking |
 | Education | ✅ Solid | Topics CRUD, progress tracking, completion |
-| Chat | ✅ Solid | `POST /ai/chat` — Azure AI with system prompt + graceful fallback *(newly implemented)* |
+| Chat | ✅ Solid | `POST /ai/chat` — Azure AI with system prompt + graceful fallback |
 | Challenges | 🔄 Stub | CRUD works; no completion auto-verification logic |
 | Badges | 🔄 Stub | List works; `awardIfNotEarned()` never triggered by events |
 | Surveys | 🔄 Stub | Endpoints work; scoring is placeholder (no correct answers in DB) |
@@ -221,8 +291,6 @@ The router also enforces the redirect: any authenticated user with `profileCompl
 ---
 
 ## 5. Open Questions — Needed From You
-
-These items are blocked until you provide content or make a decision.
 
 ### ❓ Quiz questions (US-1004 — screen 24)
 The quiz screen exists as a stub. Backend quiz endpoints have not been built yet.
@@ -257,26 +325,65 @@ Items listed by impact on thesis completeness. Items marked **[content needed]**
 
 | # | Item | Effort | Impact |
 |---|------|--------|--------|
-| 1 | Survey real questions + correct-answer scoring | Medium — **[content needed]** | Critical — thesis metric |
-| 2 | Quiz backend endpoints + real questions | Medium — **[content needed]** | High — US-1004 |
-| 3 | Challenge completion auto-verification | Medium | High — gamification |
-| 4 | Badge award triggers (first transaction, streak, goal) | Medium | High — gamification |
-| 5 | ZendaAiCard wired to real recommendations API | Low | High — dashboard differentiator |
-| 6 | Expand demo data seed script | Low | High — Phase 16 |
-| 7 | AI auto-categorization wired to POST /transactions | Low | Medium — method already exists |
-| 8 | FCM push delivery | Medium — **[content needed]** | Medium — US-1101 |
-| 9 | Goal completion animation | Low | Low — cosmetic |
-| 10 | Budget `currentSpent` verification (backend vs local) | Low | Medium |
-| 11 | Demo script (15–20 min walkthrough) | Low | High — Phase 16 |
-| 12 | Technical documentation | Medium | High — Phase 16 |
-| 13 | Unit + integration tests | High | High — Phase 14 / ISO 25010 |
+| 1 | **Implement OTP forgot-password flow** (backend + Flutter `verify_code_screen.dart`) | Medium | Critical — auth flow is broken for new users |
+| 2 | **Fix screen naming conflict** in `ZendaApp.pen`: rename "15 – Edit Transaction" to "16 –" and shift all subsequent numbers | Low | Medium — prevents confusion in design handoff |
+| 3 | **Redesign screen 11 (Profile)** in `ZendaApp.pen` to add navigation sections matching Flutter implementation | Low | High — design and code are out of sync |
+| 4 | **Design gaps 🎨1–🎨9** — targeted widget additions to existing screens | Low | High — several user stories not represented in design |
+| 5 | Survey real questions + correct-answer scoring | Medium — **[content needed]** | Critical — thesis metric |
+| 6 | Quiz backend endpoints + real questions | Medium — **[content needed]** | High — US-1004 |
+| 7 | Challenge completion auto-verification | Medium | High — gamification |
+| 8 | Badge award triggers (first transaction, streak, goal) | Medium | High — gamification |
+| 9 | ~~ZendaAiCard wired to real recommendations API~~ **Done** | — | — |
+| 10 | AI auto-categorization wired to `POST /transactions` + UI chip in Add Transaction | Low | Medium |
+| 11 | Goal completion animation + completed section + mark-complete confirmation dialog (🎨7) | Low | Medium |
+| 12 | Add Budget button in Budget screen header (🎨2) + edit/delete trigger (🎨3) | Low | Medium |
+| 13 | Goal deadline display on detail screen (🎨6); date picker in create dialog now done (🎨4 ✅) | Low | Low |
+| 14 | Expand demo data seed script | Low | High — Phase 16 |
+| 15 | FCM push delivery | Medium — **[content needed]** | Medium — US-1101 |
+| 16 | Goal completion animation | Low | Low — cosmetic |
+| 17 | Budget `currentSpent` verification (backend vs local) | Low | Medium |
+| 18 | Demo script (15–20 min walkthrough) | Low | High — Phase 16 |
+| 19 | Technical documentation | Medium | High — Phase 16 |
+| 20 | Unit + integration tests | High | High — Phase 14 / ISO 25010 |
 
 ---
 
-## 7. Changes Log
+## 7. Roadmap Phase Audit
+
+Audited against `.claude/agent-os/product/roadmap.md` checkboxes and actual codebase. Status reflects code reality, not roadmap checkbox state (roadmap checkboxes are outdated).
+
+| Phase | Title | Status | Gap summary |
+|-------|-------|--------|-------------|
+| 1 | Infrastructure and Setup | ✅ Done | Repo, Docker/Postgres, NestJS base, Flutter base, CI/CD config all present |
+| 2 | Authentication and Users | 🔄 Partial | Register/login/JWT/refresh/logout/forgot-password/reset-password done; **lockout after 3 failures not implemented**; **OTP flow not implemented**; `financialLiteracyLevel` assignment in profile setup not wired |
+| 3 | Transaction Recording | 🔄 Partial | Full CRUD + Flutter screens + edit + delete done; **dashboard balance does not refresh immediately after recording** |
+| 4 | Categorization | 🔄 Partial | Full CRUD backend + Flutter `CategoryManagementScreen`; **quick-create from `AddTransactionScreen` not implemented** |
+| 5 | Reports and Visualization | 🔄 Partial | Monthly/weekly/comparison summaries + Flutter tabs + category bar chart + PDF export + progress indicator all done; **Day tab added to ReportsScreen**; **"visual calendar" missing**; chart tap-drill-down and period selector not done |
+| 6 | Budgets and Goals | 🔄 Partial | Budget full CRUD + Flutter done; goals full CRUD + Flutter done; **deadline date picker added**; **"Mark complete" button added**; completion animation + completed section + mark-complete confirmation dialog still missing |
+| 7 | AI Integration | 🔄 Partial | `AzureFoundryProvider` fully implemented with fallback; **`classifyTransaction()` not wired to `POST /transactions`** |
+| 8 | Predictions | 🔄 Partial | Expense prediction endpoint + Flutter `PredictionsScreen` done; **anomaly detection not triggered on transaction save**; retrospective accuracy tracking not implemented |
+| 9 | Recommendations | ✅ Done | `GET /api/recommendations` + feedback done; Flutter `RecommendationsScreen` done; `ZendaAiCard` wired to real API |
+| 10 | Education and Gamification | 🔄 Partial | Education topics CRUD + Flutter done; challenges list + accept + manual complete + Flutter done; badges list + Flutter done; **quiz endpoints missing**; **challenge auto-verification not wired**; **badges never awarded automatically**; **AI learning path missing** |
+| 11 | Notifications | 🔄 Partial | Notification preferences stored; **no FCM integration**; **no budget 80% job**; **no anomaly alert trigger** |
+| 12 | Pre/Post Evaluation | 🔄 Partial | Survey GET/POST + Flutter screen + improvement comparison done; **scoring is placeholder** (no correct-answer logic); **30-day invitation notification not wired** |
+| 13 | Security and Compliance | 🔄 Partial | Consent screen + rate limiting done; **TLS/DB encryption deferred to cloud**; **ProGuard R8 not configured**; **AuditLog writes missing** |
+| 14 | Testing and Quality | ❌ Not started | Zero test files in backend or frontend |
+| 15 | Feedback and Analytics | 🔄 Partial | `POST /api/feedback` + Flutter modal done; `AnalyticsEvent` fire-and-forget in FeedbackController; **full event logging not wired** to other actions (transactions, challenges, etc.) |
+| 16 | Demo Readiness | ❌ Not started | Minimal seed data; no demo script; no installation guide; no technical documentation |
+
+---
+
+## 8. Changes Log
 
 | Date | Change |
 |------|--------|
+| 2026-04-29 | **Production-readiness + partial US implementation:** deleted 7 dead/fake service files (`lib/services/`, `local_auth_service.dart`, `ai_advice_service.dart`); implemented US-0403 Day tab in ReportsScreen; US-0502 deadline date picker in goal creation; US-0505 Mark-Complete button on goal cards; US-1002 Mark-Completed button on challenge cards; US-0204 ZendaAiCard wired to real recommendations API; US-0106 currency selector (PEN/USD) in profile edit; US-0302 quick-create "+" chip in AddTransactionScreen |
+| 2026-04-29 | **Doc sync:** updated roadmap.md checkboxes (phases 5, 7–10, 12, 15); updated user_stories.md statuses and acceptance criteria for 25 stories; updated project-status.md §3, §7, §8 |
+| 2026-04-29 | **Full codebase audit (Section 3 + Roadmap):** verified every user story's acceptance criteria against backend TypeScript and Flutter Dart source files; updated ❌/🔄/✅ statuses; added Roadmap Phase Audit section (§7) |
+| 2026-04-29 | **Status corrections:** US-0504 promoted ❌→✅ (backend PUT/DELETE + Flutter edit dialog/delete confirmed); US-0505 reclassified ❌→🔄 (delete works, mark-complete absent); US-0403 reclassified ✅→🔄 (Flutter daily tab missing); US-0501 gap updated (FAB + per-card edit/delete confirmed, color threshold mismatch noted) |
+| 2026-04-29 | **Design audit:** deep cross-reference of all 50 `.pen` frames vs 49 thesis user stories; identified 10 design gaps (🎨1–🎨10), 1 screen naming conflict, 1 auth flow design/code divergence |
+| 2026-04-29 | **Design:** Password reset flow redesigned — link-based → OTP code-based. Screen 13 updated; Screen 14 (Verify Code) created; Screen 15 (Reset Password) renamed and moved |
+| 2026-04-29 | **Design:** Naming conflict introduced — two screens named "15"; Edit Transaction must be renumbered 16 |
 | 2026-04-26 | Initial status report generated |
 | 2026-04-26 | Removed income prediction (US-0802) from entire project |
 | 2026-04-26 | Removed all ML/machine-learning references — project uses Azure OpenAI API only |
