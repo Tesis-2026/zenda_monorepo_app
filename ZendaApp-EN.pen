@@ -7350,7 +7350,7 @@
                   "fill": "#6B7280",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "Enter your email and we'll send you a link to reset your password.",
+                  "content": "Enter your email and we'll send you a 6-digit verification code.",
                   "fontFamily": "Inter",
                   "fontSize": 14,
                   "fontWeight": "normal"
@@ -7418,7 +7418,7 @@
                   "type": "text",
                   "id": "0r0bb",
                   "fill": "#FFFFFF",
-                  "content": "Send Reset Link",
+                  "content": "Send Code",
                   "fontFamily": "Inter",
                   "fontSize": 16,
                   "fontWeight": "700"
@@ -7451,7 +7451,7 @@
                   "fill": "#065F46",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "The link expires in 1 hour. Check your spam folder if you don't see it.",
+                  "content": "The code expires in 15 minutes. Check your spam folder if you don't see it.",
                   "fontFamily": "Inter",
                   "fontSize": 13,
                   "fontWeight": "normal"
@@ -7465,9 +7465,9 @@
     {
       "type": "frame",
       "id": "GSPIQ",
-      "x": 2250,
+      "x": 2700,
       "y": 0,
-      "name": "14 – Reset Password",
+      "name": "15 – Reset Password",
       "width": 390,
       "height": 844,
       "fill": "#F9FAFB",
@@ -26209,7 +26209,7 @@
                       "id": "KNQ18",
                       "name": "ch1t",
                       "fill": "#374151",
-                      "content": "PUCP — Pontificia Universidad Católica del Perú",
+                      "content": "UPC — Universidad Peruana de Ciencias Aplicadas",
                       "fontFamily": "Inter",
                       "fontSize": 13,
                       "fontWeight": "normal"
@@ -26240,7 +26240,7 @@
                       "id": "Bu4zT",
                       "name": "ch2t",
                       "fill": "#374151",
-                      "content": "ULima — Universidad de Lima",
+                      "content": "PUCP — Pontificia Universidad Católica del Perú",
                       "fontFamily": "Inter",
                       "fontSize": 13,
                       "fontWeight": "normal"
@@ -26272,6 +26272,161 @@
                       "name": "ch3t",
                       "fill": "#374151",
                       "content": "UNMSM — Universidad Nacional Mayor de San Marcos",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "mZBqm",
+                  "name": "c1",
+                  "width": "fill_container",
+                  "height": 48,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 12,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "#E5E7EB"
+                  },
+                  "padding": [
+                    0,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "f8NhL9",
+                      "name": "ch3t",
+                      "fill": "#374151",
+                      "content": "UL — Universidad de Lima",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "lVpsC",
+                  "name": "c2",
+                  "width": "fill_container",
+                  "height": 48,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 12,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "#E5E7EB"
+                  },
+                  "padding": [
+                    0,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "SEW5w",
+                      "name": "ch3t",
+                      "fill": "#374151",
+                      "content": "USMP — Universidad de San Martín de Porres",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "OeQyc",
+                  "name": "c3",
+                  "width": "fill_container",
+                  "height": 48,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 12,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "#E5E7EB"
+                  },
+                  "padding": [
+                    0,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "a6iS44",
+                      "name": "ch3t",
+                      "fill": "#374151",
+                      "content": "UNFV — Universidad Nacional Federico Villarreal",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "zKO7i",
+                  "name": "c4",
+                  "width": "fill_container",
+                  "height": 48,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 12,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "#E5E7EB"
+                  },
+                  "padding": [
+                    0,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "H0NSx",
+                      "name": "ch3t",
+                      "fill": "#374151",
+                      "content": "UNI — Universidad Nacional de Ingeniería",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "GnCZi",
+                  "name": "c5",
+                  "width": "fill_container",
+                  "height": 48,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 12,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "#E5E7EB"
+                  },
+                  "padding": [
+                    0,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Zy95b",
+                      "name": "ch3t",
+                      "fill": "#374151",
+                      "content": "UTEC — Universidad de Tecnología e Ingeniería",
                       "fontFamily": "Inter",
                       "fontSize": 13,
                       "fontWeight": "normal"
@@ -26537,7 +26692,7 @@
                       "id": "NCxa8",
                       "name": "inc1s",
                       "fill": "#6B7280",
-                      "content": "Beca, PRONABEC, university funding",
+                      "content": "Scholarship, PRONABEC, university funding",
                       "fontFamily": "Inter",
                       "fontSize": 11,
                       "fontWeight": "normal"
@@ -28118,6 +28273,329 @@
                   "content": "Delete budget",
                   "fontFamily": "Inter",
                   "fontSize": 15,
+                  "fontWeight": "600"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "Pd03m",
+      "x": 2250,
+      "y": 0,
+      "name": "14 – Verify Code",
+      "width": 390,
+      "height": 844,
+      "fill": "#F9FAFB",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "GQga8",
+          "name": "Status Bar",
+          "width": "fill_container",
+          "height": 62,
+          "fill": "#F9FAFB"
+        },
+        {
+          "type": "frame",
+          "id": "h6bMxA",
+          "name": "Back Button",
+          "width": "fill_container",
+          "height": 44,
+          "fill": "#F9FAFB",
+          "gap": 8,
+          "padding": [
+            0,
+            0,
+            0,
+            16
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon_font",
+              "id": "nlPIJ",
+              "name": "Back Icon",
+              "width": 20,
+              "height": 20,
+              "iconFontName": "chevron-left",
+              "iconFontFamily": "lucide",
+              "fill": "#374151"
+            },
+            {
+              "type": "text",
+              "id": "XTXgA",
+              "name": "Back Label",
+              "fill": "#1F2937",
+              "content": "Back",
+              "fontFamily": "Inter",
+              "fontSize": 16,
+              "fontWeight": "500"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "WCy6v",
+          "name": "Body",
+          "width": "fill_container",
+          "height": "fill_container",
+          "fill": "#F9FAFB",
+          "layout": "vertical",
+          "gap": 24,
+          "padding": [
+            40,
+            24
+          ],
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "XEV0U",
+              "name": "Icon Box",
+              "width": 80,
+              "height": 80,
+              "fill": "#ECFDF5",
+              "cornerRadius": 40,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "OLVXI",
+                  "name": "Mail Icon",
+                  "width": 36,
+                  "height": 36,
+                  "iconFontName": "mail",
+                  "iconFontFamily": "lucide",
+                  "fill": "#34D399"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "LU6wW",
+              "name": "Title",
+              "fill": "#1F2937",
+              "content": "Check your email",
+              "fontFamily": "Inter",
+              "fontSize": 24,
+              "fontWeight": "700"
+            },
+            {
+              "type": "text",
+              "id": "DSUf4",
+              "name": "Subtitle",
+              "fill": "#6B7280",
+              "textGrowth": "fixed-width",
+              "width": 342,
+              "content": "We sent a 6-digit code to your email. Enter it below to verify.",
+              "textAlign": "center",
+              "fontFamily": "Inter",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "btKBd",
+              "name": "OTP Row",
+              "height": 56,
+              "fill": "#00000000",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "ki0BC",
+                  "name": "Digit 1",
+                  "width": 46,
+                  "height": 56,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 12,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "#9CA3AF"
+                  },
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "z4N20",
+                      "name": "vcD1",
+                      "fill": "#1F2937",
+                      "content": "●",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "VUIN4",
+                  "name": "Digit 2",
+                  "width": 46,
+                  "height": 56,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 12,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "#9CA3AF"
+                  },
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "jpN0o",
+                      "name": "vcD2",
+                      "fill": "#1F2937",
+                      "content": "●",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "kmMgH",
+                  "name": "Digit 3",
+                  "width": 46,
+                  "height": 56,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 12,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "#9CA3AF"
+                  },
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "GDhUe",
+                      "name": "vcD3",
+                      "fill": "#1F2937",
+                      "content": "●",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "VtypB",
+                  "name": "Digit 4 Active",
+                  "width": 46,
+                  "height": 56,
+                  "fill": "#F0FDF4",
+                  "cornerRadius": 12,
+                  "stroke": {
+                    "thickness": 2,
+                    "fill": "#34D399"
+                  },
+                  "justifyContent": "center",
+                  "alignItems": "center"
+                },
+                {
+                  "type": "frame",
+                  "id": "ZX5kB",
+                  "name": "Digit 5",
+                  "width": 46,
+                  "height": 56,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 12,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "#E5E7EB"
+                  },
+                  "justifyContent": "center",
+                  "alignItems": "center"
+                },
+                {
+                  "type": "frame",
+                  "id": "DiRMx",
+                  "name": "Digit 6",
+                  "width": 46,
+                  "height": 56,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 12,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "#E5E7EB"
+                  },
+                  "justifyContent": "center",
+                  "alignItems": "center"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "pQN3q",
+              "name": "Timer",
+              "fill": "#9CA3AF",
+              "content": "Code expires in 14:32",
+              "fontFamily": "Inter",
+              "fontSize": 13,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "aeaar",
+              "name": "Resend Row",
+              "height": 24,
+              "fill": "#00000000",
+              "gap": 4,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "ofty5",
+                  "name": "vcResendLbl",
+                  "fill": "#6B7280",
+                  "content": "Didn't receive a code?",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "nQmSm",
+                  "name": "Resend Link",
+                  "fill": "#34D399",
+                  "content": "Resend",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "S7XCjI",
+              "name": "Verify CTA",
+              "width": 342,
+              "height": 52,
+              "fill": "#34D399",
+              "cornerRadius": 16,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "ZMXnD",
+                  "name": "ctaText",
+                  "fill": "#FFFFFF",
+                  "content": "Verify Code",
+                  "fontFamily": "Inter",
+                  "fontSize": 16,
                   "fontWeight": "600"
                 }
               ]
