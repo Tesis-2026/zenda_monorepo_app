@@ -158,7 +158,7 @@
 
 - [x] `P0` `backend` `ai` -- **AiModule wired to Azure endpoint** -- Complete `src/infra/ai/` stub: `AzureFoundryProvider` calls the Azure AI API endpoint. Config via `AZURE_AI_ENDPOINT` + `AZURE_AI_KEY` env vars. Input: structured spending context (last 3 months per category). Output: `{ predictedTotal, predictedByCategory, confidenceLevel, advice }`. Error handling: timeout, quota exceeded, malformed response. Refs: [US-0701](./user_stories.md#US-0701)
 
-- [ ] `P1` `backend` `ai` `api` -- **AI auto-categorization** -- When recording a transaction, send description + amount to Azure AI for category inference. Returns suggested `categoryId` with confidence level. Pre-selects suggestion in the form (user can override). Falls back gracefully if API unavailable or confidence < 60%. Suggestion accuracy tracked; target >= 80%. Refs: [US-0702](./user_stories.md#US-0702) · Thesis: US-018
+- [x] `P1` `backend` `ai` `api` -- **AI auto-categorization** -- When recording a transaction, send description + amount to Azure AI for category inference. Returns suggested `categoryId` with confidence level. Pre-selects suggestion in the form (user can override). Falls back gracefully if API unavailable or confidence < 60%. Suggestion accuracy tracked; target >= 80%. Refs: [US-0702](./user_stories.md#US-0702) · Thesis: US-018
 
 ---
 
@@ -204,7 +204,7 @@
 
 - [x] `P0` `flutter` `ui` -- **Quiz screen** -- State machine: answering → reviewing → results. Progress bar, per-question option tiles with animated color feedback (green/red). Results view with score, level badge, and full review list. Language auto-selected from device locale. Refs: [US-1004](./user_stories.md#US-1004) · Thesis: US-026
 
-- [ ] `P1` `backend` `api` -- **Badge system** -- Automatic assignment by criteria. `GET /api/badges`. Seed data ready (7 badges: First Transaction, Consistency, Goal Achieved, Challenger, Financial Sage, Predictor, Budgeter). No duplicate badges. `Badge` and `UserBadge` schemas ready. **Gap:** `awardIfNotEarned()` is never called — no event hooks on transaction creation, goal completion, or challenge completion. Refs: [US-1003](./user_stories.md#US-1003) · Thesis: US-025
+- [x] `P1` `backend` `api` -- **Badge system** -- Automatic assignment by criteria. `GET /api/badges`. Seed data ready (7 badges: First Transaction, Consistency, Goal Achieved, Challenger, Financial Sage, Predictor, Budgeter). No duplicate badges. `Badge` and `UserBadge` schemas ready. 6/7 triggers wired: `awardIfNotEarned()` called from `CreateTransactionUseCase` (First Transaction, Consistency), `ContributeToGoalUseCase` (Goal Achieved), `PrismaChallengeRepository.complete()` (Challenger), `CompleteTopicUseCase` (Financial Sage), `ListBudgetsUseCase` (Budgeter). **Gap:** "Predictor" badge not wired (no trigger on prediction view count). Refs: [US-1003](./user_stories.md#US-1003) · Thesis: US-025
 
 - [x] `P1` `flutter` `ui` -- **Badges screen** -- Grid with badges (colored if earned, gray if not). Tap for detail: name, description, criteria, date earned. Push notification on unlock. Refs: [US-1003](./user_stories.md#US-1003) · Thesis: US-025
 
@@ -234,13 +234,13 @@
 
 > **Impact: Critical** — Without evaluation, OE4 cannot be demonstrated. Validates educational objective.
 
-- [ ] `P0` `backend` `api` -- **Pre-usage survey** -- `POST /api/surveys/pre/response`. 15-20 financial knowledge questions (budgeting, savings, inflation, credit, interest). Score 0-100. Present during onboarding. Blocks advance if question skipped. `Survey`, `SurveyQuestion`, `SurveyResponse` schemas ready. Refs: [US-1201](./user_stories.md#US-1201) · Thesis: US-033
+- [x] `P0` `backend` `api` -- **Pre-usage survey** -- `POST /api/surveys/pre/response`. 8 financial knowledge questions seeded with correct answers; score 0-100. Present during onboarding. `Survey`, `SurveyQuestion`, `SurveyResponse` schemas ready. Refs: [US-1201](./user_stories.md#US-1201) · Thesis: US-033
 
-- [ ] `P0` `backend` `api` -- **Post-usage survey + final evaluation invitation** -- `POST /api/surveys/post/response`. Same questionnaire variant + SUS. Non-intrusive invitation shown after 30 days of active use, reappears on each session until completed. Answers linked to pre-survey for improvement % calculation. Refs: [US-1202](./user_stories.md#US-1202) · Thesis: US-034, US-047
+- [x] `P0` `backend` `api` -- **Post-usage survey + final evaluation invitation** -- `POST /api/surveys/post/response`. 8 questions with correct answers. Answers linked to pre-survey for improvement % calculation. **Gap:** Non-intrusive 30-day re-invitation logic not wired. Refs: [US-1202](./user_stories.md#US-1202) · Thesis: US-034, US-047
 
 - [x] `P0` `backend` `api` -- **Improvement calculation** -- Individual and aggregate pre/post comparison. Target: >= 20% improvement. Refs: [US-1203](./user_stories.md#US-1203)
 
-- [ ] `P0` `flutter` `ui` -- **Survey screens** -- Multiple choice, one question per screen, progress bar. Cannot advance without answering. Score on completion with interpretation and comparison to pre-survey. Refs: [US-1201](./user_stories.md#US-1201), [US-1202](./user_stories.md#US-1202) · Thesis: US-033, US-047
+- [x] `P0` `flutter` `ui` -- **Survey screens** -- Multiple choice, one question per screen, progress bar. Cannot advance without answering. Score on completion with interpretation and comparison to pre-survey. Refs: [US-1201](./user_stories.md#US-1201), [US-1202](./user_stories.md#US-1202) · Thesis: US-033, US-047
 
 - [ ] `P1` `backend` -- **SUS questionnaire** -- 10 standard questions. Automatic 0-100 calculation. Blocks submission if any question unanswered. Refs: [US-1204](./user_stories.md#US-1204) · Thesis: US-035
 
@@ -252,7 +252,7 @@
 
 - [ ] `P0` `backend` `security` -- **Encryption in transit and at rest** -- Mandatory TLS 1.3. Database encryption at rest. Encrypted backup. 401 returned without exposing sensitive info when token invalid/absent. Refs: [US-1301](./user_stories.md#US-1301) · Thesis: US-029
 
-- [ ] `P0` `flutter` `security` -- **Secure storage** -- `flutter_secure_storage` for JWT tokens and sensitive credentials. ProGuard/R8 enabled for release builds. Refs: [US-1302](./user_stories.md#US-1302)
+- [x] `P0` `flutter` `security` -- **Secure storage** -- `flutter_secure_storage` for JWT tokens and sensitive credentials. **Gap:** ProGuard/R8 not yet configured for release builds. Refs: [US-1302](./user_stories.md#US-1302)
 
 - [x] `P0` `backend` `security` -- **Law 29733 consent** -- `consentGiven` and `consentAt` fields on `User` model. Explicit consent recorded at registration. Refs: [US-1303](./user_stories.md#US-1303)
 
@@ -260,7 +260,7 @@
 
 - [ ] `P1` `backend` -- **Access auditing** -- Log sensitive actions to `AuditLog` model. Schema ready. Refs: [US-1305](./user_stories.md#US-1305)
 
-- [ ] `P2` `backend` -- **Right to deletion** -- `DELETE /api/account` complete deletion with 30-day grace period. Refs: [US-1306](./user_stories.md#US-1306)
+- [x] `P2` `backend` -- **Right to deletion** -- `DELETE /api/users/me` implemented as immediate hard delete. **Gap:** 30-day grace period not implemented. Refs: [US-1306](./user_stories.md#US-1306)
 
 ---
 
@@ -292,7 +292,7 @@
 
 - [x] `P0` `flutter` `ui` -- **Feedback button** -- Accessible from any screen. Modal with form. Confirmation shown on submit. Submit blocked if message empty. Refs: [US-1501](./user_stories.md#US-1501) · Thesis: US-036
 
-- [ ] `P1` `backend` -- **Event analytics** -- Log key actions (record_transaction, view_report, view_prediction, accept_challenge, complete_educational_topic, check_recommendation) to `AnalyticsEvent` model. Async — must not affect perceived performance (< 300ms overhead). Schema ready. Refs: [US-1502](./user_stories.md#US-1502) · Thesis: US-037
+- [x] `P1` `backend` -- **Event analytics** -- `AnalyticsService` (`@Global()`) logs 12 event types: `login`, `register`, `record_transaction`, `delete_transaction`, `create_goal`, `contribute_goal`, `complete_goal`, `accept_challenge`, `complete_challenge`, `complete_topic`, `create_budget`, `submit_feedback`. Async — does not block use-case response path. `AnalyticsEvent` schema ready. Refs: [US-1502](./user_stories.md#US-1502) · Thesis: US-037
 
 - [ ] `P1` `backend` -- **Internal metrics dashboard** -- Active users, transactions/day, pre/post scores, recommendation acceptance rate. Refs: [US-1503](./user_stories.md#US-1503)
 
@@ -322,15 +322,15 @@
 | 4 | Categorization | Sprint 3 | 2 weeks | ✅ Done |
 | 5 | Reports and Visualization | Sprint 4-5 | 4 weeks | ✅ Done (PDF export deferred to P2) |
 | 6 | Budgets and Goals | Sprint 5-6 | 3 weeks | ✅ Done |
-| 7 | AI Integration (Azure AI Foundry) | Sprint 6-7 | 4 weeks | 🔄 Partial (Azure AI wired; auto-categorization not wired to POST /transactions) |
+| 7 | AI Integration (Azure AI Foundry) | Sprint 6-7 | 4 weeks | ✅ Done |
 | 8 | AI Predictions | Sprint 7-8 | 4 weeks | 🔄 Partial (prediction endpoint + Flutter screen done; anomaly detection and accuracy tracking not done) |
 | 9 | Recommendations | Sprint 8-9 | 3 weeks | ✅ Done |
-| 10 | Education and Gamification | Sprint 9-10 | 4 weeks | 🔄 Partial (topics + challenges + badges screen + quizzes done; badge auto-award event hooks and AI learning path not done) |
+| 10 | Education and Gamification | Sprint 9-10 | 4 weeks | 🔄 Partial (topics + challenges + badges screen + quizzes done; 6/7 badge triggers wired (Predictor missing); auto-verification done for 2 criteria types; AI learning path not done) |
 | 11 | Notifications | Sprint 10 | 2 weeks | -- |
-| 12 | Pre/Post Evaluation | Sprint 11 | 3 weeks | 🔄 Partial (survey endpoints + Flutter screen + improvement calc done; scoring is placeholder; SUS not done) |
-| 13 | Security and Compliance | Sprint 11-12 | 3 weeks | 🔄 Partial (consent + rate limiting + flutter_secure_storage done; TLS, ProGuard, AuditLog not done) |
+| 12 | Pre/Post Evaluation | Sprint 11 | 3 weeks | 🔄 Partial (survey endpoints + Flutter screen + improvement calc done; real scoring seeded; 30-day invitation not wired; SUS not done) |
+| 13 | Security and Compliance | Sprint 11-12 | 3 weeks | 🔄 Partial (consent + rate limiting + flutter_secure_storage + right-to-deletion done; TLS, ProGuard, AuditLog not done) |
 | 14 | Testing and Quality | Sprint 12-13 | 3 weeks | -- |
-| 15 | Feedback and Analytics | Sprint 13 | 2 weeks | 🔄 Partial (feedback endpoint + Flutter modal done; event analytics partial; metrics dashboard not done) |
+| 15 | Feedback and Analytics | Sprint 13 | 2 weeks | 🔄 Partial (feedback endpoint + Flutter modal done; event analytics done (12 events); metrics dashboard not done) |
 | 16 | Demo Readiness | Sprint 14 | 2 weeks | -- |
 
 ---

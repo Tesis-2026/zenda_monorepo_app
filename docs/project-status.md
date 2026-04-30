@@ -299,22 +299,14 @@ Login → if profileCompleted → /dashboard
 
 ## 5. Frontend — Known Gaps and Technical Debt
 
-### 5.1 Dashboard Data Architecture Issue ⚠️
+### 5.1 Dashboard Data Architecture — FIXED ✅
 
-The dashboard home page and the transactions tab use **two disconnected data stores**:
+`todayExpenseProvider`, `weekExpenseProvider`, and `budgetBreakdownProvider` now call the backend API via `InsightsApiService` instead of reading from local SharedPreferences. `daySummaryProvider`, `weekSummaryProvider`, and `monthSummaryProvider` are new `FutureProvider.autoDispose` providers backed by `GET /api/summary/day`, `/week`, `/month`. The `RefreshIndicator` on the dashboard invalidates all three on pull-to-refresh.
 
-| UI Area | Data Source |
-|---------|-------------|
-| Home tab: account balances, today/week expense, budget pie chart, streak | Local `SharedPreferences` via `AccountsRepository` + `TransactionsRepository` |
-| Transactions tab: transaction list | Real backend API via `TransactionApiService` |
-
-**Impact:** Recording a transaction posts to the backend, but the home-page totals and budget pie chart do not update — they reflect only locally-seeded data (3 hardcoded accounts seeded on first run, 5 hardcoded Spanish transactions seeded on first run). A user viewing the dashboard will see stale/incorrect data.
-
-**What exists locally:**
-- `AccountsRepository` seeds 3 accounts on first run: `'Efectivo'` (cash), `'BCP Débito'` (debit), `'Interbank Crédito'` (credit) — local only, never synced to backend
-- `TransactionsRepository` seeds 5 hardcoded transactions (Spanish notes) — local only
-
-**Fix path:** Reconcile by routing `todayExpenseProvider`, `weekExpenseProvider`, and `budgetBreakdownProvider` to call `GET /api/summary/month` / `GET /api/summary/week` instead of computing from local SharedPreferences.
+**Remaining local-only stores** (by design — accounts are not yet synced to backend):
+- `AccountsRepository` — SharedPreferences, seeds 3 accounts on first run (`Efectivo`, `BCP Débito`, `Interbank Crédito`)
+- `TransactionsRepository` — SharedPreferences, legacy local cache (still used for streak tracking)
+- `StreakRepository` — SharedPreferences
 
 ### 5.2 Hardcoded Strings (l10n Violations)
 
@@ -396,19 +388,18 @@ Notification preferences are stored but not delivered. To implement:
 
 | # | Item | Effort | Impact |
 |---|------|--------|--------|
-| 1 | **Fix dashboard data source** — route home-tab providers (`todayExpenseProvider`, `weekExpenseProvider`, `budgetBreakdownProvider`) to backend APIs instead of local SharedPreferences | Medium | Critical — US-0201, US-0204 |
-| 2 | **Fix hardcoded Spanish strings** in `account_card.dart`, `dashboard_providers.dart`, `account.dart` (`typeLabel`) | Low | High — thesis SUS score |
-| 3 | **Fix screen naming conflict** in `ZendaApp.pen`: rename "15 – Edit Transaction" to "16 –" | Low | Medium |
-| 4 | **Redesign screen 11 (Profile)** in `ZendaApp.pen` to match Flutter implementation | Low | High |
-| 5 | Challenge completion auto-verification | Medium | High — gamification |
-| 6 | Fix budget screen l10n `'Delete'` string + month-name/day-header hardcodes in Reports | Low | Medium |
-| 7 | Expand demo data seed script (200+ transactions/user) | Low | High — Phase 16 |
-| 8 | FCM push delivery | Medium — **[content needed]** | Medium — US-1101 |
-| 9 | Fix N+1 query in `PrismaBudgetsRepository.findAll()` | Low | Medium — performance |
-| 10 | Goal completion confetti animation | Low | Low — cosmetic |
-| 11 | Demo script (15–20 min walkthrough) | Low | High — Phase 16 |
-| 12 | Technical documentation | Medium | High — Phase 16 |
-| 13 | Unit + integration tests | High | High — Phase 14 / ISO 25010 |
+| 1 | **Fix hardcoded Spanish strings** in `account_card.dart`, `dashboard_providers.dart`, `account.dart` (`typeLabel`) | Low | High — thesis SUS score |
+| 2 | **Fix screen naming conflict** in `ZendaApp.pen`: rename "15 – Edit Transaction" to "16 –" | Low | Medium |
+| 3 | **Redesign screen 11 (Profile)** in `ZendaApp.pen` to match Flutter implementation | Low | High |
+| 4 | Fix budget screen l10n `'Delete'` string + month-name/day-header hardcodes in Reports | Low | Medium |
+| 5 | Expand demo data seed script (200+ transactions/user) | Low | High — Phase 16 |
+| 6 | FCM push delivery | Medium — **[content needed]** | Medium — US-1101 |
+| 7 | Fix N+1 query in `PrismaBudgetsRepository.findAll()` | Low | Medium — performance |
+| 8 | Goal completion confetti animation | Low | Low — cosmetic |
+| 9 | Wire "Predictor" badge trigger (check predictions view count) | Low | Low — gamification |
+| 10 | Demo script (15–20 min walkthrough) | Low | High — Phase 16 |
+| 11 | Technical documentation | Medium | High — Phase 16 |
+| 12 | Unit + integration tests | High | High — Phase 14 / ISO 25010 |
 
 ---
 
@@ -425,10 +416,10 @@ Notification preferences are stored but not delivered. To implement:
 | 7 | AI Integration | ✅ Done | `AzureFoundryProvider`; `POST /transactions/classify`; debounced AI chip in `AddTransactionScreen` |
 | 8 | Predictions | 🔄 Partial | Prediction endpoint + `PredictionsScreen`; **anomaly detection not triggered on transaction save**; **`actualTotal`/`accuracy` dead fields** |
 | 9 | Recommendations | ✅ Done | `GetRecommendationsUseCase` + rule-based fallback; `RecommendationsScreen`; `ZendaAiCard` wired to real API |
-| 10 | Education and Gamification | 🔄 Partial | Education topics + Flutter + personalization header + **quiz fully implemented (US-1004)** done; challenges + badges + 6/6 award triggers; **challenge auto-verification not wired**; `PrismaChallengeRepository` cross-context infra dep |
+| 10 | Education and Gamification | 🔄 Partial | Education topics + Flutter + personalization header + quiz fully implemented done; challenges + badges + 6/7 award triggers wired (Predictor missing); **`VerifyChallengesUseCase` wired** for `daily_recording_streak` + `savings_goal_contribution`; `PrismaChallengeRepository` cross-context infra dep |
 | 11 | Notifications | 🔄 Partial | Preferences stored; **no FCM**; **no budget-80% cron job**; **no anomaly alert** |
-| 12 | Pre/Post Evaluation | 🔄 Partial | Survey GET/POST + Flutter + improvement comparison; **real correct-answer scoring seeded (8 Q each)**; **30-day invitation not wired** |
-| 13 | Security and Compliance | 🔄 Partial | Consent + rate limiting + `minSdk=28`; **TLS/DB encryption deferred**; **ProGuard R8 not configured**; **AuditLog writes missing**; `DELETE /users/me` is immediate hard delete (no 30-day grace) |
+| 12 | Pre/Post Evaluation | 🔄 Partial | Survey GET/POST + Flutter + improvement comparison + **real correct-answer scoring seeded (8 Q each)**; **30-day invitation not wired** |
+| 13 | Security and Compliance | 🔄 Partial | Consent + rate limiting + `minSdk=28` + `flutter_secure_storage` + `DELETE /users/me` (immediate hard delete); **TLS/DB encryption deferred**; **ProGuard R8 not configured**; **AuditLog writes missing**; **no 30-day grace on deletion** |
 | 14 | Testing and Quality | ❌ Not started | Zero test files in backend or frontend |
 | 15 | Feedback and Analytics | ✅ Done | `POST /feedback` + Flutter modal; `AnalyticsService` (`@Global()`) wires 12 event types: `login`, `register`, `record_transaction`, `delete_transaction`, `create_goal`, `contribute_goal`, `complete_goal`, `accept_challenge`, `complete_challenge`, `complete_topic`, `create_budget`, `submit_feedback` |
 | 16 | Demo Readiness | ❌ Not started | Minimal seed data; no demo script; no installation guide; no technical documentation |
@@ -439,6 +430,7 @@ Notification preferences are stored but not delivered. To implement:
 
 | Date | Change |
 |------|--------|
+| 2026-04-29 | **Dashboard data source fix + challenge auto-verification (session 6):** Fixed dashboard data source — `daySummaryProvider`, `weekSummaryProvider`, `monthSummaryProvider` now call `InsightsApiService`; `todayExpenseProvider`, `weekExpenseProvider`, `budgetBreakdownProvider` derive from API data. `RefreshIndicator` invalidates all three providers. Added `VerifyChallengesUseCase` in ChallengesModule — verifies `daily_recording_streak` and `savings_goal_contribution` challenge criteria using `PrismaService` directly (avoids circular deps); triggered fire-and-forget from `CreateTransactionUseCase` and `ContributeToGoalUseCase`. Updated `user_stories.md`: US-0102 → Done, US-0702 → Done, US-1002 auto-verification → [x], US-1003 badge triggers → 6/7 [x], US-1502 → In Progress. Updated `roadmap.md`: Phase 7 → ✅ Done, Phase 10/12/13/15 items updated. |
 | 2026-04-29 | **Quiz system — US-1004 (session 5):** Added `QuizQuestion` Prisma model + migration `20260429200000_add_quiz_question_pool`. Seeded 44 bilingual question groups (88 rows, EN+ES) across all 8 educational topics and 3 difficulty levels using real Peru financial data (BCRP, AFP, SBS, IGV, Yape/Plin, RMV, FSD). Backend: `GetQuizUseCase` (pool selection: 2B+2I+1A, randomized per request), `SubmitQuizUseCase` (per-question feedback + score), 2 new endpoints in `EducationController`. Flutter: `QuizScreen` fully implemented — state machine (answering → reviewing → results), animated option tiles with correct/incorrect reveal, score circle + review list, automatic EN/ES from device locale. Fixed pre-existing `AnalyticsService` type error. US-1004 moved to ✅ Done. Survey scoring confirmed real (not placeholder). |
 | 2026-04-29 | **Full codebase audit (session 4):** Subagent deep-read of all 17 backend modules (all `.ts` files) and all 31 Flutter routes (all `.dart` files). Added §4.2 Architecture Debt, §5 Frontend Known Gaps and Technical Debt (5 subsections). Identified dashboard data-source duality as #1 priority issue. Found 14 hardcoded l10n violations (6 files). Catalogued 3 dead-code items. Updated §7 priority list to 16 items. Updated all module statuses in §4.1. |
 | 2026-04-29 | **Analytics + deprecation cleanup:** Created `AnalyticsService` (`src/infra/analytics/`) as a `@Global()` NestJS service; wired 12 `AnalyticsEvent` types. Migrated 67 deprecated `.withOpacity()` → `.withValues(alpha:)` and 14 `Key? key` → `super.key` across Flutter codebase. |

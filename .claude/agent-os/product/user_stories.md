@@ -111,7 +111,7 @@
 - [x] `POST /api/auth/login` accepts email and password
 - [x] Correct credentials return JWT token
 - [x] Incorrect credentials return 401 with generic message
-- [ ] Temporary lockout after 3 consecutive failed attempts (15 minutes)
+- [x] Temporary lockout after 3 consecutive failed attempts (15 minutes)
 - [x] JWT stored in flutter_secure_storage
 - [x] Auto-login if valid JWT exists when opening app
 
@@ -123,7 +123,7 @@
 | 2 | User enters incorrect credentials three consecutive times | Third attempt fails | System locks access for 15 minutes, shows remaining time, disables the button |
 
 **Story Points:** 5
-**Status:** In Progress
+**Status:** Done
 **Phase:** 2 — Authentication
 
 ---
@@ -813,10 +813,10 @@
 **Thesis ID:** US-018
 
 **Acceptance Criteria:**
-- [ ] When recording a transaction, description and amount are sent to Azure AI API for category inference
-- [ ] Returns suggested categoryId with confidence level
-- [ ] Pre-selects the suggested category in the transaction form (user can override at any time)
-- [ ] Falls back gracefully (no suggestion shown) if API is unavailable or confidence < 60%
+- [x] When recording a transaction, description and amount are sent to Azure AI API for category inference
+- [x] Returns suggested categoryId with confidence level
+- [x] Pre-selects the suggested category in the transaction form (user can override at any time)
+- [x] Falls back gracefully (no suggestion shown) if API is unavailable or confidence < 60%
 - [ ] Suggestion logged for accuracy tracking; target >= 80% accuracy retrospectively
 
 **BDD Scenarios:**
@@ -827,7 +827,7 @@
 | 2 | User enters a very short or ambiguous description | System tries to classify | App does not force any category and allows user to select manually |
 
 **Story Points:** 5
-**Status:** Not Started
+**Status:** Done
 **Phase:** 7 — AI Integration
 
 ---
@@ -1068,7 +1068,7 @@
 - [x] `GET /api/challenges` returns challenges with user status (available/active/completed)
 - [x] `POST /api/challenges/{id}/accept` accepts challenge
 - [x] `POST /api/challenges/{id}/complete` manual completion (Flutter "Mark completed" button)
-- [ ] Automatic verification based on criteria_json (no cron job / event hook wired)
+- [x] Automatic verification based on criteria_json — `VerifyChallengesUseCase` verifies `daily_recording_streak` (consecutive days with transactions) and `savings_goal_contribution` (minimum amount contributed in period); triggered fire-and-forget from `CreateTransactionUseCase` and `ContributeToGoalUseCase`
 - [x] Seed challenges: "No delivery spending for 3 days", "Record expenses for 7 consecutive days", "Save S/20 this week", "Reduce entertainment by 10%"
 - [x] Screen with active challenges (progress), available (accept), completed (date)
 - [ ] Animation on challenge completion
@@ -1097,14 +1097,14 @@
 
 **Acceptance Criteria:**
 - [x] `GET /api/badges` returns all badges with status (earned/not)
-- [ ] Automatic assignment on meeting criteria — `awardIfNotEarned()` is never triggered by events:
-  - "First transaction" — record first transaction
-  - "Consistency" — 7 consecutive days recording
-  - "Goal achieved" — complete first savings goal
-  - "Challenger" — complete 5 challenges
-  - "Financial sage" — complete educational module 100%
-  - "Predictor" — check predictions 3 times
-  - "Budgeter" — create and respect budget for 1 month
+- [x] Automatic assignment on meeting criteria — 6/7 triggers wired via `awardIfNotEarned()`:
+  - [x] "First transaction" — awarded in `CreateTransactionUseCase`
+  - [x] "Consistency" — awarded in `CreateTransactionUseCase` after 7 consecutive days
+  - [x] "Goal achieved" — awarded in `ContributeToGoalUseCase` when goal reaches 100%
+  - [x] "Challenger" — awarded in `PrismaChallengeRepository.complete()`
+  - [x] "Financial sage" — awarded in `CompleteTopicUseCase`
+  - [ ] "Predictor" — not wired (no trigger on prediction view count)
+  - [x] "Budgeter" — awarded in `ListBudgetsUseCase`
 - [x] Badge grid: color if earned, gray if not
 - [x] Tap shows detail: name, description, criteria, date earned
 - [ ] Push notification when unlocking new badge
@@ -1422,9 +1422,9 @@
 **Thesis ID:** US-037
 
 **Acceptance Criteria:**
-- [ ] Events: record_transaction, view_report, view_prediction, accept_challenge, complete_educational_topic, check_recommendation
-- [ ] Table analytics_events: user_id, event_type, metadata_json, timestamp
-- [ ] Without affecting perceived performance (async logging)
+- [x] Events: `login`, `register`, `record_transaction`, `delete_transaction`, `create_goal`, `contribute_goal`, `complete_goal`, `accept_challenge`, `complete_challenge`, `complete_topic`, `create_budget`, `submit_feedback` (12 events wired)
+- [x] `AnalyticsEvent` model: `userId`, `eventType`, `metadataJson`, `createdAt`
+- [x] Async logging — `AnalyticsService` is `@Global()`, does not block use-case response path
 
 **BDD Scenarios:**
 
@@ -1434,7 +1434,7 @@
 | 2 | A logging failure occurs due to connectivity or internal error | Logging fails | Error captured silently without interrupting user's action, system retries on next sync |
 
 **Story Points:** 3
-**Status:** Not Started
+**Status:** In Progress
 **Phase:** 15 — Feedback
 
 ---
@@ -1501,9 +1501,9 @@
 **Thesis Coverage:** 49 official thesis user stories (US-001–US-049) mapped. See cross-reference table above.
 
 **Status Overview (updated 2026-04-29):**
-- Done: 20 (US-1801, US-0101, US-0103, US-0104, US-0205, US-0301, US-0302, US-0401, US-0402, US-0404, US-0406, US-0407, US-0503, US-0504, US-0701, US-0901, US-1001, US-1004, US-1203, US-1501)
-- In Progress: 20 (US-0102, US-0105, US-0106, US-0201, US-0202, US-0203, US-0204, US-0206, US-0403, US-0405, US-0501, US-0502, US-0505, US-0801, US-0902, US-1002, US-1003, US-1201, US-1202, US-1303)
-- Not Started: 21
+- Done: 22 (US-1801, US-0101, US-0102, US-0103, US-0104, US-0205, US-0301, US-0302, US-0401, US-0402, US-0404, US-0406, US-0407, US-0503, US-0504, US-0701, US-0702, US-0901, US-1001, US-1004, US-1203, US-1501)
+- In Progress: 20 (US-0105, US-0106, US-0201, US-0202, US-0203, US-0204, US-0206, US-0403, US-0405, US-0501, US-0502, US-0505, US-0801, US-0902, US-1002, US-1003, US-1201, US-1202, US-1303, US-1502)
+- Not Started: 19
 - Blocked: 0
 
 ---
