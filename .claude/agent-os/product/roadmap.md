@@ -200,9 +200,9 @@
 
 - [x] `P0` `flutter` `ui` -- **Challenges screen** -- Active challenges with progress, available with accept button, completed with date, expired section. Prevents duplicate active challenges of same type. Refs: [US-1002](./user_stories.md#US-1002) · Thesis: US-024, US-046
 
-- [ ] `P0` `backend` `api` -- **Knowledge quizzes** -- `GET /api/education/quizzes` (grouped by topic), `POST /api/education/quizzes/:id/answer` (returns correct/incorrect + explanation). Minimum 5 questions per topic. Score and attempt history tracked per user. Refs: [US-1004](./user_stories.md#US-1004) · Thesis: US-026
+- [x] `P0` `backend` `api` -- **Knowledge quizzes** -- `GET /api/education/topics/:id/quiz?language=en|es` returns 5 questions (2 BEGINNER + 2 INTERMEDIATE + 1 ADVANCED) from a pool of 88 seeded bilingual questions (Peru-specific). `POST /api/education/topics/:id/quiz/submit` accepts answers map, returns score, correctCount, level, and per-question feedback. `submit_quiz` analytics event fired. Refs: [US-1004](./user_stories.md#US-1004) · Thesis: US-026
 
-- [ ] `P0` `flutter` `ui` -- **Quiz screen** -- Immediate feedback after each answer with explanation. Score displayed on completion. Progress integrated with education completion bar. Refs: [US-1004](./user_stories.md#US-1004) · Thesis: US-026
+- [x] `P0` `flutter` `ui` -- **Quiz screen** -- State machine: answering → reviewing → results. Progress bar, per-question option tiles with animated color feedback (green/red). Results view with score, level badge, and full review list. Language auto-selected from device locale. Refs: [US-1004](./user_stories.md#US-1004) · Thesis: US-026
 
 - [ ] `P1` `backend` `api` -- **Badge system** -- Automatic assignment by criteria. `GET /api/badges`. Seed data ready (7 badges: First Transaction, Consistency, Goal Achieved, Challenger, Financial Sage, Predictor, Budgeter). No duplicate badges. `Badge` and `UserBadge` schemas ready. **Gap:** `awardIfNotEarned()` is never called — no event hooks on transaction creation, goal completion, or challenge completion. Refs: [US-1003](./user_stories.md#US-1003) · Thesis: US-025
 
@@ -325,7 +325,7 @@
 | 7 | AI Integration (Azure AI Foundry) | Sprint 6-7 | 4 weeks | 🔄 Partial (Azure AI wired; auto-categorization not wired to POST /transactions) |
 | 8 | AI Predictions | Sprint 7-8 | 4 weeks | 🔄 Partial (prediction endpoint + Flutter screen done; anomaly detection and accuracy tracking not done) |
 | 9 | Recommendations | Sprint 8-9 | 3 weeks | ✅ Done |
-| 10 | Education and Gamification | Sprint 9-10 | 4 weeks | 🔄 Partial (topics + challenges + badges screen done; quizzes, badge auto-award, AI learning path not done) |
+| 10 | Education and Gamification | Sprint 9-10 | 4 weeks | 🔄 Partial (topics + challenges + badges screen + quizzes done; badge auto-award event hooks and AI learning path not done) |
 | 11 | Notifications | Sprint 10 | 2 weeks | -- |
 | 12 | Pre/Post Evaluation | Sprint 11 | 3 weeks | 🔄 Partial (survey endpoints + Flutter screen + improvement calc done; scoring is placeholder; SUS not done) |
 | 13 | Security and Compliance | Sprint 11-12 | 3 weeks | 🔄 Partial (consent + rate limiting + flutter_secure_storage done; TLS, ProGuard, AuditLog not done) |

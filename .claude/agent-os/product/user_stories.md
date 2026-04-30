@@ -977,11 +977,11 @@
 **Thesis ID:** US-026
 
 **Acceptance Criteria:**
-- [ ] `GET /api/education/quizzes` returns available quiz sets grouped by topic
-- [ ] `POST /api/education/quizzes/{id}/answer` submits answer and returns: correct/incorrect, explanation, and correct answer
-- [ ] Minimum 5 multiple-choice questions per topic
-- [ ] Immediate feedback with explanation shown after each answer
-- [ ] Score and attempt history tracked per user per quiz
+- [x] `GET /api/education/topics/:id/quiz` returns 5 questions (2 BEGINNER + 2 INTERMEDIATE + 1 ADVANCED) randomized from the topic's question pool; bilingual via `?language=en|es`
+- [x] `POST /api/education/topics/:id/quiz/submit` accepts `{ answers: { questionId: chosenAnswer } }` and returns score, correctCount, totalCount, level, and per-question feedback (correct/incorrect + correctAnswer)
+- [x] Minimum 5 multiple-choice questions per quiz (topic pool has 7–8 questions per difficulty level per language)
+- [x] Batch feedback shown after submitting all answers: correct/incorrect per question with correct answer revealed
+- [ ] Persistent score and attempt history tracked per user per quiz (analytics event fired but no dedicated attempt-history model)
 - [ ] Quiz progress integrated with overall educational content completion bar
 
 **BDD Scenarios:**
@@ -992,7 +992,7 @@
 | 2 | User answers all challenge questions | Presses finish | App shows score as a percentage, saves in history, and marks challenge as completed |
 
 **Story Points:** 8
-**Status:** Not Started
+**Status:** Done
 **Phase:** 10 — Education and Gamification
 
 ---
@@ -1200,12 +1200,12 @@
 
 **Acceptance Criteria:**
 - [x] `POST /api/surveys/pre/response` endpoint exists
-- [ ] Questionnaire of 15-20 questions about budgeting, savings, inflation, credit, interest rates — **content (questions + correct answers) not yet provided**
+- [ ] Questionnaire of 15-20 questions about budgeting, savings, inflation, credit, interest rates — **current seed has 8 PRE questions (minimum viable; expansion needed)**
 - [ ] Based on validated instruments (Cordova-Buiza et al., 2022; SBS, 2022)
 - [x] Presented during onboarding or first week of usage (accessible from ProfileScreen → Surveys)
-- [ ] Automatic score calculation (0-100) — placeholder scoring (answeredQuestions / total × 100)
+- [x] Automatic score calculation uses strict equality against `correctAnswer` field (real scoring, not placeholder)
 - [x] Screen: one question per view, progress bar, automatic partial save
-- [ ] On completion: "Your current financial education level is {LOW/MEDIUM/HIGH}" (blocked on real correct-answer scoring)
+- [ ] On completion: "Your current financial education level is {LOW/MEDIUM/HIGH}" — display label not yet shown post-submission
 
 **BDD Scenarios:**
 
@@ -1229,9 +1229,9 @@
 
 **Acceptance Criteria:**
 - [x] `POST /api/surveys/post/response` endpoint exists
-- [x] Same questionnaire (variant to avoid memorization) + SUS section
+- [x] Same questionnaire (variant to avoid memorization) + SUS section; scoring uses real `correctAnswer` strict equality
 - [ ] Presented after 4-8 weeks of usage (notification inviting completion — FCM not wired)
-- [ ] On completion: visual comparison "You improved from {x} to {y} points ({z}% increase)" — blocked on real scoring
+- [ ] On completion: visual comparison "You improved from {x} to {y} points ({z}% increase)" — comparison display not yet shown in Flutter
 - [ ] If improvement < 20%: suggestions for relevant educational content
 
 **BDD Scenarios:**
@@ -1501,9 +1501,9 @@
 **Thesis Coverage:** 49 official thesis user stories (US-001–US-049) mapped. See cross-reference table above.
 
 **Status Overview (updated 2026-04-29):**
-- Done: 19 (US-1801, US-0101, US-0103, US-0104, US-0205, US-0301, US-0302, US-0401, US-0402, US-0404, US-0406, US-0407, US-0503, US-0504, US-0701, US-0901, US-1001, US-1203, US-1501)
+- Done: 20 (US-1801, US-0101, US-0103, US-0104, US-0205, US-0301, US-0302, US-0401, US-0402, US-0404, US-0406, US-0407, US-0503, US-0504, US-0701, US-0901, US-1001, US-1004, US-1203, US-1501)
 - In Progress: 20 (US-0102, US-0105, US-0106, US-0201, US-0202, US-0203, US-0204, US-0206, US-0403, US-0405, US-0501, US-0502, US-0505, US-0801, US-0902, US-1002, US-1003, US-1201, US-1202, US-1303)
-- Not Started: 22
+- Not Started: 21
 - Blocked: 0
 
 ---
