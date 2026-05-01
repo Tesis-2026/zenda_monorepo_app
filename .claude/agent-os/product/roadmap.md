@@ -70,19 +70,19 @@
 
 > **Impact: Critical** — Without authentication there is no access to the app. Blocks all user functions.
 
-- [x] `P0` `backend` `security` -- **Registration endpoint** -- `POST /api/auth/register` accepts `email`, `password`, `fullName`. Validates email format, password >= 8 chars. Creates user. Returns JWT token. bcrypt password hashing. Refs: [US-0101](./user_stories.md#US-0101)
+- [x] `P0` `backend` `security` -- **Registration endpoint** -- `POST /api/auth/register` accepts `email`, `password`, `fullName`. Validates email format, password >= 8 chars. Creates user. Returns JWT token. bcrypt password hashing. Refs: [US-0101](./user_stories.md#US-0101) · Thesis: US-027
 
-- [x] `P0` `backend` `security` -- **Login endpoint** -- `POST /api/auth/login` accepts `email`, `password`. Validates credentials. Returns JWT. Refs: [US-0102](./user_stories.md#US-0102)
+- [x] `P0` `backend` `security` -- **Login endpoint** -- `POST /api/auth/login` accepts `email`, `password`. Validates credentials. Returns JWT. Temporary lockout after 3 consecutive failed attempts (15 min). Refs: [US-0102](./user_stories.md#US-0102) · Thesis: US-028
 
 - [x] `P0` `backend` `security` -- **JWT authentication middleware** -- `JwtAuthGuard` protects all routes under `/api/*` except `/api/auth/*` and `/api/health`. Validates signature and expiration. Injects `userId` via `@UserId()` decorator. Returns 401 if invalid. Refs: [US-0103](./user_stories.md#US-0103)
 
-- [x] `P0` `flutter` `ui` -- **Registration and login screens** -- Forms with real-time validation, loading states, error handling. `AuthApiService` calls `/auth/register` and `/auth/login`. JWT stored in `flutter_secure_storage`. Profile fetched from `/users/me` after login. Refs: [US-0101](./user_stories.md#US-0101), [US-0102](./user_stories.md#US-0102)
+- [x] `P0` `flutter` `ui` -- **Registration and login screens** -- Forms with real-time validation, loading states, error handling. `AuthApiService` calls `/auth/register` and `/auth/login`. JWT stored in `flutter_secure_storage`. Profile fetched from `/users/me` after login. Refs: [US-0101](./user_stories.md#US-0101), [US-0102](./user_stories.md#US-0102) · Thesis: US-027, US-028
 
 - [x] `P1` `backend` -- **Password recovery** -- `POST /api/auth/forgot-password` generates a 32-byte token (1h expiry), stores it, sends email via `EmailService`. `POST /api/auth/reset-password` validates token, hashes new password, deletes token. Both rate-limited (5 req/min). Refs: [US-0104](./user_stories.md#US-0104)
 
-- [x] `P1` `flutter` `ui` -- **Initial profile onboarding** -- Multi-page onboarding screen after first launch. Captures age, university, income type, average income. Saves `profileCompleted = true`. Refs: [US-0105](./user_stories.md#US-0105)
+- [x] `P1` `flutter` `ui` -- **Initial profile onboarding** -- Multi-page onboarding screen after first launch. Captures age, university, income type, average income. Saves `profileCompleted = true`. Skip option available. Refs: [US-0105](./user_stories.md#US-0105) · Thesis: US-030 (initial profile), US-032 (onboarding screens)
 
-- [x] `P1` `flutter` `ui` -- **Profile editing** -- `ProfileScreen` displays and edits full name, age, university, currency, income type, monthly income, financial literacy. Calls `UserApiService.updateProfile()` → `PUT /api/users/me`. Backend: `GetProfileUseCase` (`GET /api/users/me`) and `UpdateProfileUseCase` (`PUT /api/users/me`) fully wired with DDD layers. Refs: [US-0106](./user_stories.md#US-0106)
+- [x] `P1` `flutter` `ui` -- **Profile editing** -- `ProfileScreen` displays and edits full name, age, university, currency, income type, monthly income, financial literacy. Calls `UserApiService.updateProfile()` → `PUT /api/users/me`. Backend: `GetProfileUseCase` (`GET /api/users/me`) and `UpdateProfileUseCase` (`PUT /api/users/me`) fully wired with DDD layers. Refs: [US-0106](./user_stories.md#US-0106) · Thesis: US-031
 
 ---
 
@@ -90,15 +90,15 @@
 
 > **Impact: Critical** — This is the app's primary action. Without transactions there is no data for anything else.
 
-- [x] `P0` `backend` `api` -- **Transaction CRUD** -- `POST /api/transactions` (create), `GET /api/transactions` (list with filters: type, categoryId, from/to date), `DELETE /api/transactions/:id` (soft delete). Ownership validated via `@UserId()`. Refs: [US-0201](./user_stories.md#US-0201) to [US-0206](./user_stories.md#US-0206)
+- [x] `P0` `backend` `api` -- **Transaction CRUD** -- `POST /api/transactions` (create), `GET /api/transactions` (list with filters: type, categoryId, dateFrom, dateTo, minAmount, maxAmount), `DELETE /api/transactions/:id` (soft delete). Ownership validated via `@UserId()`. Refs: [US-0201](./user_stories.md#US-0201) to [US-0206](./user_stories.md#US-0206) · Thesis: US-001, US-002, US-003, US-004
 
-- [x] `P0` `flutter` `ui` -- **Transaction recording screen** -- `AddTransactionScreen`: kind selector (Expense/Income/Transfer), amount, category grid, account picker, date picker, note. `NewTransactionController` saves locally then fire-and-forget syncs EXPENSE/INCOME to `POST /api/transactions` via `TransactionApiService`. Refs: [US-0201](./user_stories.md#US-0201)
+- [x] `P0` `flutter` `ui` -- **Transaction recording screen** -- `AddTransactionScreen`: kind selector (Expense/Income/Transfer), amount, category grid, account picker, date picker, note. `NewTransactionController` saves locally then fire-and-forget syncs EXPENSE/INCOME to `POST /api/transactions` via `TransactionApiService`. Refs: [US-0201](./user_stories.md#US-0201) · Thesis: US-001, US-002
 
 - [x] `P0` `flutter` `ui` -- **Main dashboard** -- `DashboardScreen`: 4-tab PageView (Home, Transactions, Budget, Profile). Shows balance summary, last transactions, streak card, 50/30/20 pie chart, AI advice card. Refs: [US-0204](./user_stories.md#US-0204)
 
-- [x] `P1` `flutter` `ui` -- **History with filters** -- `TransactionListScreen`: type filter chips (All/Expenses/Income), date range chips (This week/This month/All time), loads from `GET /api/transactions`, Dismissible swipe-to-delete, pull-to-refresh. Dashboard Transactions tab renders this screen. Refs: [US-0203](./user_stories.md#US-0203)
+- [x] `P1` `flutter` `ui` -- **History with filters** -- `TransactionListScreen`: type filter chips (All/Expenses/Income), date range chips (This week/This month/All time), category filter, amount range filter, loads from `GET /api/transactions`, Dismissible swipe-to-delete, pull-to-refresh. Dashboard Transactions tab renders this screen. Refs: [US-0203](./user_stories.md#US-0203) · Thesis: US-012, US-039
 
-- [x] `P2` `backend` `api` -- **Transaction detail and edit** -- `GET /api/transactions/:id` (`GetTransactionUseCase`, ownership verified) and `PUT /api/transactions/:id` (`UpdateTransactionUseCase`, optional field updates, category re-resolution). Refs: [US-0205](./user_stories.md#US-0205), [US-0206](./user_stories.md#US-0206)
+- [x] `P2` `backend` `api` -- **Transaction detail and edit** -- `GET /api/transactions/:id` (`GetTransactionUseCase`, ownership verified) and `PUT /api/transactions/:id` (`UpdateTransactionUseCase`, optional field updates, category re-resolution). Refs: [US-0205](./user_stories.md#US-0205), [US-0206](./user_stories.md#US-0206) · Thesis: US-003, US-004
 
 ---
 
@@ -106,13 +106,13 @@
 
 > **Impact: High** — Foundation for reports, predictions, and budgets.
 
-- [x] `P0` `backend` -- **Default categories (seed)** -- 9 expense categories (comida, transporte, vivienda, servicios, salud, ocio, compras, suscripciones, antojos) and 5 income categories seeded via `prisma/seed.ts`. Idempotent seeding. Refs: [US-0301](./user_stories.md#US-0301)
+- [x] `P0` `backend` -- **Default categories (seed)** -- 9 expense categories (comida, transporte, vivienda, servicios, salud, ocio, compras, suscripciones, antojos) and 5 income categories seeded via `prisma/seed.ts`. Idempotent seeding. Refs: [US-0301](./user_stories.md#US-0301) · Thesis: US-005, US-006
 
-- [x] `P0` `backend` `api` -- **Custom categories CRUD** -- `POST /api/categories` (create), `GET /api/categories` (list system + user custom), `PUT /api/categories/:id` (rename, ownership + name-collision guard), `DELETE /api/categories/:id` (soft delete). `ResolveCategoryUseCase` creates on-the-fly during transaction creation. Refs: [US-0302](./user_stories.md#US-0302)
+- [x] `P0` `backend` `api` -- **Custom categories CRUD** -- `POST /api/categories` (create, name-uniqueness guard), `GET /api/categories` (list system + user custom), `PUT /api/categories/:id` (rename, ownership + name-collision guard), `DELETE /api/categories/:id` (soft delete, blocked if transactions exist). `ResolveCategoryUseCase` creates on-the-fly during transaction creation. Refs: [US-0302](./user_stories.md#US-0302) · Thesis: US-040, US-041
 
-- [x] `P0` `flutter` `ui` -- **Category selector** -- Grid with icons/colors in `AddTransactionScreen`. Maps to 50/30/20 buckets via `bucketForCategory()`. Refs: [US-0301](./user_stories.md#US-0301)
+- [x] `P0` `flutter` `ui` -- **Category selector** -- Grid with icons/colors in `AddTransactionScreen`. Maps to 50/30/20 buckets via `bucketForCategory()`. Refs: [US-0301](./user_stories.md#US-0301) · Thesis: US-005, US-006
 
-- [x] `P1` `flutter` `ui` -- **Category management screen** -- `CategoryManagementScreen`: lists system (read-only) and custom categories. FAB to create, edit icon to rename, swipe-to-delete. Routes to `/categories` from `ProfileScreen`. `CategoryApiService` calls `GET/POST/PUT/DELETE /api/categories`. Refs: [US-0302](./user_stories.md#US-0302)
+- [x] `P1` `flutter` `ui` -- **Category management screen** -- `CategoryManagementScreen`: lists system (read-only) and custom categories. FAB to create, edit icon to rename, swipe-to-delete. Routes to `/categories` from `ProfileScreen`. `CategoryApiService` calls `GET/POST/PUT/DELETE /api/categories`. Refs: [US-0302](./user_stories.md#US-0302) · Thesis: US-040, US-041
 
 ---
 
@@ -120,17 +120,19 @@
 
 > **Impact: High** — Visibility into financial habits. Prerequisite for predictions to have context.
 
-- [x] `P0` `backend` `api` -- **Monthly summary endpoint** -- `GET /api/summary/month?year=&month=` returns total income, total expense, net balance, top 5 categories by spend, savings goals progress. Uses `Promise.all` for parallel aggregation queries. Refs: [US-0401](./user_stories.md#US-0401)
+- [x] `P0` `backend` `api` -- **Monthly summary endpoint** -- `GET /api/summary/month?year=&month=` returns total income, total expense, net balance, breakdownByCategory (name, amount, percentage), savings goals progress. Uses `Promise.all` for parallel aggregation queries. Response < 3 sec. Refs: [US-0401](./user_stories.md#US-0401) · Thesis: US-009, US-038
 
-- [x] `P0` `backend` `api` -- **Weekly and daily summary endpoints** -- `GET /api/summary/week` and `GET /api/summary/day`. Breakdown by category. Response < 2 sec. Refs: [US-0402](./user_stories.md#US-0402), [US-0403](./user_stories.md#US-0403)
+- [x] `P0` `backend` `api` -- **Weekly and daily summary endpoints** -- `GET /api/summary/week` and `GET /api/summary/day`. Breakdown by category. Response < 2 sec. Refs: [US-0402](./user_stories.md#US-0402), [US-0403](./user_stories.md#US-0403) · Thesis: US-008, US-007
 
-- [x] `P0` `backend` `api` -- **Multi-month comparison endpoint** -- `GET /api/summary/comparison?months=3`. Refs: [US-0404](./user_stories.md#US-0404)
+- [x] `P0` `backend` `api` -- **Multi-month comparison endpoint** -- `GET /api/summary/comparison?months=3`. Returns totals per month for comparison chart. Refs: [US-0404](./user_stories.md#US-0404) · Thesis: US-011
 
-- [x] `P0` `flutter` `ui` -- **Monthly summary in dashboard** -- 50/30/20 `BudgetPieChart` (fl_chart), `SummaryCard` (today/week totals). Refs: [US-0401](./user_stories.md#US-0401)
+- [x] `P0` `flutter` `ui` -- **Monthly summary in dashboard** -- 50/30/20 `BudgetPieChart` (fl_chart), `SummaryCard` (today/week totals), category breakdown list. Refs: [US-0401](./user_stories.md#US-0401) · Thesis: US-009, US-038
 
-- [x] `P1` `flutter` `ui` -- **Interactive charts screen** -- Bar charts by category, comparative line charts by month using fl_chart. Tap for detail. Backend integration required. Refs: [US-0405](./user_stories.md#US-0405)
+- [x] `P1` `flutter` `ui` -- **Interactive charts screen** -- Bar charts by category (sorted highest to lowest), comparative line charts by month using fl_chart. Tap for detail. Period selector: week, month, quarter. Backend integration required. Refs: [US-0405](./user_stories.md#US-0405) · Thesis: US-010, US-011
 
-- [x] `P2` `backend` `api` -- **PDF export** -- Generates PDF with complete summary. Temporary download URL (24h). Refs: [US-0406](./user_stories.md#US-0406)
+- [x] `P1` `backend` `api` -- **Financial progress indicator** -- `GET /api/insights/progress` returns current vs previous month: total expenses, savings, net balance with improvement/decline % and direction per metric. Requires minimum 2-month history; returns informative empty state otherwise. Refs: [US-0407](./user_stories.md#US-0407) · Thesis: US-014
+
+- [x] `P2` `backend` `api` -- **PDF export** -- Generates PDF with complete summary including charts, totals, and category breakdown. Share intent (native share sheet). Temporary download URL (24h). Refs: [US-0406](./user_stories.md#US-0406) · Thesis: US-013
 
 ---
 
@@ -138,15 +140,15 @@
 
 > **Impact: High** — Prerequisite for intelligent alerts. Goals give purpose to savings.
 
-- [x] `P0` `backend` `api` -- **Budget CRUD** -- `POST /api/budgets`, `GET /api/budgets` (with `currentSpent` and `percentageUsed`), `PUT /api/budgets/:id`, `DELETE /api/budgets/:id`. Budget model and schema ready (`@@unique([userId, categoryId, month, year])`). Refs: [US-0501](./user_stories.md#US-0501)
+- [x] `P0` `backend` `api` -- **Budget CRUD** -- `POST /api/budgets` (create, amount > 0 validated), `GET /api/budgets` (with `currentSpent` and `percentageUsed`), `PUT /api/budgets/:id` (edit limit, ownership validated), `DELETE /api/budgets/:id` (removes budget and stops alerts). Budget model and schema ready (`@@unique([userId, categoryId, month, year])`). Refs: [US-0501](./user_stories.md#US-0501), [US-0504](./user_stories.md#US-0504) · Thesis: US-019, US-042, US-043
 
-- [x] `P0` `flutter` `ui` -- **Budget screen** -- List with progress bars (green/yellow/red). Creation modal. Backend integration required. Refs: [US-0501](./user_stories.md#US-0501)
+- [x] `P0` `flutter` `ui` -- **Budget screen** -- List with progress bars (green < 60% / yellow 60–80% / red > 80%). Creation modal. Edit and delete actions. Empty state when no budgets. Backend integration required. Refs: [US-0501](./user_stories.md#US-0501), [US-0504](./user_stories.md#US-0504) · Thesis: US-019, US-042, US-043
 
-- [x] `P1` `backend` `api` -- **Financial goals CRUD** -- `POST /api/goals`, `GET /api/goals`, `POST /api/goals/:id/contribute`, `DELETE /api/goals/:id`. Ownership validated. Contribution updates `currentAmount` (Decimal arithmetic). Refs: [US-0502](./user_stories.md#US-0502)
+- [x] `P1` `backend` `api` -- **Financial goals CRUD** -- `POST /api/goals` (create, future deadline validated), `GET /api/goals`, `POST /api/goals/:id/contribute` (amount > 0 validated), `PUT /api/goals/:id` (mark complete), `DELETE /api/goals/:id` (removes goal and all contributions). Ownership validated. Contribution updates `currentAmount` (Decimal arithmetic). Refs: [US-0502](./user_stories.md#US-0502), [US-0505](./user_stories.md#US-0505) · Thesis: US-021, US-044, US-045
 
-- [x] `P1` `flutter` `ui` -- **Goals screen** -- Cards with progress, contribute button, completion animation. Backend integration required. Refs: [US-0502](./user_stories.md#US-0502)
+- [x] `P1` `flutter` `ui` -- **Goals screen** -- Cards with progress, contribute button, mark-complete action, delete action, completion animation. Backend integration required. Refs: [US-0502](./user_stories.md#US-0502), [US-0505](./user_stories.md#US-0505) · Thesis: US-021, US-044, US-045
 
-- [x] `P2` `flutter` `ui` -- **Goal detail** -- Contribution history, progress chart, completion projection. Refs: [US-0503](./user_stories.md#US-0503)
+- [x] `P2` `flutter` `ui` -- **Goal detail** -- Contribution history, cumulative progress chart, completion projection ("At this pace you'll finish on {date}"), alert if projection misses deadline. Refs: [US-0503](./user_stories.md#US-0503) · Thesis: US-022
 
 ---
 
@@ -154,7 +156,9 @@
 
 > **Impact: Critical** — Connects the backend to the Azure AI external API that powers predictions, advice, anomaly detection, and recommendations.
 
-- [ ] `P0` `backend` `ai` -- **AiModule wired to Azure endpoint** -- Complete `src/infra/ai/` stub: `AzureFoundryProvider` calls the Azure AI API endpoint. Config via `AZURE_AI_ENDPOINT` + `AZURE_AI_KEY` env vars. Input: structured spending context (last 3 months per category). Output: `{ predictedTotal, predictedByCategory, confidenceLevel, advice }`. Error handling: timeout, quota exceeded, malformed response. Refs: [US-0701](./user_stories.md#US-0701)
+- [x] `P0` `backend` `ai` -- **AiModule wired to Azure endpoint** -- Complete `src/infra/ai/` stub: `AzureFoundryProvider` calls the Azure AI API endpoint. Config via `AZURE_AI_ENDPOINT` + `AZURE_AI_KEY` env vars. Input: structured spending context (last 3 months per category). Output: `{ predictedTotal, predictedByCategory, confidenceLevel, advice }`. Error handling: timeout, quota exceeded, malformed response. Refs: [US-0701](./user_stories.md#US-0701)
+
+- [x] `P1` `backend` `ai` `api` -- **AI auto-categorization** -- When recording a transaction, send description + amount to Azure AI for category inference. Returns suggested `categoryId` with confidence level. Pre-selects suggestion in the form (user can override). Falls back gracefully if API unavailable or confidence < 60%. Suggestion accuracy tracked; target >= 80%. Refs: [US-0702](./user_stories.md#US-0702) · Thesis: US-018
 
 ---
 
@@ -162,11 +166,11 @@
 
 > **Impact: Critical** — Main differentiator. The Azure AI model provides both numeric forecasts (via statistical trend layer) and natural language spending insights in Spanish.
 
-- [ ] `P0` `backend` `ai` `api` -- **Expense prediction** -- `GET /api/predictions/expenses?period=next_month` computes a 3-month weighted moving average per category (statistical layer) then enriches with confidence level and category narrative from the Azure AI model. Returns: `predictedTotal`, `predictedByCategory`, `confidenceLevel`, `modelVersion`. Requires >= 2 months of history. Accuracy >= 80%. `Prediction` schema ready. Refs: [US-0801](./user_stories.md#US-0801)
+- [x] `P0` `backend` `ai` `api` -- **Expense prediction** -- `GET /api/predictions/expenses?period=next_month` computes a 3-month weighted moving average per category (statistical layer) then enriches with confidence level and category narrative from the Azure AI model. Returns: `predictedTotal`, `predictedByCategory`, `confidenceLevel`, `modelVersion`. Requires >= 2 months of history. Result only shown if confidence >= 60%. Accuracy >= 80%. `Prediction` schema ready. Refs: [US-0801](./user_stories.md#US-0801) · Thesis: US-015
 
-- [ ] `P0` `flutter` `ui` -- **Predictions screen** -- Monthly expense forecast, breakdown by category, projected balance, confidence indicator, and a natural language insight card powered by the Azure AI model. Refs: [US-0801](./user_stories.md#US-0801)
+- [x] `P0` `flutter` `ui` -- **Predictions screen** -- Monthly expense forecast, breakdown by category, projected balance, confidence indicator, and a natural language insight card powered by the Azure AI model. Empty state if insufficient history. Refs: [US-0801](./user_stories.md#US-0801) · Thesis: US-015
 
-- [ ] `P1` `backend` `ai` -- **Anomaly detection** -- If spending in a category exceeds >20% of its 3-month rolling average, generates an alert via the Azure AI model with a contextual explanation. Refs: [US-0803](./user_stories.md#US-0803)
+- [ ] `P1` `backend` `ai` -- **Anomaly detection** -- If spending in a category exceeds >20% of its 3-month rolling average, generates an alert via the Azure AI model with a contextual explanation. Maximum one alert per category per month. Refs: [US-0803](./user_stories.md#US-0803) · Thesis: US-016
 
 - [ ] `P1` `backend` -- **Real accuracy tracking** -- When period completes, compare predicted vs actual. Store `actualTotal` and `accuracy` in `Prediction` model. Refs: [US-0804](./user_stories.md#US-0804)
 
@@ -176,11 +180,11 @@
 
 > **Impact: High** — Closes the loop: data → analysis → concrete action.
 
-- [ ] `P0` `backend` `ai` `api` -- **Recommendation engine** -- `GET /api/recommendations` calls the Azure AI model with the user's last 30 days of categorized spend, active goals, and budget status. Returns 1-5 recommendations in Spanish. Types: SAVINGS, BUDGET, GOAL. `Recommendation` schema ready. Refs: [US-0901](./user_stories.md#US-0901)
+- [x] `P0` `backend` `ai` `api` -- **Recommendation engine** -- `GET /api/recommendations` calls the Azure AI model with the user's last 30 days of categorized spend, active goals, and budget status. Returns 1-5 recommendations in Spanish. Types: SAVINGS, BUDGET, GOAL. Requires >= 1 month history + at least one active goal or budget. `Recommendation` schema ready. Refs: [US-0901](./user_stories.md#US-0901) · Thesis: US-017
 
-- [ ] `P0` `flutter` `ui` -- **Recommendations section** -- Cards with message, suggested action, feedback button ("Helpful"/"Not relevant"). Integrated into Dashboard. Refs: [US-0901](./user_stories.md#US-0901)
+- [x] `P0` `flutter` `ui` -- **Recommendations section** -- Cards with message, suggested action, feedback button ("Helpful"/"Not relevant"). Integrated into Dashboard. Empty state if insufficient data. Refs: [US-0901](./user_stories.md#US-0901) · Thesis: US-017
 
-- [ ] `P1` `backend` -- **Acceptance tracking** -- `POST /api/recommendations/:id/feedback`. `RecommendationFeedback` schema ready. Target acceptance rate >= 60%. Refs: [US-0902](./user_stories.md#US-0902)
+- [x] `P1` `backend` -- **Acceptance tracking** -- `POST /api/recommendations/:id/feedback`. `RecommendationFeedback` schema ready. Target acceptance rate >= 60%. Refs: [US-0902](./user_stories.md#US-0902)
 
 ---
 
@@ -188,17 +192,25 @@
 
 > **Impact: High** — Key differentiator. Required to demonstrate >= 20% knowledge improvement.
 
-- [ ] `P0` `backend` `api` -- **Educational content** -- `GET /api/education/topics`, `POST /api/education/topics/:id/complete`. Seed data ready (8 topics: Personal budget, Savings, Credit/debt, Inflation, Interest rates, Basic investing, Responsible consumption, Digital wallets in Peru). `EducationalTopic` and `UserTopicProgress` schemas ready. Refs: [US-1001](./user_stories.md#US-1001)
+- [x] `P0` `backend` `api` -- **Educational content** -- `GET /api/education/topics`, `GET /api/education/topics/:id`, `PATCH /api/education/topics/:id/complete`. Seed data ready (8 topics: Personal budget, Savings, Credit/debt, Inflation, Interest rates, Basic investing, Responsible consumption, Digital wallets in Peru). `EducationalTopic` and `UserTopicProgress` schemas ready. Refs: [US-1001](./user_stories.md#US-1001) · Thesis: US-023
 
-- [ ] `P0` `flutter` `ui` -- **Educational module** -- Topic list with difficulty and completion status. Content in readable mobile format. Mark as completed. Refs: [US-1001](./user_stories.md#US-1001)
+- [x] `P0` `flutter` `ui` -- **Educational module** -- Topic list with difficulty and completion status. Content in readable mobile format (text + icons + practical Peruvian examples). Mark as completed. Visual distinction between read and unread modules. Refs: [US-1001](./user_stories.md#US-1001) · Thesis: US-023
 
-- [ ] `P0` `backend` `api` -- **Challenge system** -- `GET /api/challenges`, `POST /api/challenges/:id/accept`, automatic completion verification. Seed data ready (4 challenges). `Challenge` and `UserChallenge` schemas ready (state machine: AVAILABLE → ACTIVE → COMPLETED). Refs: [US-1002](./user_stories.md#US-1002)
+- [x] `P0` `backend` `api` -- **Challenge system** -- `GET /api/challenges`, `POST /api/challenges/:id/accept`, automatic completion verification via criteria_json. Expired challenges move to expired state and become re-available. Seed data ready (4 challenges). `Challenge` and `UserChallenge` schemas ready (state machine: AVAILABLE → ACTIVE → COMPLETED/EXPIRED). Refs: [US-1002](./user_stories.md#US-1002) · Thesis: US-024, US-046
 
-- [ ] `P0` `flutter` `ui` -- **Challenges screen** -- Active challenges with progress, available with accept button, completed with date. Refs: [US-1002](./user_stories.md#US-1002)
+- [x] `P0` `flutter` `ui` -- **Challenges screen** -- Active challenges with progress, available with accept button, completed with date, expired section. Prevents duplicate active challenges of same type. Refs: [US-1002](./user_stories.md#US-1002) · Thesis: US-024, US-046
 
-- [ ] `P1` `backend` `api` -- **Badge system** -- Automatic assignment by criteria. `GET /api/badges`. Seed data ready (7 badges: First Transaction, Consistency, Goal Achieved, Challenger, Financial Sage, Predictor, Budgeter). `Badge` and `UserBadge` schemas ready. Refs: [US-1003](./user_stories.md#US-1003)
+- [x] `P0` `backend` `api` -- **Knowledge quizzes** -- `GET /api/education/topics/:id/quiz?language=en|es` returns 5 questions (2 BEGINNER + 2 INTERMEDIATE + 1 ADVANCED) from a pool of 88 seeded bilingual questions (Peru-specific). `POST /api/education/topics/:id/quiz/submit` accepts answers map, returns score, correctCount, level, and per-question feedback. `submit_quiz` analytics event fired. Refs: [US-1004](./user_stories.md#US-1004) · Thesis: US-026
 
-- [ ] `P1` `flutter` `ui` -- **Badges screen** -- Grid with badges (colored if earned, gray if not). Detail with criteria. Refs: [US-1003](./user_stories.md#US-1003)
+- [x] `P0` `flutter` `ui` -- **Quiz screen** -- State machine: answering → reviewing → results. Progress bar, per-question option tiles with animated color feedback (green/red). Results view with score, level badge, and full review list. Language auto-selected from device locale. Refs: [US-1004](./user_stories.md#US-1004) · Thesis: US-026
+
+- [x] `P1` `backend` `api` -- **Badge system** -- Automatic assignment by criteria. `GET /api/badges`. Seed data ready (7 badges: First Transaction, Consistency, Goal Achieved, Challenger, Financial Sage, Predictor, Budgeter). No duplicate badges. `Badge` and `UserBadge` schemas ready. 6/7 triggers wired: `awardIfNotEarned()` called from `CreateTransactionUseCase` (First Transaction, Consistency), `ContributeToGoalUseCase` (Goal Achieved), `PrismaChallengeRepository.complete()` (Challenger), `CompleteTopicUseCase` (Financial Sage), `ListBudgetsUseCase` (Budgeter). **Gap:** "Predictor" badge not wired (no trigger on prediction view count). Refs: [US-1003](./user_stories.md#US-1003) · Thesis: US-025
+
+- [x] `P1` `flutter` `ui` -- **Badges screen** -- Grid with badges (colored if earned, gray if not). Tap for detail: name, description, criteria, date earned. Push notification on unlock. Refs: [US-1003](./user_stories.md#US-1003) · Thesis: US-025
+
+- [ ] `P2` `backend` `ai` `api` -- **AI learning path** -- `GET /api/education/learning-path` calls Azure AI with user's spending history, active budgets, and goals to order modules by relevance. Each module includes a brief explanation of why it is prioritized. Returns default order with informative note if history is insufficient. Refs: [US-1006](./user_stories.md#US-1006) · Thesis: US-048
+
+- [ ] `P2` `backend` `ai` `api` -- **AI-generated contextual questions** -- `GET /api/education/quizzes/contextual` generates quiz questions via Azure AI based on the user's high-spend categories or exceeded budgets. Falls back to generic fundamental questions with note when history is insufficient. Questions generated in Spanish. Refs: [US-1007](./user_stories.md#US-1007) · Thesis: US-049
 
 ---
 
@@ -222,15 +234,15 @@
 
 > **Impact: Critical** — Without evaluation, OE4 cannot be demonstrated. Validates educational objective.
 
-- [ ] `P0` `backend` `api` -- **Pre-usage survey** -- `POST /api/surveys/pre/response`. 15-20 financial knowledge questions. Score 0-100. Present during onboarding. `Survey`, `SurveyQuestion`, `SurveyResponse` schemas ready. Refs: [US-1201](./user_stories.md#US-1201)
+- [x] `P0` `backend` `api` -- **Pre-usage survey** -- `POST /api/surveys/pre/response`. 8 financial knowledge questions seeded with correct answers; score 0-100. Present during onboarding. `Survey`, `SurveyQuestion`, `SurveyResponse` schemas ready. Refs: [US-1201](./user_stories.md#US-1201) · Thesis: US-033
 
-- [ ] `P0` `backend` `api` -- **Post-usage survey** -- `POST /api/surveys/post/response`. Same questionnaire variant + SUS. Present after 4-8 weeks. Refs: [US-1202](./user_stories.md#US-1202)
+- [x] `P0` `backend` `api` -- **Post-usage survey + final evaluation invitation** -- `POST /api/surveys/post/response`. 8 questions with correct answers. Answers linked to pre-survey for improvement % calculation. **Gap:** Non-intrusive 30-day re-invitation logic not wired. Refs: [US-1202](./user_stories.md#US-1202) · Thesis: US-034, US-047
 
-- [ ] `P0` `backend` `api` -- **Improvement calculation** -- Individual and aggregate pre/post comparison. Target: >= 20% improvement. Refs: [US-1203](./user_stories.md#US-1203)
+- [x] `P0` `backend` `api` -- **Improvement calculation** -- Individual and aggregate pre/post comparison. Target: >= 20% improvement. Refs: [US-1203](./user_stories.md#US-1203)
 
-- [ ] `P0` `flutter` `ui` -- **Survey screens** -- Multiple choice, one question per screen, progress bar. Score on completion with interpretation. Refs: [US-1201](./user_stories.md#US-1201)
+- [x] `P0` `flutter` `ui` -- **Survey screens** -- Multiple choice, one question per screen, progress bar. Cannot advance without answering. Score on completion with interpretation and comparison to pre-survey. Refs: [US-1201](./user_stories.md#US-1201), [US-1202](./user_stories.md#US-1202) · Thesis: US-033, US-047
 
-- [ ] `P1` `backend` -- **SUS questionnaire** -- 10 standard questions. Automatic 0-100 calculation. Refs: [US-1204](./user_stories.md#US-1204)
+- [ ] `P1` `backend` -- **SUS questionnaire** -- 10 standard questions. Automatic 0-100 calculation. Blocks submission if any question unanswered. Refs: [US-1204](./user_stories.md#US-1204) · Thesis: US-035
 
 ---
 
@@ -238,9 +250,9 @@
 
 > **Impact: Critical** — Without security, handling financial data violates the law.
 
-- [ ] `P0` `backend` `security` -- **Encryption in transit and at rest** -- Mandatory TLS. Database encryption at rest. Encrypted backup. Refs: [US-1301](./user_stories.md#US-1301)
+- [ ] `P0` `backend` `security` -- **Encryption in transit and at rest** -- Mandatory TLS 1.3. Database encryption at rest. Encrypted backup. 401 returned without exposing sensitive info when token invalid/absent. Refs: [US-1301](./user_stories.md#US-1301) · Thesis: US-029
 
-- [ ] `P0` `flutter` `security` -- **Secure storage** -- `flutter_secure_storage` for JWT tokens and sensitive credentials. ProGuard/R8 enabled for release builds. Refs: [US-1302](./user_stories.md#US-1302)
+- [x] `P0` `flutter` `security` -- **Secure storage** -- `flutter_secure_storage` for JWT tokens and sensitive credentials. **Gap:** ProGuard/R8 not yet configured for release builds. Refs: [US-1302](./user_stories.md#US-1302)
 
 - [x] `P0` `backend` `security` -- **Law 29733 consent** -- `consentGiven` and `consentAt` fields on `User` model. Explicit consent recorded at registration. Refs: [US-1303](./user_stories.md#US-1303)
 
@@ -248,7 +260,7 @@
 
 - [ ] `P1` `backend` -- **Access auditing** -- Log sensitive actions to `AuditLog` model. Schema ready. Refs: [US-1305](./user_stories.md#US-1305)
 
-- [ ] `P2` `backend` -- **Right to deletion** -- `DELETE /api/account` complete deletion with 30-day grace period. Refs: [US-1306](./user_stories.md#US-1306)
+- [x] `P2` `backend` -- **Right to deletion** -- `DELETE /api/users/me` implemented as immediate hard delete. **Gap:** 30-day grace period not implemented. Refs: [US-1306](./user_stories.md#US-1306)
 
 ---
 
@@ -276,11 +288,11 @@
 
 > **Impact: Medium** — Enables iteration before final release.
 
-- [ ] `P0` `backend` `api` -- **Feedback endpoint** -- `POST /api/feedback`. Type (BUG/SUGGESTION/GENERAL), message, screenName, rating (1-5). `Feedback` schema ready. Refs: [US-1501](./user_stories.md#US-1501)
+- [x] `P0` `backend` `api` -- **Feedback endpoint** -- `POST /api/feedback`. Type (BUG/SUGGESTION/GENERAL), message, screenName, rating (1-5). Field validation: message required (>= 1 char). `Feedback` schema ready. Refs: [US-1501](./user_stories.md#US-1501) · Thesis: US-036
 
-- [ ] `P0` `flutter` `ui` -- **Feedback button** -- Accessible from any screen. Modal with form. Refs: [US-1501](./user_stories.md#US-1501)
+- [x] `P0` `flutter` `ui` -- **Feedback button** -- Accessible from any screen. Modal with form. Confirmation shown on submit. Submit blocked if message empty. Refs: [US-1501](./user_stories.md#US-1501) · Thesis: US-036
 
-- [ ] `P1` `backend` -- **Event analytics** -- Log key actions to `AnalyticsEvent` model without affecting performance. Schema ready. Refs: [US-1502](./user_stories.md#US-1502)
+- [x] `P1` `backend` -- **Event analytics** -- `AnalyticsService` (`@Global()`) logs 12 event types: `login`, `register`, `record_transaction`, `delete_transaction`, `create_goal`, `contribute_goal`, `complete_goal`, `accept_challenge`, `complete_challenge`, `complete_topic`, `create_budget`, `submit_feedback`. Async — does not block use-case response path. `AnalyticsEvent` schema ready. Refs: [US-1502](./user_stories.md#US-1502) · Thesis: US-037
 
 - [ ] `P1` `backend` -- **Internal metrics dashboard** -- Active users, transactions/day, pre/post scores, recommendation acceptance rate. Refs: [US-1503](./user_stories.md#US-1503)
 
@@ -310,15 +322,15 @@
 | 4 | Categorization | Sprint 3 | 2 weeks | ✅ Done |
 | 5 | Reports and Visualization | Sprint 4-5 | 4 weeks | ✅ Done (PDF export deferred to P2) |
 | 6 | Budgets and Goals | Sprint 5-6 | 3 weeks | ✅ Done |
-| 7 | AI Integration (Azure AI Foundry) | Sprint 6-7 | 4 weeks | -- |
-| 8 | AI Predictions | Sprint 7-8 | 4 weeks | -- |
-| 9 | Recommendations | Sprint 8-9 | 3 weeks | -- |
-| 10 | Education and Gamification | Sprint 9-10 | 4 weeks | -- |
+| 7 | AI Integration (Azure AI Foundry) | Sprint 6-7 | 4 weeks | ✅ Done |
+| 8 | AI Predictions | Sprint 7-8 | 4 weeks | 🔄 Partial (prediction endpoint + Flutter screen done; anomaly detection and accuracy tracking not done) |
+| 9 | Recommendations | Sprint 8-9 | 3 weeks | ✅ Done |
+| 10 | Education and Gamification | Sprint 9-10 | 4 weeks | 🔄 Partial (topics + challenges + badges screen + quizzes done; 6/7 badge triggers wired (Predictor missing); auto-verification done for 2 criteria types; AI learning path not done) |
 | 11 | Notifications | Sprint 10 | 2 weeks | -- |
-| 12 | Pre/Post Evaluation | Sprint 11 | 3 weeks | -- |
-| 13 | Security and Compliance | Sprint 11-12 | 3 weeks | 🔄 Partial (consent + rate limiting done) |
+| 12 | Pre/Post Evaluation | Sprint 11 | 3 weeks | 🔄 Partial (survey endpoints + Flutter screen + improvement calc done; real scoring seeded; 30-day invitation not wired; SUS not done) |
+| 13 | Security and Compliance | Sprint 11-12 | 3 weeks | 🔄 Partial (consent + rate limiting + flutter_secure_storage + right-to-deletion done; TLS, ProGuard, AuditLog not done) |
 | 14 | Testing and Quality | Sprint 12-13 | 3 weeks | -- |
-| 15 | Feedback and Analytics | Sprint 13 | 2 weeks | -- |
+| 15 | Feedback and Analytics | Sprint 13 | 2 weeks | 🔄 Partial (feedback endpoint + Flutter modal done; event analytics done (12 events); metrics dashboard not done) |
 | 16 | Demo Readiness | Sprint 14 | 2 weeks | -- |
 
 ---
