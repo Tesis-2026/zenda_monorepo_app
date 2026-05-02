@@ -4,7 +4,7 @@
 
 Phase 2 delivered a complete auth + profile system with local-first transaction storage (SharedPreferences). Phase 3 closes the gap between local-only transactions and a fully synced backend, and adds the transaction history UI (list, filters, delete). It also adds the missing GET/:id and PUT/:id endpoints to the backend so individual transactions can be viewed and edited.
 
-User stories covered: US-0201, US-0202, US-0203, US-0204, US-0205, US-0206.
+User stories covered: US-001, US-002, US-012 / US-039, (infrastructure: main dashboard), US-003, US-004.
 
 ## Tasks Completed
 
@@ -27,7 +27,7 @@ User stories covered: US-0201, US-0202, US-0203, US-0204, US-0205, US-0206.
 
 ## What Was Built
 
-### Transaction API — GET/:id and PUT/:id (US-0205, US-0206)
+### Transaction API — GET/:id and PUT/:id (US-003, US-004)
 
 | Endpoint | Method | Guard | Use Case |
 |----------|--------|-------|----------|
@@ -38,7 +38,7 @@ User stories covered: US-0201, US-0202, US-0203, US-0204, US-0205, US-0206.
 
 `UpdateTransactionUseCase` accepts `UpdateTransactionCommand` (all fields optional). Category is re-resolved via `ResolveCategoryUseCase` if `newCategoryName` is provided. `occurredAt` rejects future dates.
 
-### Backend Sync — Fire-and-Forget (US-0201)
+### Backend Sync — Fire-and-Forget (US-001)
 
 `NewTransactionController.save()` saves locally first (SharedPreferences, always succeeds), then calls `TransactionApiService.create()` in a try/catch that swallows failures. Transfers are excluded (backend only supports INCOME/EXPENSE).
 
@@ -58,7 +58,7 @@ Category name mapping from Flutter enum (Spanish) to backend (English):
 | `ahorro` | Savings |
 | `otros` | Other |
 
-### TransactionListScreen (US-0203)
+### TransactionListScreen (US-012 / US-039)
 
 - Loads from `GET /api/transactions` with `type` (EXPENSE/INCOME) and date range (`from`/`to`) query params
 - Type filter chips: All / Expenses / Income

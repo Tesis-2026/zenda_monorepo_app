@@ -4,7 +4,7 @@
 
 Phase 3 delivered backend transaction CRUD and the Flutter transaction list. The categorization system had its backend seeds, list/create/delete endpoints, and the Flutter category selector in `AddTransactionScreen` all done. Phase 4 closes the remaining gaps: the backend was missing `PUT /api/categories/:id` (rename), and the Flutter app had no management screen for custom categories.
 
-User stories covered: US-0301 (already done), US-0302 (edit endpoint + management screen).
+User stories covered: US-005 (already done), US-040 / US-041 (edit endpoint + management screen).
 
 ## Tasks Completed
 
@@ -25,7 +25,7 @@ User stories covered: US-0301 (already done), US-0302 (edit endpoint + managemen
 
 ## What Was Built
 
-### `PUT /api/categories/:id` (US-0302)
+### `PUT /api/categories/:id` (US-040 / US-041)
 
 `UpdateCategoryUseCase` performs three checks before writing:
 1. Fetch by `id` + `userId` — throws `NotFoundException` if not found
@@ -34,7 +34,7 @@ User stories covered: US-0301 (already done), US-0302 (edit endpoint + managemen
 
 The repository `update()` patches only the `name` field.
 
-### `CategoryManagementScreen` (US-0302)
+### `CategoryManagementScreen` (US-040 / US-041)
 
 Navigation: `ProfileScreen` → button → `context.push('/categories')` → `CategoryManagementScreen`
 

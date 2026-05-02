@@ -2,7 +2,7 @@
 
 ## Decisions
 
-- **`JWT_EXPIRES_IN` corrected to `30d` in `.env.example`** — the previous value was `7d`. US-0102 explicitly specifies a 30-day token lifetime. Leaving the example wrong would cause every developer to start with a misconfigured environment that silently fails the acceptance criteria.
+- **`JWT_EXPIRES_IN` corrected to `30d` in `.env.example`** — the previous value was `7d`. US-028 explicitly specifies a 30-day token lifetime. Leaving the example wrong would cause every developer to start with a misconfigured environment that silently fails the acceptance criteria.
 
 - **CI uses local Prisma version, not global** — `npx prisma generate` in the workflow resolves to the version in `node_modules` (6.x), not any globally installed version. This prevents the Prisma 7.x breaking change (which requires a `prisma.config.ts` file) from failing CI builds on developer machines that have Prisma 7 installed globally.
 

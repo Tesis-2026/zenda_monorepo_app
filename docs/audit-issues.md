@@ -97,11 +97,11 @@
 |----|--------|------|-------------|
 | GAP-01 | 🔴 OPEN | Backend+Frontend | Phase 11 (Notifications) — FCM not integrated; no push notifications delivered |
 | GAP-02 | 🔴 OPEN | Backend+Frontend | US-034 — 30-day re-invitation logic not wired anywhere |
-| GAP-03 | 🔴 OPEN | Backend | US-0804 — Prediction accuracy tracking (compare predicted vs actual when period closes) |
+| GAP-03 | 🔴 OPEN | Backend | (infrastructure: spending anomaly tracking) — Prediction accuracy tracking (compare predicted vs actual when period closes) |
 | GAP-04 | 🔴 OPEN | Backend | Badge "Predictor" trigger not wired (no call to `awardIfNotEarned` on prediction views) |
 | GAP-05 | 🔴 OPEN | Backend+Frontend | Phase 14 (Testing) — 0% test coverage; no unit or integration tests |
 | GAP-06 | 🔴 OPEN | Backend+Frontend | Phase 16 (Demo Readiness) — no demo data script, no install guide, no demo script |
-| GAP-07 | 🔴 OPEN | Backend | SUS questionnaire endpoint (US-1204) not implemented |
+| GAP-07 | 🔴 OPEN | Backend | SUS questionnaire endpoint (US-035) not implemented |
 
 ---
 

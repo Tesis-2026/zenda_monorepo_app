@@ -2,7 +2,7 @@
 
 ## Context
 
-Before this phase, the project had a fully operational NestJS backend (Phase 1A) and a complete Prisma schema (Phase 1B), but zero frontend code. This phase bootstraps the entire Flutter mobile app: app infrastructure, all auth flows wired to the backend API, onboarding, a functional dashboard with 50/30/20 budget visualization, transaction entry, profile management, and full EN/ES internationalization. User stories covered: US-0101, US-0102, US-0103, US-0104, US-0105, US-0301, US-0501.
+Before this phase, the project had a fully operational NestJS backend (Phase 1A) and a complete Prisma schema (Phase 1B), but zero frontend code. This phase bootstraps the entire Flutter mobile app: app infrastructure, all auth flows wired to the backend API, onboarding, a functional dashboard with 50/30/20 budget visualization, transaction entry, profile management, and full EN/ES internationalization. User stories covered: US-027, US-028, (infrastructure: JWT guard), (infrastructure: password recovery), US-030 / US-032, US-005, US-019.
 
 ## Tasks Completed
 
@@ -68,7 +68,7 @@ Before this phase, the project had a fully operational NestJS backend (Phase 1A)
 | `/dashboard` | `DashboardScreen` | Yes |
 | `/add-transaction` | `AddTransactionScreen` | Yes |
 
-### Auth Flow (US-0101, US-0102, US-0103)
+### Auth Flow (US-027, US-028, infrastructure: JWT guard)
 
 - **Login**: email + password → `AuthApiService.login()` → JWT stored in `flutter_secure_storage` → navigate to `/dashboard`
 - **Register**: name + email + password → `AuthApiService.register()` → auto-login → `/dashboard`
@@ -76,11 +76,11 @@ Before this phase, the project had a fully operational NestJS backend (Phase 1A)
 - **Reset password**: code + new password → `AuthApiService.resetPassword()` → snackbar → `/auth/login`
 - **Auth guard**: `AuthGate` wraps login/register screens — authenticated users are skipped to `/dashboard`
 
-### Onboarding (US-0104)
+### Onboarding (infrastructure: password recovery)
 
 Three-page carousel explaining: (1) record expenses, (2) 50/30/20 rule, (3) streak/consistency. Controls: skip (goes to login), next, register (goes to onboarding with register flow), start. Completion flag stored in SharedPreferences — seen once only.
 
-### Dashboard (US-0501)
+### Dashboard (US-019)
 
 Bottom navigation shell with four tabs. Home tab shows:
 - Greeting with user's first name
@@ -91,11 +91,11 @@ Bottom navigation shell with four tabs. Home tab shows:
 - Summary card (today's spend, this-week total)
 - Streak card with ICU plural label
 
-### Transaction Entry (US-0301)
+### Transaction Entry (US-005)
 
 `AddTransactionScreen` supports three types: Expense, Income, Transfer. Fields: account, amount (PEN), category (grid picker), note, date. Category grid maps to 50/30/20 buckets via `bucketForCategory()`. Saves locally to `TransactionsRepository`.
 
-### Profile (US-0105)
+### Profile (US-030 / US-032)
 
 View and edit: full name, age, university, currency, income type, monthly income, financial literacy level. Sign-out with `AlertDialog` confirmation. Calls `UserApiService.updateProfile()` on save.
 

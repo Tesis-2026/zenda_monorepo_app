@@ -2,7 +2,7 @@
 
 ## Context
 
-This is the foundation phase. No application code existed before it. The goal was to produce a running NestJS API with authentication, the five core feature modules, shared infrastructure, and a minimal Prisma schema — everything Phase 1B needs in place before expanding the data model. References: US-0101, US-0102, US-0103, US-0201, US-0301, US-0401.
+This is the foundation phase. No application code existed before it. The goal was to produce a running NestJS API with authentication, the five core feature modules, shared infrastructure, and a minimal Prisma schema — everything Phase 1B needs in place before expanding the data model. References: US-027, US-028, (infrastructure: JWT guard), US-001, US-005, (infrastructure: insights).
 
 ## Tasks Completed
 
@@ -40,7 +40,7 @@ This is the foundation phase. No application code existed before it. The goal wa
 | `Transaction` | `id`, `userId`, `categoryId?`, `type` (String at this stage), `amount` (Decimal), `currency`, `description`, `occurredAt`, `deletedAt?` | `type` was a plain string — changed to enum in Phase 1B |
 | `SavingsGoal` | `id`, `userId`, `name`, `targetAmount`, `currentAmount`, `dueDate?`, `deletedAt?` | Accumulation tracked via `currentAmount` |
 
-### Auth Module (US-0101, US-0102)
+### Auth Module (US-027, US-028)
 
 | Endpoint | Method | Auth | Description |
 |----------|--------|------|-------------|
@@ -50,7 +50,7 @@ This is the foundation phase. No application code existed before it. The goal wa
 - Rate limited: 10 req/min on register, 20 req/min on login
 - JWT payload: `{ sub: userId, email }`
 
-### Categories Module (US-0201)
+### Categories Module (US-001)
 
 | Endpoint | Method | Auth | Description |
 |----------|--------|------|-------------|
@@ -61,7 +61,7 @@ This is the foundation phase. No application code existed before it. The goal wa
 - System categories cannot be deleted
 - `resolveCategoryForTransaction`: accepts `categoryId` or `newCategoryName`; auto-creates if name not found
 
-### Transactions Module (US-0301)
+### Transactions Module (US-005)
 
 | Endpoint | Method | Auth | Description |
 |----------|--------|------|-------------|
@@ -69,7 +69,7 @@ This is the foundation phase. No application code existed before it. The goal wa
 | `/api/transactions` | GET | JWT | List with filters: `from`, `to`, `type`, `categoryId` |
 | `/api/transactions/:id` | DELETE | JWT | Soft-delete |
 
-### Goals Module (US-0401)
+### Goals Module (US-019)
 
 | Endpoint | Method | Auth | Description |
 |----------|--------|------|-------------|
@@ -78,7 +78,7 @@ This is the foundation phase. No application code existed before it. The goal wa
 | `/api/goals/:id/contribute` | POST | JWT | Add amount to `currentAmount` |
 | `/api/goals/:id` | DELETE | JWT | Soft-delete |
 
-### Insights Module (US-0601)
+### Insights Module (infrastructure: insights)
 
 | Endpoint | Method | Auth | Description |
 |----------|--------|------|-------------|

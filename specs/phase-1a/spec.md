@@ -2,7 +2,7 @@
 
 ## Context
 
-Before this phase, the repository had no shared conventions, no CI/CD pipeline, a single-entry `.gitignore`, and no documentation beyond a Spanish-language backend README. There was no `docs/` folder and no environment variable reference. This phase establishes every piece of scaffolding that all future phases depend on: repository conventions, automation, environment configuration, and the health check endpoint. References: US-1801, US-1803, US-1804.
+Before this phase, the repository had no shared conventions, no CI/CD pipeline, a single-entry `.gitignore`, and no documentation beyond a Spanish-language backend README. There was no `docs/` folder and no environment variable reference. This phase establishes every piece of scaffolding that all future phases depend on: repository conventions, automation, environment configuration, and the health check endpoint. References: (infrastructure: repository setup), (infrastructure: CI/CD), (infrastructure: Docker).
 
 ## Tasks Completed
 
@@ -11,7 +11,7 @@ Before this phase, the repository had no shared conventions, no CI/CD pipeline, 
 3. `CONTRIBUTING.md` created — branching model, Conventional Commits format, PR process, and pointer to coding standards
 4. `LICENSE` created — MIT license, 2026
 5. `SETUP.md` created — full step-by-step setup with environment variable reference table and troubleshooting section
-6. `zenda_backend_app/.env.example` updated — added `FCM_SERVER_KEY`, corrected `JWT_EXPIRES_IN` to `30d` per US-0102, added phase comments for each variable group
+6. `zenda_backend_app/.env.example` updated — added `FCM_SERVER_KEY`, corrected `JWT_EXPIRES_IN` to `30d` per US-028, added phase comments for each variable group
 7. `zenda_backend_app/README.md` translated to English — setup instructions, scripts table, and endpoint table
 8. `.github/workflows/ci.yml` created — two jobs: backend (Node 20 → `npm ci` → `prisma generate` → `nest build`) and frontend (Flutter 3.10 → `pub get` → `flutter analyze`)
 9. `docs/` folder created — documentation index referencing all pending architecture docs and the key design decisions table
