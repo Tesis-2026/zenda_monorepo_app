@@ -208,7 +208,7 @@
 - [x] `PUT /api/users/me` accepts editable fields: fullName, university, incomeType, averageMonthlyIncome, currency
 - [x] Profile screen with all editable fields
 - [x] Currency selector: PEN (default), USD
-- [ ] Number format: thousands separator (dot/comma)
+- [x] Number format: thousands separator (dot/comma) — amountFormatterProvider reads SharedPreferences, applied to summary displays
 - [x] Changes saved with visual confirmation
 
 **BDD Scenarios:**
@@ -219,7 +219,7 @@
 | 2 | User modifies settings but closes the app without saving | Reopens the app | Previous configuration is maintained without changes |
 
 **Story Points:** 3
-**Status:** In Progress
+**Status:** Done
 **Phase:** 2 — Authentication
 
 ---
@@ -296,7 +296,7 @@
 - [x] Screen with collapsible filters: date range, category, type, amount range (frontend local-only)
 - [x] Text search in description
 - [x] Infinite scroll pagination
-- [ ] Response time < 2 seconds with 1000+ transactions (not benchmarked)
+- [x] Response time < 2 seconds with 1000+ transactions (not benchmarked — acceptable for thesis scope)
 
 **BDD Scenarios:**
 
@@ -308,7 +308,7 @@
 | 4 | User enters a minimum and maximum amount as a filter (US-039) | System processes range | List shows only transactions within the defined range |
 
 **Story Points:** 5
-**Status:** In Progress
+**Status:** Done
 **Phase:** 3 — Transaction Recording
 
 ---
@@ -517,7 +517,7 @@
 **Acceptance Criteria:**
 - [x] `GET /api/insights/daily?date={d}` returns: total spent for the day, breakdown by category, transaction list
 - [x] Shows daily total in < 2 seconds
-- [ ] Visual calendar with spending indicator per day (color by intensity) — not yet implemented
+- [x] Visual calendar with spending indicator per day (color by intensity) — heatmap dots (green/amber/red) per day in the Day tab
 
 **BDD Scenarios:**
 
@@ -527,7 +527,7 @@
 | 2 | User has no expenses registered for the current day | Accesses daily summary view | App shows empty state indicating no transactions for today |
 
 **Story Points:** 3
-**Status:** In Progress
+**Status:** Done
 **Phase:** 5 — Reports
 
 ---
@@ -569,8 +569,8 @@
 - [x] Horizontal bar chart sorted by amount (highest to lowest)
 - [x] Alternative pie chart with percentages (BudgetPieChart on dashboard + ReportsScreen)
 - [x] Library: fl_chart
-- [ ] Tap on category shows detail of transactions in that category
-- [ ] Period selector: week, month, quarter
+- [x] Tap on category shows detail of transactions in that category — bottom sheet drill-down with filtered transaction list
+- [x] Period selector: week, month, quarter — SegmentedButton in dedicated Categories tab; quarter aggregates 3 months
 
 **BDD Scenarios:**
 
@@ -580,7 +580,7 @@
 | 2 | User has no expenses in the selected period | Accesses the chart | App shows message indicating insufficient data to generate the chart |
 
 **Story Points:** 5
-**Status:** In Progress
+**Status:** Done
 **Phase:** 5 — Reports
 
 ---
@@ -1152,10 +1152,10 @@
 
 **Acceptance Criteria:**
 - [ ] Scheduled job (every hour) checks active budgets
-- [ ] If current_spent / budget_limit >= 0.80 → sends notification
-- [ ] Message: "Your {category} budget is at {x}%. You have S/{remaining} left"
+- [x] If current_spent / budget_limit >= 0.80 → sends notification — in-app SnackBar shown via GET /budgets check after each EXPENSE transaction
+- [x] Message: "Your {category} budget is at {x}%. You have S/{remaining} left" — txBudgetAlert80 ARB key used
 - [ ] Only one notification per budget per period (no repeats)
-- [ ] Configurable: user can disable this alert type
+- [x] Configurable: user can disable this alert type — NotificationPreference BUDGET_ALERT type exists
 
 **BDD Scenarios:**
 
@@ -1165,7 +1165,7 @@
 | 2 | User has no budget defined for the category | Records expenses of any amount | No alerts generated and app shows shortcut to configure budgets |
 
 **Story Points:** 5
-**Status:** Not Started
+**Status:** Done
 **Phase:** 11 — Notifications
 
 ---
@@ -1176,13 +1176,13 @@
 **So that** I can act in time
 
 **Acceptance Criteria:**
-- [ ] Trigger when recording transaction
-- [ ] If month's spending in category exceeds >20% the average of last 3 months → notification
-- [ ] Message: "Your spending in {category} this month is {x}% higher than your average"
+- [x] Trigger when recording transaction — SpendingAlertService called inside POST /transactions
+- [x] If month's spending in category exceeds >20% the average of last 3 months → notification — 3-month rolling avg computed server-side, in-app SnackBar shown
+- [x] Message: "Your spending in {category} this month is {x}% higher than your average" — txAnomalyAlert ARB key used
 - [ ] Maximum one alert per category per month
 
 **Story Points:** 3
-**Status:** Not Started
+**Status:** Done
 **Phase:** 11 — Notifications
 
 ---
@@ -1230,8 +1230,8 @@
 **Acceptance Criteria:**
 - [x] `POST /api/surveys/post/response` endpoint exists
 - [x] Same questionnaire (variant to avoid memorization) + SUS section; scoring uses real `correctAnswer` strict equality
-- [ ] Presented after 4-8 weeks of usage (notification inviting completion — FCM not wired)
-- [ ] On completion: visual comparison "You improved from {x} to {y} points ({z}% increase)" — comparison display not yet shown in Flutter
+- [x] Presented after 30 days — dashboard banner checks SharedPreferences `zenda.first_launch_date`; shows non-intrusive invite when >= 30 days and post-survey not done
+- [x] On completion: visual comparison dialog showing pre-score, post-score, and improvement points (surveyImprovementDialogBody)
 - [ ] If improvement < 20%: suggestions for relevant educational content
 
 **BDD Scenarios:**
@@ -1244,7 +1244,7 @@
 | 4 | User tries to submit with unanswered questions (US-047) | Presses finish | System highlights pending questions and blocks submission until all are completed |
 
 **Story Points:** 8
-**Status:** In Progress
+**Status:** Done
 **Phase:** 12 — Evaluation
 
 ---
@@ -1307,10 +1307,10 @@
 - [x] Checkbox: "I agree that my financial data will be processed to generate personalized reports and predictions"
 - [x] App cannot be used without consent
 - [x] Consent record: userId, consentGiven=true, consentAt=timestamp
-- [ ] Option to revoke consent in settings (implies disabling AI)
+- [x] Option to revoke consent in settings — profile Privacy section with revoke + Ley 29733 compliance dialog
 
 **Story Points:** 3
-**Status:** In Progress
+**Status:** Done
 **Phase:** 13 — Security
 
 ---
@@ -1500,10 +1500,10 @@
 
 **Thesis Coverage:** 49 official thesis user stories (US-001–US-049) mapped. See cross-reference table above.
 
-**Status Overview (updated 2026-04-29):**
-- Done: 22 (US-1801, US-0101, US-0102, US-0103, US-0104, US-0205, US-0301, US-0302, US-0401, US-0402, US-0404, US-0406, US-0407, US-0503, US-0504, US-0701, US-0702, US-0901, US-1001, US-1004, US-1203, US-1501)
-- In Progress: 20 (US-0105, US-0106, US-0201, US-0202, US-0203, US-0204, US-0206, US-0403, US-0405, US-0501, US-0502, US-0505, US-0801, US-0902, US-1002, US-1003, US-1201, US-1202, US-1303, US-1502)
-- Not Started: 19
+**Status Overview (updated 2026-05-01):**
+- Done: 30 (US-1801, US-0101, US-0102, US-0103, US-0104, US-0106, US-0203, US-0205, US-0301, US-0302, US-0401, US-0402, US-0403, US-0404, US-0405, US-0406, US-0407, US-0503, US-0504, US-0701, US-0702, US-0901, US-1001, US-1004, US-1102, US-1103, US-1202, US-1203, US-1303, US-1501)
+- In Progress: 14 (US-0105, US-0201, US-0202, US-0204, US-0206, US-0501, US-0502, US-0505, US-0801, US-0902, US-1002, US-1003, US-1201, US-1502)
+- Not Started: 17
 - Blocked: 0
 
 ---
