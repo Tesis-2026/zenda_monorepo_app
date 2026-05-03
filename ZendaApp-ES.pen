@@ -3289,15 +3289,8 @@
               "id": "DOEdu",
               "name": "amt_box",
               "width": "fill_container",
-              "fill": "#1F2937",
-              "cornerRadius": 20,
               "layout": "vertical",
-              "gap": 4,
-              "padding": [
-                24,
-                20
-              ],
-              "alignItems": "center",
+              "gap": 6,
               "children": [
                 {
                   "type": "text",
@@ -3306,16 +3299,44 @@
                   "content": "Monto",
                   "fontFamily": "Inter",
                   "fontSize": 13,
-                  "fontWeight": "normal"
+                  "fontWeight": "600"
                 },
                 {
-                  "type": "text",
-                  "id": "G8j7f",
-                  "fill": "#FFFFFF",
-                  "content": "S/ 0.00",
-                  "fontFamily": "Inter",
-                  "fontSize": 40,
-                  "fontWeight": "800"
+                  "type": "frame",
+                  "id": "amt_field_add",
+                  "name": "amt_field_add",
+                  "width": "fill_container",
+                  "fill": "#F9FAFB",
+                  "cornerRadius": 12,
+                  "stroke": "#34D399",
+                  "strokeWidth": 2,
+                  "layout": "horizontal",
+                  "gap": 8,
+                  "padding": [
+                    14,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "prefix_add",
+                      "fill": "#34D399",
+                      "content": "S/",
+                      "fontFamily": "Inter",
+                      "fontSize": 18,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "G8j7f",
+                      "fill": "#1F2937",
+                      "content": "0.00",
+                      "fontFamily": "Inter",
+                      "fontSize": 24,
+                      "fontWeight": "800"
+                    }
+                  ]
                 }
               ]
             },
