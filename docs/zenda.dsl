@@ -112,7 +112,7 @@ workspace "Zenda" "Personal finance app for university students in Lima" {
 
         component zenda.api "Components" {
             include *
-            autolayout lr
+            autolayout tb
         }
 
         deployment zenda live "ProductionDeployment" {
