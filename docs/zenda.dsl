@@ -4,11 +4,10 @@ workspace "Zenda" "Personal finance app for university students in Lima" {
 
     model {
         student = person "University Student" "18-24 year olds in Lima using Android 9.0+"
-        developer = person "Developer" "Maintains and monitors the system"
 
-        ai = softwareSystem "Azure AI Foundry" "GPT-4o-mini · API 2024-10-21" "External"
-        email = softwareSystem "Email Provider" "SMTP via nodemailer; sends password-reset and OTP emails" "External"
-        fcm = softwareSystem "Firebase Cloud Messaging" "Planned: delivers push notifications to the device. Schema and user preferences are ready; dispatch logic not yet implemented." "External,Planned"
+        ai = softwareSystem "Azure AI Foundry" "AI platform for financial intelligence" "External"
+        email = softwareSystem "Email Provider" "Delivers transactional emails to users" "External"
+        fcm = softwareSystem "Firebase Cloud Messaging" "Push notification delivery service" "External"
 
         zenda = softwareSystem "Zenda System" "Helps students track spending, view reports, and complete financial challenges" {
 
@@ -40,12 +39,11 @@ workspace "Zenda" "Personal finance app for university students in Lima" {
         }
 
         # ── Context-level relationships ───────────────────────────────────────
-        student -> zenda "Records transactions, views reports, completes challenges, chats with AI"
-        zenda -> ai "AI predictions, recommendations, quiz, chat" "JSON / HTTPS"
-        zenda -> email "Sends password-reset and OTP emails" "SMTP"
-        zenda -> fcm "Will deliver push notifications (not yet implemented)" "HTTPS"
-        fcm -> student "Will deliver push notifications (not yet implemented)"
-        developer -> zenda "Views API documentation" "Swagger UI /api/docs"
+        student -> zenda "Manages personal finances"
+        zenda -> ai "Requests AI-powered insights"
+        zenda -> email "Sends transactional emails"
+        zenda -> fcm "Triggers push notifications"
+        fcm -> student "Delivers push notifications"
 
         # ── Container-level relationships ─────────────────────────────────────
         student -> zenda.mobile "Uses" "Android"
@@ -53,8 +51,7 @@ workspace "Zenda" "Personal finance app for university students in Lima" {
         zenda.api -> zenda.db "Reads from and writes to" "Prisma ORM"
         zenda.api -> ai "5 AI calls" "JSON / HTTPS"
         zenda.api -> email "Sends transactional emails" "SMTP"
-        zenda.api -> fcm "Will trigger push notifications (not yet implemented)"
-        developer -> zenda.api "Views API docs" "Swagger UI /api/docs"
+        zenda.api -> fcm "Dispatches push notification events" "HTTPS"
 
         # ── Component-level AI flows ──────────────────────────────────────────
         zenda.api.predictionsModule -> zenda.api.aiProvider "predictExpenses(SpendingContext) → {predictedTotal, predictedByCategory[], confidenceLevel, narrative}"
@@ -101,7 +98,11 @@ workspace "Zenda" "Personal finance app for university students in Lima" {
 
     views {
         systemContext zenda "Context" {
-            include *
+            include student
+            include zenda
+            include ai
+            include email
+            include fcm
             autolayout lr
         }
 
@@ -133,11 +134,6 @@ workspace "Zenda" "Personal finance app for university students in Lima" {
             element "External" {
                 background #999999
                 color #ffffff
-            }
-            element "Planned" {
-                background #cccccc
-                color #333333
-                border dashed
             }
             element "Container" {
                 background #438dd5
