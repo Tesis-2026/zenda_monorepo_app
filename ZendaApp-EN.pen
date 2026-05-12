@@ -14394,6 +14394,28 @@
                 },
                 {
                   "type": "frame",
+                  "id": "O3XDD",
+                  "name": "pathChip",
+                  "fill": "#34D399",
+                  "cornerRadius": 20,
+                  "padding": [
+                    8,
+                    16
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "zk28c",
+                      "fill": "#FFFFFF",
+                      "content": "Path",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
                   "id": "8v40G",
                   "name": "edu_tabBudget",
                   "fill": "#F3F4F6",
@@ -32170,107 +32192,32 @@
           "id": "s49_hdr",
           "name": "header",
           "width": "fill_container",
+          "height": 56,
           "fill": "#FFFFFF",
-          "layout": "vertical",
           "gap": 12,
           "padding": [
-            16,
-            20,
-            12,
-            20
+            0,
+            16
           ],
+          "alignItems": "center",
           "children": [
             {
-              "type": "frame",
-              "id": "s49_hdrrow",
-              "width": "fill_container",
-              "alignItems": "center",
-              "children": [
-                {
-                  "type": "text",
-                  "id": "s49_hdrtit",
-                  "fill": "#1F2937",
-                  "content": "Your Learning Path",
-                  "fontFamily": "Inter",
-                  "fontSize": 22,
-                  "fontWeight": "700"
-                },
-                {
-                  "type": "frame",
-                  "id": "s49_hdrsp",
-                  "width": "fill_container",
-                  "height": 1
-                },
-                {
-                  "type": "frame",
-                  "id": "s49_aibadge",
-                  "fill": "#ECFDF5",
-                  "cornerRadius": 20,
-                  "gap": 4,
-                  "padding": [
-                    6,
-                    12
-                  ],
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "s49_aiico",
-                      "fill": "#34D399",
-                      "content": "✦",
-                      "fontFamily": "Inter",
-                      "fontSize": 12,
-                      "fontWeight": "normal"
-                    },
-                    {
-                      "type": "text",
-                      "id": "s49_aitxt",
-                      "fill": "#34D399",
-                      "content": "AI Personalized",
-                      "fontFamily": "Inter",
-                      "fontSize": 12,
-                      "fontWeight": "600"
-                    }
-                  ]
-                }
-              ]
+              "type": "icon_font",
+              "id": "rrgMH",
+              "width": 20,
+              "height": 20,
+              "iconFontName": "arrow_back_ios_new",
+              "iconFontFamily": "Material Symbols Rounded",
+              "fill": "#1F2937"
             },
             {
-              "type": "frame",
-              "id": "s49_insight",
-              "name": "ai-insight",
-              "width": "fill_container",
-              "fill": "#ECFDF5",
-              "cornerRadius": 10,
-              "gap": 8,
-              "padding": [
-                10,
-                12
-              ],
-              "alignItems": "center",
-              "children": [
-                {
-                  "type": "text",
-                  "id": "s49_insico",
-                  "fill": "#34D399",
-                  "content": "✦",
-                  "fontFamily": "Inter",
-                  "fontSize": 14,
-                  "fontWeight": "normal"
-                },
-                {
-                  "type": "text",
-                  "id": "s49_instxt",
-                  "fill": "#059669",
-                  "textGrowth": "fixed-width",
-                  "width": "fill_container",
-                  "content": "You overspent in Food (+50%) and Entertainment (+35%) last month. Topics are ordered by relevance.",
-                  "lineHeight": 1.4,
-                  "fontFamily": "Inter",
-                  "fontSize": 12,
-                  "fontWeight": "normal"
-                }
-              ]
+              "type": "text",
+              "id": "i3UWfz",
+              "fill": "#1F2937",
+              "content": "My Learning Path",
+              "fontFamily": "Inter",
+              "fontSize": 18,
+              "fontWeight": "700"
             }
           ]
         },
@@ -32296,161 +32243,88 @@
           "children": [
             {
               "type": "frame",
-              "id": "s49_c1",
-              "name": "ai-topic-1",
+              "id": "cj70A",
+              "name": "ai-banner",
               "width": "fill_container",
-              "fill": "#FFFFFF",
-              "cornerRadius": 12,
-              "effect": {
-                "type": "shadow",
-                "shadowType": "outer",
-                "color": "#00000010",
-                "offset": {
-                  "x": 0,
-                  "y": 1
-                },
-                "blur": 4
-              },
-              "layout": "vertical",
-              "gap": 10,
+              "fill": "#1F2937",
+              "cornerRadius": 16,
+              "gap": 12,
               "padding": 16,
               "children": [
                 {
                   "type": "frame",
-                  "id": "s49_c1top",
-                  "width": "fill_container",
-                  "gap": 12,
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "s49_c1ico",
-                      "width": 48,
-                      "height": 48,
-                      "fill": "#FEF3C7",
-                      "cornerRadius": 12,
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "s49_c1icotxt",
-                          "fill": "#374151",
-                          "content": "🍽",
-                          "fontFamily": "Inter",
-                          "fontSize": 24,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "s49_c1info",
-                      "width": "fill_container",
-                      "layout": "vertical",
-                      "gap": 2,
-                      "children": [
-                        {
-                          "type": "frame",
-                          "id": "s49_c1row",
-                          "gap": 6,
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "s49_c1tit",
-                              "fill": "#1F2937",
-                              "content": "Mindful Spending on Food",
-                              "fontFamily": "Inter",
-                              "fontSize": 14,
-                              "fontWeight": "600"
-                            },
-                            {
-                              "type": "frame",
-                              "id": "s49_c1badge",
-                              "fill": "#34D399",
-                              "cornerRadius": 8,
-                              "padding": [
-                                2,
-                                6
-                              ],
-                              "children": [
-                                {
-                                  "type": "text",
-                                  "id": "s49_c1badgetxt",
-                                  "fill": "#FFFFFF",
-                                  "content": "#1 Priority",
-                                  "fontFamily": "Inter",
-                                  "fontSize": 10,
-                                  "fontWeight": "700"
-                                }
-                              ]
-                            }
-                          ]
-                        },
-                        {
-                          "type": "text",
-                          "id": "s49_c1meta",
-                          "fill": "#9CA3AF",
-                          "content": "7 min · 5 questions",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "s49_c1reason",
-                  "fill": "#F0FDF4",
+                  "id": "N951l",
+                  "name": "bnr_ic",
+                  "width": 36,
+                  "height": 36,
+                  "fill": "#818CF820",
                   "cornerRadius": 8,
-                  "gap": 4,
-                  "padding": [
-                    6,
-                    10
-                  ],
+                  "layout": "vertical",
+                  "justifyContent": "center",
                   "alignItems": "center",
                   "children": [
                     {
-                      "type": "text",
-                      "id": "s49_c1reaico",
-                      "fill": "#34D399",
-                      "content": "✦",
-                      "fontFamily": "Inter",
-                      "fontSize": 11,
-                      "fontWeight": "normal"
-                    },
-                    {
-                      "type": "text",
-                      "id": "s49_c1reatxt",
-                      "fill": "#059669",
-                      "content": "Why: Your Food spending is 50% above your average",
-                      "fontFamily": "Inter",
-                      "fontSize": 11,
-                      "fontWeight": "normal"
+                      "type": "icon_font",
+                      "id": "NLZ2k",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "star",
+                      "iconFontFamily": "Material Symbols Rounded",
+                      "fill": "#818CF8"
                     }
                   ]
                 },
                 {
                   "type": "frame",
-                  "id": "s49_c1bar",
+                  "id": "LLHHL",
+                  "name": "bnr_txt",
                   "width": "fill_container",
-                  "height": 4,
-                  "fill": "#F3F4F6",
-                  "cornerRadius": 2,
-                  "layout": "none",
+                  "layout": "vertical",
+                  "gap": 6,
                   "children": [
                     {
                       "type": "frame",
-                      "id": "s49_c1prog",
-                      "x": 0,
-                      "y": 0,
-                      "width": 60,
-                      "height": 4,
-                      "fill": "#34D399",
-                      "cornerRadius": 2
+                      "id": "hW0GS",
+                      "name": "bnr_chip",
+                      "fill": "#818CF820",
+                      "cornerRadius": 20,
+                      "padding": [
+                        3,
+                        8
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "x4NtZ",
+                          "fill": "#818CF8",
+                          "content": "AI Personalized",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "wqdze",
+                      "fill": "#FFFFFF",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Topics ordered by what will help you most this month.",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "q6oSe",
+                      "fill": "#9CA3AF",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Based on May: no savings yet · food 77% · health 80%.",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 }
@@ -32458,140 +32332,409 @@
             },
             {
               "type": "frame",
-              "id": "s49_c2",
-              "name": "ai-topic-2",
+              "id": "O4gJi",
+              "name": "topic-1",
               "width": "fill_container",
               "fill": "#FFFFFF",
-              "cornerRadius": 12,
+              "cornerRadius": 16,
               "effect": {
                 "type": "shadow",
                 "shadowType": "outer",
                 "color": "#00000010",
                 "offset": {
                   "x": 0,
-                  "y": 1
+                  "y": 2
                 },
-                "blur": 4
+                "blur": 8
               },
-              "layout": "vertical",
-              "gap": 10,
+              "gap": 12,
               "padding": 16,
               "children": [
                 {
                   "type": "frame",
-                  "id": "s49_c2top",
-                  "width": "fill_container",
-                  "gap": 12,
+                  "id": "a43LUT",
+                  "name": "c1_num",
+                  "width": 32,
+                  "height": 32,
+                  "fill": "#34D39920",
+                  "cornerRadius": 16,
+                  "layout": "vertical",
+                  "justifyContent": "center",
                   "alignItems": "center",
                   "children": [
                     {
-                      "type": "frame",
-                      "id": "s49_c2ico",
-                      "width": 48,
-                      "height": 48,
-                      "fill": "#DBEAFE",
-                      "cornerRadius": 12,
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "s49_c2icotxt",
-                          "fill": "#374151",
-                          "content": "💰",
-                          "fontFamily": "Inter",
-                          "fontSize": 24,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "s49_c2info",
-                      "width": "fill_container",
-                      "layout": "vertical",
-                      "gap": 2,
-                      "children": [
-                        {
-                          "type": "frame",
-                          "id": "s49_c2row",
-                          "gap": 6,
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "s49_c2tit",
-                              "fill": "#1F2937",
-                              "content": "Building an Emergency Fund",
-                              "fontFamily": "Inter",
-                              "fontSize": 14,
-                              "fontWeight": "600"
-                            },
-                            {
-                              "type": "frame",
-                              "id": "s49_c2badge",
-                              "fill": "#ECFDF5",
-                              "cornerRadius": 8,
-                              "padding": [
-                                2,
-                                6
-                              ],
-                              "children": [
-                                {
-                                  "type": "text",
-                                  "id": "s49_c2badgetxt",
-                                  "fill": "#34D399",
-                                  "content": "#2",
-                                  "fontFamily": "Inter",
-                                  "fontSize": 10,
-                                  "fontWeight": "700"
-                                }
-                              ]
-                            }
-                          ]
-                        },
-                        {
-                          "type": "text",
-                          "id": "s49_c2meta",
-                          "fill": "#9CA3AF",
-                          "content": "10 min · 6 questions",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
-                        }
-                      ]
+                      "type": "text",
+                      "id": "OET9Y",
+                      "fill": "#34D399",
+                      "content": "1",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "700"
                     }
                   ]
                 },
                 {
                   "type": "frame",
-                  "id": "s49_c2reason",
-                  "fill": "#F0FDF4",
-                  "cornerRadius": 8,
-                  "gap": 4,
-                  "padding": [
-                    6,
-                    10
-                  ],
+                  "id": "H4iRfM",
+                  "name": "c1_body",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "RsrXd",
+                      "name": "c1_row",
+                      "width": "fill_container",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "M4ydU",
+                          "fill": "#1F2937",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Emergency fund basics",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "CNUHS",
+                          "fill": "#FFF7ED",
+                          "cornerRadius": 8,
+                          "padding": [
+                            3,
+                            7
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "ACqbT",
+                              "fill": "#F97316",
+                              "content": "Intermediate",
+                              "fontFamily": "Inter",
+                              "fontSize": 10,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "AjtpF",
+                      "fill": "#6B7280",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "No savings recorded in May — building an emergency fund is your highest priority.",
+                      "lineHeight": 1.4,
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal",
+                      "fontStyle": "italic"
+                    },
+                    {
+                      "type": "text",
+                      "id": "paqko",
+                      "fill": "#34D399",
+                      "content": "Start →",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "szHQF",
+              "name": "topic-2",
+              "width": "fill_container",
+              "fill": "#FFFFFF",
+              "cornerRadius": 16,
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#00000010",
+                "offset": {
+                  "x": 0,
+                  "y": 2
+                },
+                "blur": 8
+              },
+              "gap": 12,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "I5NoYd",
+                  "name": "c2_num",
+                  "width": 32,
+                  "height": 32,
+                  "fill": "#34D39920",
+                  "cornerRadius": 16,
+                  "layout": "vertical",
+                  "justifyContent": "center",
                   "alignItems": "center",
                   "children": [
                     {
                       "type": "text",
-                      "id": "s49_c2reaico",
+                      "id": "vsM6V",
                       "fill": "#34D399",
-                      "content": "✦",
+                      "content": "2",
                       "fontFamily": "Inter",
-                      "fontSize": 11,
-                      "fontWeight": "normal"
+                      "fontSize": 13,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "i2voz",
+                  "name": "c2_body",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "N64aEd",
+                      "name": "c2_row",
+                      "width": "fill_container",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Ioq76",
+                          "fill": "#1F2937",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "How to set a realistic budget",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "xCapB",
+                          "fill": "#ECFDF5",
+                          "cornerRadius": 8,
+                          "padding": [
+                            3,
+                            7
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "QmpdO",
+                              "fill": "#34D399",
+                              "content": "Beginner",
+                              "fontFamily": "Inter",
+                              "fontSize": 10,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
                     },
                     {
                       "type": "text",
-                      "id": "s49_c2reatxt",
-                      "fill": "#059669",
-                      "content": "Why: You have no active savings goals yet",
+                      "id": "FmojU",
+                      "fill": "#6B7280",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Your Food budget is at 77%. Better planning will keep you on track.",
+                      "lineHeight": 1.4,
                       "fontFamily": "Inter",
-                      "fontSize": 11,
-                      "fontWeight": "normal"
+                      "fontSize": 12,
+                      "fontWeight": "normal",
+                      "fontStyle": "italic"
+                    },
+                    {
+                      "type": "text",
+                      "id": "ae7rS",
+                      "fill": "#34D399",
+                      "content": "Start →",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "KF9gg",
+              "name": "topic-3",
+              "width": "fill_container",
+              "fill": "#FFFFFF",
+              "cornerRadius": 16,
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "#34D39966"
+              },
+              "gap": 12,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "LmTKw",
+                  "name": "c3_num",
+                  "width": 32,
+                  "height": 32,
+                  "fill": "#34D399",
+                  "cornerRadius": 16,
+                  "layout": "vertical",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "EEP87",
+                      "width": 16,
+                      "height": 16,
+                      "iconFontName": "check",
+                      "iconFontFamily": "Material Symbols Rounded",
+                      "fill": "#FFFFFF"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "H8GEe",
+                  "name": "c3_body",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "u07J4E",
+                      "name": "c3_row",
+                      "width": "fill_container",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "JwBzn",
+                          "fill": "#1F2937",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "The 50/30/20 rule",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "OQQAl",
+                      "fill": "#6B7280",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Review — 58% of spending goes to Needs this month, above the 50% target.",
+                      "lineHeight": 1.4,
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal",
+                      "fontStyle": "italic"
+                    },
+                    {
+                      "type": "text",
+                      "id": "hhXmd",
+                      "fill": "#34D399",
+                      "content": "Review →",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "lTSdo",
+              "name": "topic-4",
+              "width": "fill_container",
+              "fill": "#FFFFFF",
+              "cornerRadius": 16,
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#00000010",
+                "offset": {
+                  "x": 0,
+                  "y": 2
+                },
+                "blur": 8
+              },
+              "gap": 12,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "TwEae",
+                  "name": "c4_num",
+                  "width": 32,
+                  "height": 32,
+                  "fill": "#F3F4F6",
+                  "cornerRadius": 16,
+                  "layout": "vertical",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "QFa4w",
+                      "width": 13,
+                      "height": 13,
+                      "iconFontName": "lock",
+                      "iconFontFamily": "Material Symbols Rounded",
+                      "fill": "#9CA3AF"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "K4smi",
+                  "name": "c4_body",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "tC7XK",
+                      "fill": "#9CA3AF",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Understanding credit cards",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "K49WZu",
+                      "fill": "#D1D5DB",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "You have a Visa Credit card — understanding interest will save you money.",
+                      "lineHeight": 1.4,
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal",
+                      "fontStyle": "italic"
                     }
                   ]
                 }
