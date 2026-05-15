@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxGraphModel compressed="false" dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+
+    <!-- TITLE -->
+    <mxCell id="2" value="Zenda — Physical Architecture" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=20;fontStyle=1;fontColor=#1a1a2e;" vertex="1" parent="1">
+      <mxGeometry x="420" y="18" width="760" height="32" as="geometry" />
+    </mxCell>
+    <mxCell id="3" value="Azure App Service · PostgreSQL · Key Vault · Azure OpenAI · Third-party SaaS (SMTP · FCM)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontStyle=2;fontColor=#666666;" vertex="1" parent="1">
+      <mxGeometry x="380" y="48" width="900" height="20" as="geometry" />
+    </mxCell>
+
+    <!-- ═══════════════════════════════ -->
+    <!-- ACTOR                          -->
+    <!-- ═══════════════════════════════ -->
+    <mxCell id="10" value="Student" style="shape=mxgraph.archimate3.actor;html=1;whiteSpace=wrap;fillColor=#ffff88;strokeColor=#888800;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="30" y="330" width="80" height="70" as="geometry" />
+    </mxCell>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- MOBILE CLIENT                                           -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <mxCell id="20" value="Mobile Client" style="swimlane;fontStyle=1;align=left;startSize=28;fillColor=none;strokeColor=#888888;strokeDashArray=6;fontSize=12;fontColor=#333333;rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="130" y="120" width="300" height="500" as="geometry" />
+    </mxCell>
+
+    <mxCell id="21" value="" style="shape=mxgraph.android.phone2;html=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="20">
+      <mxGeometry x="80" y="50" width="140" height="280" as="geometry" />
+    </mxCell>
+
+    <mxCell id="22" value="Flutter App" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;fontColor=#1a1a2e;" vertex="1" parent="20">
+      <mxGeometry x="80" y="155" width="140" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="23" value="Android APK" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;fontStyle=2;fontColor=#555555;" vertex="1" parent="20">
+      <mxGeometry x="80" y="181" width="140" height="20" as="geometry" />
+    </mxCell>
+    <mxCell id="24" value="Flutter 3.10&#10;Riverpod 3&#10;GoRouter 17" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;fontColor=#666666;" vertex="1" parent="20">
+      <mxGeometry x="80" y="205" width="140" height="56" as="geometry" />
+    </mxCell>
+
+    <!-- Local storage box (fills empty Mobile Client space) -->
+    <mxCell id="25" value="Local Storage&#10;SharedPreferences · flutter_secure_storage (JWT)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontStyle=1;" vertex="1" parent="20">
+      <mxGeometry x="20" y="360" width="260" height="56" as="geometry" />
+    </mxCell>
+    <mxCell id="26" value="Android 10+ · ARM64 · 4G/5G/WiFi" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=9;fontColor=#888888;fontStyle=2;" vertex="1" parent="20">
+      <mxGeometry x="20" y="425" width="260" height="20" as="geometry" />
+    </mxCell>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- MICROSOFT AZURE (trust boundary, compact 4-service layout) -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <mxCell id="40" value="Microsoft Azure" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e6f0fa;strokeColor=#0072c6;strokeDashArray=8 4;dashed=1;fontSize=13;fontStyle=1;fontColor=#0072c6;verticalAlign=top;align=left;spacingLeft=14;spacingTop=6;" vertex="1" parent="1">
+      <mxGeometry x="460" y="120" width="900" height="500" as="geometry" />
+    </mxCell>
+
+    <!-- Azure App Service (top center — orchestrator) -->
+    <mxCell id="41" value="" style="shape=mxgraph.azure2.app_services;html=1;labelPosition=center;verticalLabelPosition=bottom;align=center;verticalAlign=top;outlineConnect=0;fillColor=#0072c6;strokeColor=#005a9e;" vertex="1" parent="40">
+      <mxGeometry x="400" y="55" width="100" height="100" as="geometry" />
+    </mxCell>
+    <mxCell id="42" value="Azure App Service" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;fontColor=#1a1a2e;" vertex="1" parent="40">
+      <mxGeometry x="340" y="158" width="220" height="22" as="geometry" />
+    </mxCell>
+    <mxCell id="43" value="NestJS 11 API · Node.js 20" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;fontStyle=2;fontColor=#555555;" vertex="1" parent="40">
+      <mxGeometry x="340" y="180" width="220" height="20" as="geometry" />
+    </mxCell>
+    <mxCell id="44" value="HTTPS · port 443" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;fontColor=#666666;" vertex="1" parent="40">
+      <mxGeometry x="340" y="200" width="220" height="20" as="geometry" />
+    </mxCell>
+
+    <!-- ── Bottom row: PostgreSQL · Key Vault · Azure OpenAI ── -->
+
+    <!-- PostgreSQL -->
+    <mxCell id="45" value="" style="shape=mxgraph.veeam.postgresql_database;html=1;pointerEvents=1;dashed=0;fillColor=#336791;strokeColor=#1f3f5b;labelPosition=center;verticalLabelPosition=bottom;align=center;verticalAlign=top;outlineConnect=0;" vertex="1" parent="40">
+      <mxGeometry x="100" y="280" width="100" height="120" as="geometry" />
+    </mxCell>
+    <mxCell id="46" value="PostgreSQL 15" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=12;fontStyle=1;fontColor=#1a1a2e;" vertex="1" parent="40">
+      <mxGeometry x="40" y="402" width="220" height="22" as="geometry" />
+    </mxCell>
+    <mxCell id="47" value="TCP/5432 · Prisma schema · 19 tables" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;fontColor=#555555;" vertex="1" parent="40">
+      <mxGeometry x="40" y="424" width="220" height="22" as="geometry" />
+    </mxCell>
+
+    <!-- Azure Key Vault -->
+    <mxCell id="48" value="" style="shape=mxgraph.azure2.key_vaults;html=1;labelPosition=center;verticalLabelPosition=bottom;align=center;verticalAlign=top;outlineConnect=0;fillColor=#0072c6;strokeColor=#005a9e;" vertex="1" parent="40">
+      <mxGeometry x="410" y="290" width="80" height="100" as="geometry" />
+    </mxCell>
+    <mxCell id="49" value="Azure Key Vault" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=12;fontStyle=1;fontColor=#1a1a2e;" vertex="1" parent="40">
+      <mxGeometry x="340" y="392" width="220" height="22" as="geometry" />
+    </mxCell>
+    <mxCell id="4a" value="JWT secret · DB password · API keys" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;fontColor=#555555;" vertex="1" parent="40">
+      <mxGeometry x="340" y="414" width="220" height="22" as="geometry" />
+    </mxCell>
+
+    <!-- Azure OpenAI (moved INSIDE Azure boundary) -->
+    <mxCell id="4b" value="" style="shape=mxgraph.azure2.ai_machine_learning.azure_open_ai;html=1;labelPosition=center;verticalLabelPosition=bottom;align=center;verticalAlign=top;outlineConnect=0;fillColor=#0072c6;strokeColor=#005a9e;" vertex="1" parent="40">
+      <mxGeometry x="710" y="290" width="80" height="100" as="geometry" />
+    </mxCell>
+    <mxCell id="4c" value="Azure AI Foundry" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=12;fontStyle=1;fontColor=#1a1a2e;" vertex="1" parent="40">
+      <mxGeometry x="640" y="392" width="220" height="22" as="geometry" />
+    </mxCell>
+    <mxCell id="4d" value="Azure OpenAI · gpt-4o-mini" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;fontColor=#555555;" vertex="1" parent="40">
+      <mxGeometry x="640" y="414" width="220" height="22" as="geometry" />
+    </mxCell>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- THIRD-PARTY SAAS (renamed from "External Services")     -->
+    <!-- Only contains SMTP and FCM (planned)                    -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <mxCell id="60" value="Third-party SaaS" style="swimlane;fontStyle=1;align=left;startSize=28;fillColor=none;strokeColor=#888888;strokeDashArray=6;fontSize=12;fontColor=#333333;rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="1390" y="120" width="240" height="500" as="geometry" />
+    </mxCell>
+
+    <!-- SMTP Gateway -->
+    <mxCell id="64" value="" style="shape=mxgraph.office.communications.email;html=1;labelPosition=center;verticalLabelPosition=bottom;align=center;verticalAlign=top;fillColor=#b85450;strokeColor=#a02a25;outlineConnect=0;" vertex="1" parent="60">
+      <mxGeometry x="85" y="60" width="70" height="70" as="geometry" />
+    </mxCell>
+    <mxCell id="65" value="SMTP Gateway" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;fontStyle=1;fontColor=#1a1a2e;" vertex="1" parent="60">
+      <mxGeometry x="20" y="132" width="200" height="22" as="geometry" />
+    </mxCell>
+    <mxCell id="66" value="Transactional email · port 587" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;fontColor=#555555;" vertex="1" parent="60">
+      <mxGeometry x="20" y="154" width="200" height="22" as="geometry" />
+    </mxCell>
+
+    <!-- FCM (planned — placement to be decided) -->
+    <mxCell id="67" value="" style="shape=mxgraph.gcp2.developer_tools.firebase;html=1;labelPosition=center;verticalLabelPosition=bottom;align=center;verticalAlign=top;fillColor=#ffca28;strokeColor=#f57c00;outlineConnect=0;" vertex="1" parent="60">
+      <mxGeometry x="85" y="290" width="70" height="70" as="geometry" />
+    </mxCell>
+    <mxCell id="68" value="Firebase Cloud Messaging" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;fontStyle=1;fontColor=#1a1a2e;" vertex="1" parent="60">
+      <mxGeometry x="20" y="362" width="200" height="22" as="geometry" />
+    </mxCell>
+    <mxCell id="69" value="Push notifications · FCM v1 API" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;fontColor=#555555;" vertex="1" parent="60">
+      <mxGeometry x="20" y="384" width="200" height="22" as="geometry" />
+    </mxCell>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- CONNECTIONS                                             -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+
+    <!-- Student → Mobile (uses) -->
+    <mxCell id="1000" value="uses" style="edgeStyle=orthogonalEdgeStyle;dashed=1;endArrow=open;endFill=0;strokeColor=#888888;fontSize=10;fontStyle=2;" edge="1" source="10" target="21" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- Mobile → App Service: HTTPS REST 443 -->
+    <mxCell id="1001" value="HTTPS · REST/JSON · 443&#10;(TLS terminated by App Service)" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#d79b00;strokeWidth=2;fontSize=10;fontStyle=1;" edge="1" source="21" target="41" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- App Service → PostgreSQL (obs. 6: add Private Endpoint label) -->
+    <mxCell id="1002" value="TCP/5432&#10;Private Endpoint (VNet)" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#0072c6;strokeWidth=2;fontSize=10;fontStyle=1;" edge="1" source="41" target="45" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- App Service → Key Vault -->
+    <mxCell id="1003" value="reads secrets&#10;HTTPS · Managed Identity" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#0072c6;strokeWidth=2;fontSize=10;fontStyle=1;" edge="1" source="41" target="48" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- App Service → Azure OpenAI (obs. 1: now internal to Azure) -->
+    <mxCell id="1004" value="HTTPS · Chat Completions" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#0072c6;strokeWidth=2;fontSize=10;fontStyle=1;" edge="1" source="41" target="4b" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- App Service → SMTP -->
+    <mxCell id="1005" value="SMTP · STARTTLS · 587" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#b85450;strokeWidth=2;fontSize=10;fontStyle=1;" edge="1" source="41" target="64" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- App Service → FCM -->
+    <mxCell id="1006" value="HTTPS · FCM v1" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#b85450;strokeWidth=2;fontSize=10;fontStyle=1;" edge="1" source="41" target="67" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- FCM → Mobile (async push, routed via bottom-left like in the logical diagram) -->
+    <mxCell id="1007" value="push delivery" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#d6b656;strokeWidth=2;fontSize=10;fontStyle=1;fontColor=#7a5a00;" edge="1" source="67" target="21" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="1620" y="680" />
+          <mxPoint x="80" y="680" />
+          <mxPoint x="80" y="380" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+  </root>
+</mxGraphModel>

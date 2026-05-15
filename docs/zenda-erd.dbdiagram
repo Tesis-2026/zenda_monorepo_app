@@ -107,6 +107,18 @@
       "y": 1576
     },
     {
+      "name": "ai_conversations",
+      "schemaName": "public",
+      "x": 1344,
+      "y": 1024
+    },
+    {
+      "name": "ai_messages",
+      "schemaName": "public",
+      "x": 1344,
+      "y": 1400
+    },
+    {
       "name": "surveys",
       "schemaName": "public",
       "x": 16,
@@ -565,6 +577,36 @@
         "id"
       ],
       "secondTableName": "users",
+      "secondSchemaName": "public",
+      "secondRelation": "1",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "user_id"
+      ],
+      "firstTableName": "ai_conversations",
+      "firstSchemaName": "public",
+      "firstRelation": "*",
+      "secondFieldNames": [
+        "id"
+      ],
+      "secondTableName": "users",
+      "secondSchemaName": "public",
+      "secondRelation": "1",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "conversation_id"
+      ],
+      "firstTableName": "ai_messages",
+      "firstSchemaName": "public",
+      "firstRelation": "*",
+      "secondFieldNames": [
+        "id"
+      ],
+      "secondTableName": "ai_conversations",
       "secondSchemaName": "public",
       "secondRelation": "1",
       "checkPoints": []

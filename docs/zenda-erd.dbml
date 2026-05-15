@@ -67,6 +67,22 @@ Enum feedback_type {
   GENERAL
 }
 
+Enum ai_conversation_status {
+  ACTIVE
+  CLOSED
+}
+
+Enum ai_message_role {
+  USER
+  ASSISTANT
+}
+
+Enum category_source {
+  AI               // AI suggested and the user accepted as-is
+  AI_OVERRIDDEN    // AI suggested but the user picked a different category
+  USER             // user picked the category manually (no AI suggestion)
+}
+
 // ─────────────────────────────────────────────────────────────────
 // CORE
 // ─────────────────────────────────────────────────────────────────
@@ -104,17 +120,20 @@ Table categories {
 }
 
 Table transactions {
-  id          uuid             [primary key]
-  user_id     uuid             [not null]
-  category_id uuid
-  type        transaction_type [not null]
-  amount      decimal(12,2)    [not null]
-  currency    varchar          [default: "PEN"]
-  description varchar          [not null]
-  occurred_at timestamp
-  created_at  timestamp
-  updated_at  timestamp
-  deleted_at  timestamp
+  id                    uuid             [primary key]
+  user_id               uuid             [not null]
+  category_id           uuid             [note: 'final category — what counts for budgets/insights']
+  suggested_category_id uuid             [note: 'what the AI proposed at create time; null = no AI involved']
+  ai_confidence         decimal(3,2)     [note: '0.00–1.00; null = no AI involved']
+  category_source       category_source  [default: "USER", note: 'AI / AI_OVERRIDDEN / USER — derived from (suggested_category_id, category_id)']
+  type                  transaction_type [not null]
+  amount                decimal(12,2)    [not null]
+  currency              varchar          [default: "PEN"]
+  description           varchar          [not null]
+  occurred_at           timestamp
+  created_at            timestamp
+  updated_at            timestamp
+  deleted_at            timestamp
 }
 
 Table savings_goals {
@@ -296,6 +315,36 @@ Table recommendation_feedback {
 }
 
 // ─────────────────────────────────────────────────────────────────
+// AI CHAT — CONVERSATIONAL ASSISTANT
+// ─────────────────────────────────────────────────────────────────
+
+Table ai_conversations {
+  id         uuid                   [primary key]
+  user_id    uuid                   [not null]
+  status     ai_conversation_status [default: "ACTIVE", note: 'one ACTIVE conversation per user — enforced in the service layer']
+  started_at timestamp
+  ended_at   timestamp              [note: 'set when the conversation is closed, e.g. on logout']
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (user_id, status)
+  }
+}
+
+Table ai_messages {
+  id              uuid            [primary key]
+  conversation_id uuid            [not null]
+  role            ai_message_role [not null]
+  content         text            [not null]
+  created_at      timestamp
+
+  indexes {
+    (conversation_id, created_at)
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────
 // SURVEYS
 // ─────────────────────────────────────────────────────────────────
 
@@ -393,8 +442,9 @@ Table feedback {
 
 // Core
 Ref category_owner:           categories.user_id > users.id
-Ref transaction_user:         transactions.user_id > users.id
-Ref transaction_category:     transactions.category_id > categories.id
+Ref transaction_user:                  transactions.user_id > users.id
+Ref transaction_category:              transactions.category_id > categories.id
+Ref transaction_suggested_category:    transactions.suggested_category_id > categories.id
 Ref goal_owner:               savings_goals.user_id > users.id
 Ref contribution_goal:        goal_contributions.goal_id > savings_goals.id
 Ref budget_owner:             budgets.user_id > users.id
@@ -416,6 +466,8 @@ Ref user_badge_badge:         user_badges.badge_id > badges.id
 Ref prediction_user:          predictions.user_id > users.id
 Ref recommendation_user:      recommendations.user_id > users.id
 Ref rec_feedback_rec:         recommendation_feedback.recommendation_id - recommendations.id
+Ref conversation_user:        ai_conversations.user_id > users.id
+Ref message_conversation:     ai_messages.conversation_id > ai_conversations.id
 
 // Surveys
 Ref survey_question_survey:   survey_questions.survey_id > surveys.id
@@ -469,6 +521,8 @@ TableGroup AI {
   predictions
   recommendations
   recommendation_feedback
+  ai_conversations
+  ai_messages
 }
 
 TableGroup Surveys {

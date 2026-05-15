@@ -17,9 +17,9 @@
     </mxCell>
 
     <!-- ═══════════════════════════════════════════════════════ -->
-    <!-- ANDROID APP (outer container)                           -->
+    <!-- MOBILE CLIENT (logical grouping)                        -->
     <!-- ═══════════════════════════════════════════════════════ -->
-    <mxCell id="20" value="Android App (Flutter)" style="swimlane;fontStyle=1;align=left;startSize=28;fillColor=none;strokeColor=#888888;strokeDashArray=6;fontSize=12;fontColor=#333333;rounded=1;" vertex="1" parent="1">
+    <mxCell id="20" value="Mobile Client" style="swimlane;fontStyle=1;align=left;startSize=28;fillColor=none;strokeColor=#888888;strokeDashArray=6;fontSize=12;fontColor=#333333;rounded=1;" vertex="1" parent="1">
       <mxGeometry x="150" y="110" width="390" height="490" as="geometry" />
     </mxCell>
 
@@ -64,9 +64,9 @@
     </mxCell>
 
     <!-- ═══════════════════════════════════════════════════════ -->
-    <!-- AZURE APP SERVICE (outer container)                     -->
+    <!-- BACKEND (logical grouping)                              -->
     <!-- ═══════════════════════════════════════════════════════ -->
-    <mxCell id="30" value="Application Service" style="swimlane;fontStyle=1;align=left;startSize=28;fillColor=none;strokeColor=#888888;strokeDashArray=6;fontSize=12;fontColor=#333333;rounded=1;" vertex="1" parent="1">
+    <mxCell id="30" value="Backend" style="swimlane;fontStyle=1;align=left;startSize=28;fillColor=none;strokeColor=#888888;strokeDashArray=6;fontSize=12;fontColor=#333333;rounded=1;" vertex="1" parent="1">
       <mxGeometry x="590" y="110" width="600" height="540" as="geometry" />
     </mxCell>
 
@@ -199,7 +199,7 @@
     </mxCell>
 
     <!-- ═══════════════════════════════════════════════════════ -->
-    <!-- AZURE POSTGRESQL (outer container)                      -->
+    <!-- DATABASE (logical grouping)                             -->
     <!-- ═══════════════════════════════════════════════════════ -->
     <mxCell id="50" value="Database" style="swimlane;fontStyle=1;align=left;startSize=28;fillColor=none;strokeColor=#888888;strokeDashArray=6;fontSize=12;fontColor=#333333;rounded=1;" vertex="1" parent="1">
       <mxGeometry x="1250" y="110" width="290" height="215" as="geometry" />

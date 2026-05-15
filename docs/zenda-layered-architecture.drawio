@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxGraphModel compressed="false" dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="1000" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- TITLE                                                   -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <mxCell id="t1" value="Zenda — Layered Architecture" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=20;fontStyle=1;fontColor=#1a1a2e;" vertex="1" parent="1">
+      <mxGeometry x="320" y="18" width="760" height="32" as="geometry" />
+    </mxCell>
+    <mxCell id="t2" value="Logical view · Separation of responsibilities by layer" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontStyle=2;fontColor=#666666;" vertex="1" parent="1">
+      <mxGeometry x="320" y="48" width="760" height="20" as="geometry" />
+    </mxCell>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- ACTOR                                                   -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <mxCell id="actor" value="Student" style="shape=mxgraph.archimate3.actor;html=1;whiteSpace=wrap;fillColor=#ffff88;strokeColor=#888800;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="660" y="85" width="80" height="70" as="geometry" />
+    </mxCell>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- LAYER 1 — PRESENTATION                                  -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <mxCell id="L1" value="PRESENTATION LAYER&#10;User interface · Client-side interaction" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=2;fontSize=13;fontStyle=1;fontColor=#1a1a2e;verticalAlign=top;align=left;spacingLeft=14;spacingTop=8;" vertex="1" parent="1">
+      <mxGeometry x="80" y="180" width="1240" height="160" as="geometry" />
+    </mxCell>
+
+    <mxCell id="L1a" value="Screens&#10;&#10;Dashboard · Authentication&#10;Transactions · Budgets&#10;Goals · Reports · Profile" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;fontSize=10;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="L1">
+      <mxGeometry x="30" y="60" width="200" height="85" as="geometry" />
+    </mxCell>
+
+    <mxCell id="L1b" value="State Management&#10;&#10;Reactive UI state&#10;Loading · Error · Data&#10;Notifiers" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;fontSize=10;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="L1">
+      <mxGeometry x="250" y="60" width="200" height="85" as="geometry" />
+    </mxCell>
+
+    <mxCell id="L1c" value="Navigation&#10;&#10;Declarative routing&#10;Session guards&#10;Screen flows" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;fontSize=10;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="L1">
+      <mxGeometry x="470" y="60" width="200" height="85" as="geometry" />
+    </mxCell>
+
+    <mxCell id="L1d" value="API Client&#10;&#10;Service consumption&#10;Authentication interceptor&#10;JSON serialization" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;fontSize=10;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="L1">
+      <mxGeometry x="690" y="60" width="200" height="85" as="geometry" />
+    </mxCell>
+
+    <mxCell id="L1e" value="Cross-cutting Services&#10;&#10;Internationalization&#10;Visual theme&#10;Local secure storage" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;fontSize=10;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="L1">
+      <mxGeometry x="910" y="60" width="200" height="85" as="geometry" />
+    </mxCell>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- LAYER 2 — BUSINESS                                      -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <mxCell id="L2" value="BUSINESS LAYER&#10;Domain logic · Use cases · Business rules" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;fontSize=13;fontStyle=1;fontColor=#1a1a2e;verticalAlign=top;align=left;spacingLeft=14;spacingTop=8;" vertex="1" parent="1">
+      <mxGeometry x="80" y="370" width="1240" height="200" as="geometry" />
+    </mxCell>
+
+    <mxCell id="L2a" value="Service Interface&#10;&#10;REST controllers&#10;Input validation · Contracts&#10;Standardized responses" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;fontSize=10;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="L2">
+      <mxGeometry x="30" y="55" width="270" height="80" as="geometry" />
+    </mxCell>
+
+    <mxCell id="L2b" value="Application&#10;&#10;Use Cases · Orchestration&#10;Auth · Users · Transactions&#10;Categories · Budgets · Goals · Insights" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;fontSize=10;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="L2">
+      <mxGeometry x="320" y="55" width="290" height="80" as="geometry" />
+    </mxCell>
+
+    <mxCell id="L2c" value="Domain&#10;&#10;Entities · Aggregates · Value Objects&#10;Business rules and invariants&#10;Repository ports (abstractions)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;fontSize=10;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="L2">
+      <mxGeometry x="630" y="55" width="290" height="80" as="geometry" />
+    </mxCell>
+
+    <mxCell id="L2d" value="Supporting Services&#10;&#10;Artificial Intelligence&#10;Email delivery&#10;Push notifications" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;fontSize=10;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="L2">
+      <mxGeometry x="940" y="55" width="270" height="80" as="geometry" />
+    </mxCell>
+
+    <mxCell id="L2e" value="Cross-cutting Concerns · Authentication and authorization · Global exception handling · Activity logging · Configuration" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf3e7;strokeColor=#82b366;fontSize=10;fontStyle=2;align=center;verticalAlign=middle;dashed=1;" vertex="1" parent="L2">
+      <mxGeometry x="30" y="148" width="1180" height="36" as="geometry" />
+    </mxCell>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- LAYER 3 — PERSISTENCE                                   -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <mxCell id="L3" value="PERSISTENCE LAYER&#10;Data access · Object-relational mapping" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;strokeWidth=2;fontSize=13;fontStyle=1;fontColor=#1a1a2e;verticalAlign=top;align=left;spacingLeft=14;spacingTop=8;" vertex="1" parent="1">
+      <mxGeometry x="80" y="600" width="1240" height="160" as="geometry" />
+    </mxCell>
+
+    <mxCell id="L3a" value="Repository Implementations&#10;&#10;Persistence adapters&#10;Implement domain ports&#10;CRUD operations per aggregate" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d79b00;fontSize=10;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="L3">
+      <mxGeometry x="30" y="55" width="290" height="90" as="geometry" />
+    </mxCell>
+
+    <mxCell id="L3b" value="Object-Relational Mapping&#10;&#10;Logical data schema&#10;Controlled migrations&#10;Atomic transactions" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d79b00;fontSize=10;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="L3">
+      <mxGeometry x="340" y="55" width="280" height="90" as="geometry" />
+    </mxCell>
+
+    <mxCell id="L3c" value="Data Mappers&#10;&#10;Domain ↔ data model&#10;Exact numeric types&#10;Soft-delete filter" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d79b00;fontSize=10;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="L3">
+      <mxGeometry x="640" y="55" width="280" height="90" as="geometry" />
+    </mxCell>
+
+    <mxCell id="L3d" value="Connection Management&#10;&#10;Connection pool&#10;Database sessions&#10;Access error handling" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d79b00;fontSize=10;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="L3">
+      <mxGeometry x="940" y="55" width="270" height="90" as="geometry" />
+    </mxCell>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- LAYER 4 — DATABASE                                      -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <mxCell id="L4" value="DATABASE LAYER&#10;Persistent storage · Relational model" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;strokeWidth=2;fontSize=13;fontStyle=1;fontColor=#1a1a2e;verticalAlign=top;align=left;spacingLeft=14;spacingTop=8;" vertex="1" parent="1">
+      <mxGeometry x="80" y="790" width="1240" height="170" as="geometry" />
+    </mxCell>
+
+    <mxCell id="L4icon" value="" style="shape=mxgraph.flowchart.database;html=1;whiteSpace=wrap;fillColor=#b85450;strokeColor=#7a2c29;labelPosition=center;verticalLabelPosition=bottom;align=center;verticalAlign=top;" vertex="1" parent="L4">
+      <mxGeometry x="50" y="65" width="70" height="85" as="geometry" />
+    </mxCell>
+
+    <mxCell id="L4a" value="Identity &amp; Authentication&#10;&#10;Users · Refresh tokens&#10;Password recovery" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b85450;fontSize=10;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="L4">
+      <mxGeometry x="150" y="55" width="240" height="100" as="geometry" />
+    </mxCell>
+
+    <mxCell id="L4b" value="Personal Finance&#10;&#10;Accounts · Transactions&#10;Categories · Budgets · Goals" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b85450;fontSize=10;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="L4">
+      <mxGeometry x="410" y="55" width="240" height="100" as="geometry" />
+    </mxCell>
+
+    <mxCell id="L4c" value="AI &amp; Recommendations&#10;&#10;Conversations · Messages&#10;Recommendations · Predictions" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b85450;fontSize=10;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="L4">
+      <mxGeometry x="670" y="55" width="240" height="100" as="geometry" />
+    </mxCell>
+
+    <mxCell id="L4d" value="Engagement&#10;&#10;Streaks · Monthly insights&#10;Notifications" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b85450;fontSize=10;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="L4">
+      <mxGeometry x="930" y="55" width="240" height="100" as="geometry" />
+    </mxCell>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- CONNECTIONS (strict layered: only adjacent layers)      -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+
+    <!-- Actor → Presentation -->
+    <mxCell id="e0" value="uses" style="edgeStyle=orthogonalEdgeStyle;dashed=1;endArrow=open;endFill=0;strokeColor=#888888;fontSize=10;fontStyle=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="actor" target="L1" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- Presentation → Business -->
+    <mxCell id="e1" value="invokes services" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#6c8ebf;strokeWidth=2;fontSize=11;fontStyle=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="L1" target="L2" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- Business → Persistence -->
+    <mxCell id="e2" value="requests data&#10;(domain ports)" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#82b366;strokeWidth=2;fontSize=11;fontStyle=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="L2" target="L3" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- Persistence → Database -->
+    <mxCell id="e3" value="queries and commands&#10;(SQL)" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#d79b00;strokeWidth=2;fontSize=11;fontStyle=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="L3" target="L4" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+  </root>
+</mxGraphModel>
