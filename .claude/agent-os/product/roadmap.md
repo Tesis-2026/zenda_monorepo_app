@@ -42,7 +42,7 @@
 
 - [x] `P0` `infra` `backend` -- **PostgreSQL database setup** -- PostgreSQL 15 via Docker Compose (`docker-compose.yml`). Prisma ORM manages schema (`prisma/schema.prisma`). Migrations via `npx prisma migrate dev`. Azure provisioning deferred to production deployment.
 
-- [x] `P0` `infra` `flutter` -- **Base Flutter project** -- Flutter 3.10+ project (`zenda_fronted_app/`). Architecture: feature-based under `lib/features/`. State management: Riverpod 3 (NotifierProvider, AsyncNotifierProvider). Navigation: GoRouter 17 (`lib/routing/app_router.dart`). Local storage: SharedPreferences via `LocalKvStore`. Theme: Material Design 3 light/dark in `lib/core/theme/`.
+- [x] `P0` `infra` `flutter` -- **Base Flutter project** -- Flutter 3.10+ project (`zenda_fronted_app/`). Architecture: feature-based under `lib/features/`. State management: Riverpod 3 (NotifierProvider, AsyncNotifierProvider). Navigation: GoRouter 17 (`lib/routing/app_router.dart`). Local storage: SharedPreferences via `LocalKvStore`. Theme: Material Design 3 light only in `lib/core/theme/` (dark mode not supported; app locked via `themeMode: ThemeMode.light`).
 
 - [x] `P0` `infra` `backend` -- **Base REST API** -- NestJS 11 server. Health check: `GET /api/health` returns `{ status: "ok", timestamp, version: "1.0.0" }`. Global prefix `/api` (no `/v1`). CORS (localhost regex), rate limiting (ThrottlerModule: 120 req/min global), Helmet security headers, ValidationPipe (strict), centralized GlobalExceptionFilter. Swagger at `/api/docs`.
 

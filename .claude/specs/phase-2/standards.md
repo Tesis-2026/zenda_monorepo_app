@@ -36,4 +36,4 @@
 ## Theme
 
 - **No hardcoded colors in widgets:** All colors come from `Theme.of(context).colorScheme` or the project-defined palette constants in `AppTheme`. Exception: Zenda's brand green `Color(0xFF34D399)` is used directly where semantic tokens are not yet defined.
-- **Light and dark theme both implemented:** Every screen was visually checked against both themes at build time.
+- **Light theme only:** The app is locked to light mode via `themeMode: ThemeMode.light` in `lib/app.dart`. Dark mode is not supported — no dark color tokens, no brightness checks, no `values-night/` resources.

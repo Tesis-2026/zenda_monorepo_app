@@ -54,7 +54,7 @@ Tesis2026/
 │       │   ├── services/   # ApiClient, AuthApiService, UserApiService,
 │       │   │               # AccountsRepository, TransactionsRepository,
 │       │   │               # StreakRepository, AiAdviceService, LocalKvStore, OcrService
-│       │   └── theme/      # AppTheme, LightTheme, DarkTheme
+│       │   └── theme/      # AppTheme (light only)
 │       ├── features/
 │       │   ├── auth/       # LoginScreen, RegisterScreen, ForgotPasswordScreen,
 │       │   │               # ResetPasswordScreen, AuthGate, AuthController, LocalAuthService
@@ -118,7 +118,7 @@ Tesis2026/
   - State management: Riverpod `Notifier` + `Provider` patterns
   - Routing: GoRouter in `lib/routing/app_router.dart` — all routes declared there
   - Local storage: SharedPreferences via `LocalKvStore`
-  - Theme: Light/dark themes in `lib/core/theme/`
+  - Theme: Light theme only in `lib/core/theme/` (dark mode is not supported)
   - Models in `lib/core/models/`, API services in `lib/core/services/`
   - API client: `ApiClient` in `lib/core/services/api_client.dart` — base HTTP wrapper
   - i18n: `flutter_localizations` with `app_en.arb` + `app_es.arb`; access via `context.l10n.*` (L10nX extension)

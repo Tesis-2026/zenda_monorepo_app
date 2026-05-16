@@ -7,11 +7,10 @@
 | `pubspec.yaml` | Added all dependencies: riverpod, go_router, google_fonts, fl_chart, image_picker, intl, shared_preferences, crypto, http, flutter_secure_storage, flutter_localizations; `generate: true` flag |
 | `l10n.yaml` | Created — codegen config for flutter gen-l10n |
 | `lib/main.dart` | Created — `ProviderScope` wrapping `App` |
-| `lib/app.dart` | Created — `MaterialApp.router` with localization delegates, light/dark themes, GoRouter |
+| `lib/app.dart` | Created — `MaterialApp.router` with localization delegates, light theme only (`themeMode: ThemeMode.light`), GoRouter |
 | `lib/routing/app_router.dart` | Created — all 8 routes declared |
 | `lib/core/theme/app_theme.dart` | Created — theme entry point |
 | `lib/core/theme/light_theme.dart` | Created — light theme definition |
-| `lib/core/theme/dark_theme.dart` | Created — dark theme definition |
 | `lib/core/models/user.dart` | Created — `User` model |
 | `lib/core/models/transaction.dart` | Created — `Transaction` model with `bucketForCategory()` |
 | `lib/core/models/account.dart` | Created — `Account` model (cash, debit, credit) |

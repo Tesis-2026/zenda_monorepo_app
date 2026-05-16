@@ -31,6 +31,6 @@
 
 - **No hardcoded strings:** All visible text uses `context.l10n.*`. The `_monthNames` constant is an English-only internal identifier (month abbreviations in the period selector header) — not displayed as a user-facing string.
 - **ARB keys prefixed `budget` and `goals`:** All 22 new keys follow the established prefix convention (`auth`, `tx`, `catMgmt`, `reports`, etc.).
-- **Dark/light theme respected:** Progress bar backgrounds use `.withValues(alpha:)` on white/black respectively, checked against `Theme.of(context).brightness`. No hardcoded `Colors.white` or `Colors.black` without a brightness guard.
+- **Light theme tokens only:** Progress bar backgrounds use `.withValues(alpha:)` on neutral tokens from `AppColors`. The app is locked to light mode (`themeMode: ThemeMode.light`), so no brightness branching is needed.
 - **`withValues(alpha:)` used for transparency:** All semi-transparent color values in `_BudgetCard` and `_GoalCard` use `.withValues(alpha: x)` instead of the deprecated `.withOpacity(x)`.
 - **`mounted` checked before async `setState`:** Dialog callbacks check `!context.mounted` or `!mounted` before any call to `ref.invalidate()` or `ScaffoldMessenger.of(context)` after an `await`.

@@ -32,5 +32,5 @@
 
 - **No hardcoded strings:** All visible text in `reports_screen.dart` uses `context.l10n.*`. Month name abbreviations used in `MonthComparisonEntry.label` and the `_monthNames` constant are English-only internal identifiers, not displayed user-facing strings.
 - **ARB keys prefixed `reports`:** All 20 new keys follow the `reports` prefix convention established in prior phases (`auth`, `tx`, `catMgmt`, etc.).
-- **Dark/light theme respected:** All color decisions check `Theme.of(context).brightness` or use `Theme.of(context).colorScheme` tokens. No hardcoded `Colors.white` or `Colors.black` in card or text widgets without a brightness guard.
+- **Light theme tokens only:** All color decisions use `Theme.of(context).colorScheme` tokens or the `AppColors` palette. The app is locked to light mode (`themeMode: ThemeMode.light`), so no brightness branching is needed.
 - **`withValues(alpha:)` used for transparency:** New code uses `.withValues(alpha: x)` instead of the deprecated `.withOpacity(x)` for all semi-transparent color values.

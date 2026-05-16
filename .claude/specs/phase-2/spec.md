@@ -8,9 +8,9 @@ Before this phase, the project had a fully operational NestJS backend (Phase 1A)
 
 1. `pubspec.yaml` — Flutter project with dependencies: `flutter_riverpod ^3.0.3`, `go_router ^17.0.0`, `google_fonts`, `fl_chart`, `image_picker`, `intl`, `shared_preferences`, `crypto`, `http`, `flutter_secure_storage`, `flutter_localizations`
 2. `lib/main.dart` — entry point with `ProviderScope` wrapping `App`
-3. `lib/app.dart` — `MaterialApp.router` with GoRouter, localization delegates, light/dark themes
+3. `lib/app.dart` — `MaterialApp.router` with GoRouter, localization delegates, light theme (forced via `themeMode: ThemeMode.light`)
 4. `lib/routing/app_router.dart` — GoRouter with all routes: `/`, `/onboarding`, `/auth/login`, `/auth/register`, `/auth/forgot-password`, `/auth/reset-password`, `/dashboard`, `/add-transaction`
-5. `lib/core/theme/` — `AppTheme`, `LightTheme`, `DarkTheme` using Material 3
+5. `lib/core/theme/` — `AppTheme` (light only) using Material 3
 6. `lib/core/models/` — `User`, `Transaction`, `Account`, `Streak`, `Breakdown503020`
 7. `lib/core/services/api_client.dart` — base HTTP client with auth token injection and error normalization
 8. `lib/core/services/auth_api_service.dart` — register, login, forgotPassword, resetPassword hitting the NestJS API
