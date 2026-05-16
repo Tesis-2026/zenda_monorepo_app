@@ -41,12 +41,6 @@
       "y": 648
     },
     {
-      "name": "notification_preferences",
-      "schemaName": "public",
-      "x": 760,
-      "y": 752
-    },
-    {
       "name": "educational_topics",
       "schemaName": "public",
       "x": 16,
@@ -63,6 +57,12 @@
       "schemaName": "public",
       "x": 760,
       "y": 3136
+    },
+    {
+      "name": "quiz_attempts",
+      "schemaName": "public",
+      "x": 1344,
+      "y": 3376
     },
     {
       "name": "challenges",
@@ -101,12 +101,6 @@
       "y": 4312
     },
     {
-      "name": "recommendation_feedback",
-      "schemaName": "public",
-      "x": 16,
-      "y": 1576
-    },
-    {
       "name": "ai_conversations",
       "schemaName": "public",
       "x": 1344,
@@ -123,12 +117,6 @@
       "schemaName": "public",
       "x": 16,
       "y": 1776
-    },
-    {
-      "name": "survey_questions",
-      "schemaName": "public",
-      "x": 760,
-      "y": 4920
     },
     {
       "name": "survey_responses",
@@ -149,16 +137,10 @@
       "y": 1720
     },
     {
-      "name": "password_reset_tokens",
+      "name": "auth_challenges",
       "schemaName": "public",
       "x": 760,
       "y": 2024
-    },
-    {
-      "name": "password_reset_otps",
-      "schemaName": "public",
-      "x": 760,
-      "y": 2296
     },
     {
       "name": "refresh_tokens",
@@ -283,21 +265,6 @@
     },
     {
       "firstFieldNames": [
-        "user_id"
-      ],
-      "firstTableName": "notification_preferences",
-      "firstSchemaName": "public",
-      "firstRelation": "*",
-      "secondFieldNames": [
-        "id"
-      ],
-      "secondTableName": "users",
-      "secondSchemaName": "public",
-      "secondRelation": "1",
-      "checkPoints": []
-    },
-    {
-      "firstFieldNames": [
         "topic_id"
       ],
       "firstTableName": "quiz_questions",
@@ -331,6 +298,51 @@
         "topic_id"
       ],
       "firstTableName": "user_topic_progress",
+      "firstSchemaName": "public",
+      "firstRelation": "*",
+      "secondFieldNames": [
+        "id"
+      ],
+      "secondTableName": "educational_topics",
+      "secondSchemaName": "public",
+      "secondRelation": "1",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "user_id"
+      ],
+      "firstTableName": "quiz_attempts",
+      "firstSchemaName": "public",
+      "firstRelation": "*",
+      "secondFieldNames": [
+        "id"
+      ],
+      "secondTableName": "users",
+      "secondSchemaName": "public",
+      "secondRelation": "1",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "question_id"
+      ],
+      "firstTableName": "quiz_attempts",
+      "firstSchemaName": "public",
+      "firstRelation": "*",
+      "secondFieldNames": [
+        "id"
+      ],
+      "secondTableName": "quiz_questions",
+      "secondSchemaName": "public",
+      "secondRelation": "1",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "topic_id"
+      ],
+      "firstTableName": "quiz_attempts",
       "firstSchemaName": "public",
       "firstRelation": "*",
       "secondFieldNames": [
@@ -433,36 +445,6 @@
     },
     {
       "firstFieldNames": [
-        "recommendation_id"
-      ],
-      "firstTableName": "recommendation_feedback",
-      "firstSchemaName": "public",
-      "firstRelation": "1",
-      "secondFieldNames": [
-        "id"
-      ],
-      "secondTableName": "recommendations",
-      "secondSchemaName": "public",
-      "secondRelation": "1",
-      "checkPoints": []
-    },
-    {
-      "firstFieldNames": [
-        "survey_id"
-      ],
-      "firstTableName": "survey_questions",
-      "firstSchemaName": "public",
-      "firstRelation": "*",
-      "secondFieldNames": [
-        "id"
-      ],
-      "secondTableName": "surveys",
-      "secondSchemaName": "public",
-      "secondRelation": "1",
-      "checkPoints": []
-    },
-    {
-      "firstFieldNames": [
         "user_id"
       ],
       "firstTableName": "survey_responses",
@@ -525,22 +507,7 @@
       "firstFieldNames": [
         "user_id"
       ],
-      "firstTableName": "password_reset_tokens",
-      "firstSchemaName": "public",
-      "firstRelation": "*",
-      "secondFieldNames": [
-        "id"
-      ],
-      "secondTableName": "users",
-      "secondSchemaName": "public",
-      "secondRelation": "1",
-      "checkPoints": []
-    },
-    {
-      "firstFieldNames": [
-        "user_id"
-      ],
-      "firstTableName": "password_reset_otps",
+      "firstTableName": "auth_challenges",
       "firstSchemaName": "public",
       "firstRelation": "*",
       "secondFieldNames": [

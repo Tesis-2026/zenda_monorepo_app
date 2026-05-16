@@ -36,15 +36,11 @@
     <mxCell id="23" value="Android APK" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;fontStyle=2;fontColor=#555555;" vertex="1" parent="20">
       <mxGeometry x="80" y="181" width="140" height="20" as="geometry" />
     </mxCell>
-    <mxCell id="24" value="Flutter 3.10&#10;Riverpod 3&#10;GoRouter 17" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;fontColor=#666666;" vertex="1" parent="20">
+    <mxCell id="24" value="Flutter 3.10" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;fontColor=#666666;" vertex="1" parent="20">
       <mxGeometry x="80" y="205" width="140" height="56" as="geometry" />
     </mxCell>
 
-    <!-- Local storage box (fills empty Mobile Client space) -->
-    <mxCell id="25" value="Local Storage&#10;SharedPreferences · flutter_secure_storage (JWT)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontStyle=1;" vertex="1" parent="20">
-      <mxGeometry x="20" y="360" width="260" height="56" as="geometry" />
-    </mxCell>
-    <mxCell id="26" value="Android 10+ · ARM64 · 4G/5G/WiFi" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=9;fontColor=#888888;fontStyle=2;" vertex="1" parent="20">
+    <mxCell id="26" value="Android 10+" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=9;fontColor=#888888;fontStyle=2;" vertex="1" parent="20">
       <mxGeometry x="20" y="425" width="260" height="20" as="geometry" />
     </mxCell>
 
@@ -65,7 +61,7 @@
     <mxCell id="43" value="NestJS 11 API · Node.js 20" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;fontStyle=2;fontColor=#555555;" vertex="1" parent="40">
       <mxGeometry x="340" y="180" width="220" height="20" as="geometry" />
     </mxCell>
-    <mxCell id="44" value="HTTPS · port 443" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;fontColor=#666666;" vertex="1" parent="40">
+    <mxCell id="44" value="HTTPS · REST API" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;fontColor=#666666;" vertex="1" parent="40">
       <mxGeometry x="340" y="200" width="220" height="20" as="geometry" />
     </mxCell>
 
@@ -78,7 +74,7 @@
     <mxCell id="46" value="PostgreSQL 15" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=12;fontStyle=1;fontColor=#1a1a2e;" vertex="1" parent="40">
       <mxGeometry x="40" y="402" width="220" height="22" as="geometry" />
     </mxCell>
-    <mxCell id="47" value="TCP/5432 · Prisma schema · 19 tables" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;fontColor=#555555;" vertex="1" parent="40">
+    <mxCell id="47" value="Prisma schema · 19 tables" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;fontColor=#555555;" vertex="1" parent="40">
       <mxGeometry x="40" y="424" width="220" height="22" as="geometry" />
     </mxCell>
 
@@ -119,7 +115,7 @@
     <mxCell id="65" value="SMTP Gateway" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;fontStyle=1;fontColor=#1a1a2e;" vertex="1" parent="60">
       <mxGeometry x="20" y="132" width="200" height="22" as="geometry" />
     </mxCell>
-    <mxCell id="66" value="Transactional email · port 587" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;fontColor=#555555;" vertex="1" parent="60">
+    <mxCell id="66" value="Transactional email" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;fontColor=#555555;" vertex="1" parent="60">
       <mxGeometry x="20" y="154" width="200" height="22" as="geometry" />
     </mxCell>
 
@@ -143,43 +139,42 @@
       <mxGeometry relative="1" as="geometry" />
     </mxCell>
 
-    <!-- Mobile → App Service: HTTPS REST 443 -->
-    <mxCell id="1001" value="HTTPS · REST/JSON · 443&#10;(TLS terminated by App Service)" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#d79b00;strokeWidth=2;fontSize=10;fontStyle=1;" edge="1" source="21" target="41" parent="1">
+    <!-- Mobile → App Service -->
+    <mxCell id="1001" value="HTTPS · REST API" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#d79b00;strokeWidth=2;fontSize=10;fontStyle=1;" edge="1" source="21" target="41" parent="1">
       <mxGeometry relative="1" as="geometry" />
     </mxCell>
 
-    <!-- App Service → PostgreSQL (obs. 6: add Private Endpoint label) -->
-    <mxCell id="1002" value="TCP/5432&#10;Private Endpoint (VNet)" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#0072c6;strokeWidth=2;fontSize=10;fontStyle=1;" edge="1" source="41" target="45" parent="1">
+    <!-- App Service → PostgreSQL (exit bottom-left, enter PG top so the three downward edges fan out cleanly) -->
+    <mxCell id="1002" value="Private Endpoint" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#0072c6;strokeWidth=2;fontSize=10;fontStyle=1;exitX=0.2;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="41" target="45" parent="1">
       <mxGeometry relative="1" as="geometry" />
     </mxCell>
 
-    <!-- App Service → Key Vault -->
-    <mxCell id="1003" value="reads secrets&#10;HTTPS · Managed Identity" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#0072c6;strokeWidth=2;fontSize=10;fontStyle=1;" edge="1" source="41" target="48" parent="1">
+    <!-- App Service → Key Vault (straight down — bottom center) -->
+    <mxCell id="1003" value="reads secrets&#10;HTTPS · Managed Identity" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#0072c6;strokeWidth=2;fontSize=10;fontStyle=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="41" target="48" parent="1">
       <mxGeometry relative="1" as="geometry" />
     </mxCell>
 
-    <!-- App Service → Azure OpenAI (obs. 1: now internal to Azure) -->
-    <mxCell id="1004" value="HTTPS · Chat Completions" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#0072c6;strokeWidth=2;fontSize=10;fontStyle=1;" edge="1" source="41" target="4b" parent="1">
+    <!-- App Service → Azure OpenAI (exit bottom-right so it separates from 1003 and 1006) -->
+    <mxCell id="1004" value="HTTPS · Chat Completions" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#0072c6;strokeWidth=2;fontSize=10;fontStyle=1;exitX=0.8;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="41" target="4b" parent="1">
       <mxGeometry relative="1" as="geometry" />
     </mxCell>
 
-    <!-- App Service → SMTP -->
-    <mxCell id="1005" value="SMTP · STARTTLS · 587" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#b85450;strokeWidth=2;fontSize=10;fontStyle=1;" edge="1" source="41" target="64" parent="1">
+    <!-- App Service → SMTP (exit upper-right of App Service so it doesn't share the corridor with 1006) -->
+    <mxCell id="1005" value="SMTP" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#b85450;strokeWidth=2;fontSize=10;fontStyle=1;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="41" target="64" parent="1">
       <mxGeometry relative="1" as="geometry" />
     </mxCell>
 
-    <!-- App Service → FCM -->
-    <mxCell id="1006" value="HTTPS · FCM v1" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#b85450;strokeWidth=2;fontSize=10;fontStyle=1;" edge="1" source="41" target="67" parent="1">
+    <!-- App Service → FCM (exit lower-right + go down then right to avoid overlapping 1005) -->
+    <mxCell id="1006" value="HTTPS · FCM v1" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#b85450;strokeWidth=2;fontSize=10;fontStyle=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="41" target="67" parent="1">
       <mxGeometry relative="1" as="geometry" />
     </mxCell>
 
-    <!-- FCM → Mobile (async push, routed via bottom-left like in the logical diagram) -->
-    <mxCell id="1007" value="push delivery" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#d6b656;strokeWidth=2;fontSize=10;fontStyle=1;fontColor=#7a5a00;" edge="1" source="67" target="21" parent="1">
+    <!-- FCM → Mobile (async push, routed via the empty corridor above swimlanes to avoid the Student actor at x=30-110) -->
+    <mxCell id="1007" value="push delivery" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#d6b656;strokeWidth=2;fontSize=10;fontStyle=1;fontColor=#7a5a00;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="67" target="21" parent="1">
       <mxGeometry relative="1" as="geometry">
         <Array as="points">
-          <mxPoint x="1620" y="680" />
-          <mxPoint x="80" y="680" />
-          <mxPoint x="80" y="380" />
+          <mxPoint x="1510" y="90" />
+          <mxPoint x="280" y="90" />
         </Array>
       </mxGeometry>
     </mxCell>
