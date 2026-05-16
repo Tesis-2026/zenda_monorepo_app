@@ -81,9 +81,9 @@ If this fails:
 Before proceeding, clearly state one of:
 
 ```
-✓ Pre-audit passed — backend compiles clean, no TypeScript errors.
-✓ Pre-audit passed — frontend analyzes clean, no Dart errors.
-✗ Pre-audit found N error(s) — fixing before proceeding.
+Pre-audit passed — backend compiles clean, no TypeScript errors.
+Pre-audit passed — frontend analyzes clean, no Dart errors.
+Pre-audit found N error(s) — fixing before proceeding.
 ```
 
 ---
@@ -109,8 +109,8 @@ Compare result against pre-audit:
 ### Step 3 — Report Post-Audit Result
 
 ```
-✓ Post-audit passed — no new errors introduced. Task complete.
-✗ Post-audit found regression — N new error(s) introduced. Fixing now.
+Post-audit passed — no new errors introduced. Task complete.
+Post-audit found regression — N new error(s) introduced. Fixing now.
 ```
 
 ---

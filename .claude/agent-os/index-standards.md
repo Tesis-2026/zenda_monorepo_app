@@ -104,9 +104,9 @@ Summarize what changed:
 
 ```
 Index updated:
-  ✓ 2 new entries added
-  ✓ 1 stale entry removed
-  ✓ 8 entries unchanged
+  - 2 new entries added
+  - 1 stale entry removed
+  - 8 entries unchanged
 
 Total: 9 standards indexed
 ```

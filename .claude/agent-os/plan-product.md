@@ -187,7 +187,7 @@ Generate each file based on the information gathered:
 After creating all files, output to user:
 
 ```
-✓ Product documentation created:
+Product documentation created:
 
   agent-os/product/mission.md
   agent-os/product/roadmap.md

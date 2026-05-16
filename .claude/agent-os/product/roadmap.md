@@ -316,21 +316,21 @@
 
 | Phase | Name | Sprint(s) | Duration | Status |
 |-------|------|-----------|----------|--------|
-| 1 | Infrastructure and Setup | Sprint 1 | 3 weeks | ✅ Done |
-| 2 | Authentication and Users | Sprint 1-2 | 3 weeks | ✅ Done |
-| 3 | Transaction Recording | Sprint 2-3 | 4 weeks | ✅ Done |
-| 4 | Categorization | Sprint 3 | 2 weeks | ✅ Done |
-| 5 | Reports and Visualization | Sprint 4-5 | 4 weeks | ✅ Done (PDF export deferred to P2) |
-| 6 | Budgets and Goals | Sprint 5-6 | 3 weeks | ✅ Done |
-| 7 | AI Integration (Azure AI Foundry) | Sprint 6-7 | 4 weeks | ✅ Done |
-| 8 | AI Predictions | Sprint 7-8 | 4 weeks | 🔄 Partial (prediction endpoint + Flutter screen done; anomaly detection and accuracy tracking not done) |
-| 9 | Recommendations | Sprint 8-9 | 3 weeks | ✅ Done |
-| 10 | Education and Gamification | Sprint 9-10 | 4 weeks | 🔄 Partial (topics + challenges + badges + quizzes done; 6/7 badge triggers wired; AI learning path not done) |
+| 1 | Infrastructure and Setup | Sprint 1 | 3 weeks | Done |
+| 2 | Authentication and Users | Sprint 1-2 | 3 weeks | Done |
+| 3 | Transaction Recording | Sprint 2-3 | 4 weeks | Done |
+| 4 | Categorization | Sprint 3 | 2 weeks | Done |
+| 5 | Reports and Visualization | Sprint 4-5 | 4 weeks | Done (PDF export deferred to P2) |
+| 6 | Budgets and Goals | Sprint 5-6 | 3 weeks | Done |
+| 7 | AI Integration (Azure AI Foundry) | Sprint 6-7 | 4 weeks | Done |
+| 8 | AI Predictions | Sprint 7-8 | 4 weeks | Partial (prediction endpoint + Flutter screen done; anomaly detection and accuracy tracking not done) |
+| 9 | Recommendations | Sprint 8-9 | 3 weeks | Done |
+| 10 | Education and Gamification | Sprint 9-10 | 4 weeks | Partial (topics + challenges + badges + quizzes done; 6/7 badge triggers wired; AI learning path not done) |
 | 11 | Notifications | Sprint 10 | 2 weeks | -- |
-| 12 | Pre/Post Evaluation | Sprint 11 | 3 weeks | 🔄 Partial (survey endpoints + Flutter screen + improvement calc done; SUS not done) |
-| 13 | Security and Compliance | Sprint 11-12 | 3 weeks | 🔄 Partial (consent + rate limiting + secure storage + right-to-deletion done; TLS and AuditLog not done) |
+| 12 | Pre/Post Evaluation | Sprint 11 | 3 weeks | Partial (survey endpoints + Flutter screen + improvement calc done; SUS not done) |
+| 13 | Security and Compliance | Sprint 11-12 | 3 weeks | Partial (consent + rate limiting + secure storage + right-to-deletion done; TLS and AuditLog not done) |
 | 14 | Testing and Quality | Sprint 12-13 | 3 weeks | -- |
-| 15 | Feedback and Analytics | Sprint 13 | 2 weeks | 🔄 Partial (feedback endpoint + Flutter modal + event analytics done; metrics dashboard not done) |
+| 15 | Feedback and Analytics | Sprint 13 | 2 weeks | Partial (feedback endpoint + Flutter modal + event analytics done; metrics dashboard not done) |
 | 16 | Demo Readiness | Sprint 14 | 2 weeks | -- |
 
 ---

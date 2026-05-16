@@ -322,7 +322,7 @@ nullable-getter: false
   "appTitle": "Zenda",
   "commonCancel": "Cancel",
   "authLoginTitle": "Welcome to Zenda",
-  "dashboardGreeting": "Hi, {name} 👋",
+  "dashboardGreeting": "Hi, {name}",
   "@dashboardGreeting": {
     "placeholders": {
       "name": { "type": "String" }
@@ -393,7 +393,7 @@ Text(context.l10n.streakLabel(streakDays))
 
 ## Best Practices
 
-### ✅ DO
+### DO
 - Use widgets for every UI element
 - Implement proper state management
 - Use const constructors where possible
@@ -405,7 +405,7 @@ Text(context.l10n.streakLabel(streakDays))
 - Test on both iOS and Android
 - Document custom widgets
 
-### ❌ DON'T
+### DON'T
 - Build entire screens in build() method
 - Use setState for complex state logic
 - Make network calls in build()
