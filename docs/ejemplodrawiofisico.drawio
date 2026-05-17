@@ -1,0 +1,322 @@
+<mxfile host="app.diagrams.net" agent="1.0" version="24.0.0">
+  <diagram name="Deployment Architecture" id="deploy1">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- ==================== FIREBASE APP DISTRIBUTION ==================== -->
+        <mxCell id="fad_group" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="330" y="20" width="200" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="fad_title" value="Firebase App Distribution" style="text;html=1;fontSize=12;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="340" y="25" width="180" height="20" as="geometry" />
+        </mxCell>
+        <!-- Firebase logo placeholder -->
+        <mxCell id="fad_icon" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="400" y="50" width="50" height="45" as="geometry" />
+        </mxCell>
+
+        <!-- Flutter App Delivery label on arrow -->
+        <mxCell id="arrow_fad_mobile" style="edgeStyle=orthogonalEdgeStyle;rounded=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="330" y="65" as="sourcePoint" />
+            <mxPoint x="170" y="65" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="250" y="65" />
+              <mxPoint x="250" y="65" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="fad_arrow_label" value="Flutter App Delivery (APK/IPA)" style="edgeLabel;html=1;fontSize=9;align=center;" vertex="1" connectable="0" parent="arrow_fad_mobile">
+          <mxGeometry x="-0.1" relative="1" as="geometry">
+            <mxPoint y="-15" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ==================== FRONT-END ==================== -->
+        <mxCell id="fe_group" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="640" y="20" width="160" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="fe_title" value="Front-end" style="text;html=1;fontSize=12;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="670" y="25" width="100" height="20" as="geometry" />
+        </mxCell>
+        <!-- Flutter logo placeholder -->
+        <mxCell id="fe_icon" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="690" y="50" width="50" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="fe_flutter_label" value="Flutter" style="text;html=1;fontSize=11;align=center;" vertex="1" parent="1">
+          <mxGeometry x="690" y="95" width="50" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- ==================== MOBILE DEVICE GROUP ==================== -->
+        <mxCell id="mobile_group" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="80" y="120" width="170" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="mobile_title" value="Mobile Device" style="text;html=1;fontSize=12;fontStyle=1;align=left;" vertex="1" parent="1">
+          <mxGeometry x="90" y="125" width="120" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- Patient icon placeholder -->
+        <mxCell id="patient_icon" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="20" y="165" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="patient_label" value="Patient" style="text;html=1;fontSize=10;align=center;" vertex="1" parent="1">
+          <mxGeometry x="10" y="205" width="60" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- App Mobile Patient placeholder -->
+        <mxCell id="app_patient_icon" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="140" y="160" width="45" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="app_patient_label" value="App Mobile Patient" style="text;html=1;fontSize=9;align=center;" vertex="1" parent="1">
+          <mxGeometry x="100" y="210" width="120" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow Patient -> App -->
+        <mxCell id="arrow_patient_app" style="rounded=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="60" y="185" as="sourcePoint" />
+            <mxPoint x="140" y="185" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Nutritionist icon placeholder -->
+        <mxCell id="nutri_icon" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="20" y="255" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="nutri_label" value="Nutritionist" style="text;html=1;fontSize=10;align=center;" vertex="1" parent="1">
+          <mxGeometry x="5" y="295" width="70" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- Mobile App Nutritionist placeholder -->
+        <mxCell id="app_nutri_icon" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="140" y="250" width="45" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="app_nutri_label" value="Mobile App Nutritionist" style="text;html=1;fontSize=9;align=center;" vertex="1" parent="1">
+          <mxGeometry x="95" y="300" width="130" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow Nutritionist -> App -->
+        <mxCell id="arrow_nutri_app" style="rounded=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="60" y="275" as="sourcePoint" />
+            <mxPoint x="140" y="275" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ==================== INTERNET ACCESS NETWORK ==================== -->
+        <mxCell id="inet_group" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="330" y="180" width="170" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="inet_title" value="Internet access network" style="text;html=1;fontSize=11;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="335" y="185" width="160" height="20" as="geometry" />
+        </mxCell>
+        <!-- Router Wifi icon placeholder -->
+        <mxCell id="router_icon" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="385" y="210" width="50" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="router_label" value="Router Wifi" style="text;html=1;fontSize=10;align=center;" vertex="1" parent="1">
+          <mxGeometry x="375" y="252" width="70" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- Red móvil / Wi-Fi icon placeholder -->
+        <mxCell id="redmovil_icon" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="520" y="200" width="40" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="redmovil_label" value="Red móvil/&#xa;Wi-Fi" style="text;html=1;fontSize=9;align=center;" vertex="1" parent="1">
+          <mxGeometry x="510" y="252" width="60" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow Mobile -> Router (connection) -->
+        <mxCell id="arrow_mobile_router" style="edgeStyle=orthogonalEdgeStyle;rounded=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="250" y="230" as="sourcePoint" />
+            <mxPoint x="385" y="230" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arrow_mobile_router_label" value="connection" style="edgeLabel;html=1;fontSize=9;align=center;" vertex="1" connectable="0" parent="arrow_mobile_router">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Bidirectional arrows Mobile <-> Router -->
+        <mxCell id="arrow_mobile_router_back" style="edgeStyle=orthogonalEdgeStyle;rounded=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="250" y="240" as="sourcePoint" />
+            <mxPoint x="385" y="240" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ==================== NOTIFICATION / FIREBASE CLOUD MESSAGING ==================== -->
+        <mxCell id="notif_group" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="80" y="390" width="200" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="notif_title" value="Notification" style="text;html=1;fontSize=12;fontStyle=1;align=left;" vertex="1" parent="1">
+          <mxGeometry x="90" y="395" width="100" height="20" as="geometry" />
+        </mxCell>
+        <!-- Firebase Cloud Messaging icon placeholder -->
+        <mxCell id="fcm_icon" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="140" y="420" width="60" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="fcm_label" value="Firebase Cloud Messaging" style="text;html=1;fontSize=10;align=center;" vertex="1" parent="1">
+          <mxGeometry x="100" y="475" width="140" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow Mobile -> Notification -->
+        <mxCell id="arrow_mobile_notif" style="edgeStyle=orthogonalEdgeStyle;rounded=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="165" y="320" as="sourcePoint" />
+            <mxPoint x="165" y="390" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arrow_mobile_notif_label" value="HTTPS" style="edgeLabel;html=1;fontSize=9;align=center;" vertex="1" connectable="0" parent="arrow_mobile_notif">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-20" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ==================== CLOUD - AZURE GROUP ==================== -->
+        <mxCell id="cloud_group" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="560" y="320" width="420" height="300" as="geometry" />
+        </mxCell>
+        <mxCell id="cloud_title" value="Cloud - Azure" style="text;html=1;fontSize=14;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="700" y="325" width="120" height="25" as="geometry" />
+        </mxCell>
+
+        <!-- Application Insights -->
+        <mxCell id="appinsights_icon" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="595" y="380" width="55" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="appinsights_label" value="Application Insights" style="text;html=1;fontSize=10;align=center;" vertex="1" parent="1">
+          <mxGeometry x="575" y="433" width="95" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- ===== BACK-END SUB-GROUP ===== -->
+        <mxCell id="backend_group" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="720" y="355" width="160" height="250" as="geometry" />
+        </mxCell>
+        <mxCell id="backend_title" value="Back-end" style="text;html=1;fontSize=12;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="760" y="358" width="80" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- Backend REST API icon placeholder -->
+        <mxCell id="backend_api_icon" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="770" y="385" width="55" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="backend_api_label" value="Backend REST API" style="text;html=1;fontSize=10;align=center;" vertex="1" parent="1">
+          <mxGeometry x="735" y="438" width="120" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- JWT security module icon placeholder -->
+        <mxCell id="jwt_icon" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="770" y="480" width="55" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="jwt_label" value="JWT security module" style="text;html=1;fontSize=10;align=center;" vertex="1" parent="1">
+          <mxGeometry x="735" y="533" width="120" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- ===== DATA SUB-GROUP ===== -->
+        <mxCell id="data_group" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="580" y="490" width="130" height="115" as="geometry" />
+        </mxCell>
+        <mxCell id="data_title" value="Data" style="text;html=1;fontSize=12;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="620" y="493" width="50" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- Azure MySQL DB icon placeholder -->
+        <mxCell id="db_icon" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="615" y="520" width="50" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="db_label" value="Azure MySQL&#xa;(Database as a Service)" style="text;html=1;fontSize=9;align=center;" vertex="1" parent="1">
+          <mxGeometry x="585" y="568" width="120" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow: DB <-> Backend (Spring Data JPA) -->
+        <mxCell id="arrow_db_backend" style="edgeStyle=orthogonalEdgeStyle;rounded=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="665" y="540" as="sourcePoint" />
+            <mxPoint x="770" y="510" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="720" y="540" />
+              <mxPoint x="720" y="510" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arrow_db_backend_label" value="Spring Data&#xa;JPA" style="edgeLabel;html=1;fontSize=9;align=center;" vertex="1" connectable="0" parent="arrow_db_backend">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Arrow: Frontend -> Cloud (HTTPS) -->
+        <mxCell id="arrow_fe_cloud" style="edgeStyle=orthogonalEdgeStyle;rounded=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="800" y="120" as="sourcePoint" />
+            <mxPoint x="800" y="355" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arrow_fe_cloud_label" value="HTTPS" style="edgeLabel;html=1;fontSize=10;align=center;" vertex="1" connectable="0" parent="arrow_fe_cloud">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="20" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Arrow: Notification -> Cloud (HTTPS) -->
+        <mxCell id="arrow_notif_cloud" style="edgeStyle=orthogonalEdgeStyle;rounded=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="280" y="455" as="sourcePoint" />
+            <mxPoint x="580" y="455" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arrow_notif_cloud_label" value="HTTPS" style="edgeLabel;html=1;fontSize=10;align=center;" vertex="1" connectable="0" parent="arrow_notif_cloud">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ==================== EXTERNAL SERVICE ==================== -->
+        <mxCell id="ext_group" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="1030" y="370" width="140" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="ext_title" value="External Service" style="text;html=1;fontSize=11;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="1045" y="375" width="110" height="20" as="geometry" />
+        </mxCell>
+        <!-- OpenAI icon placeholder -->
+        <mxCell id="openai_icon" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="1073" y="400" width="50" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="openai_label" value="OpenAI" style="text;html=1;fontSize=10;align=center;" vertex="1" parent="1">
+          <mxGeometry x="1073" y="448" width="50" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow: Backend -> External Service -->
+        <mxCell id="arrow_backend_ext" style="edgeStyle=orthogonalEdgeStyle;rounded=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="880" y="420" as="sourcePoint" />
+            <mxPoint x="1030" y="420" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arrow_backend_ext_label" value="REST API&#xa;(HTTPS)" style="edgeLabel;html=1;fontSize=9;align=center;" vertex="1" connectable="0" parent="arrow_backend_ext">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Arrow: Router -> Frontend (through red movil) -->
+        <mxCell id="arrow_router_fe" style="edgeStyle=orthogonalEdgeStyle;rounded=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="500" y="230" as="sourcePoint" />
+            <mxPoint x="640" y="230" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="540" y="230" />
+              <mxPoint x="540" y="230" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
