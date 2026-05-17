@@ -55,10 +55,10 @@ Each batch ships as one commit on its own branch with PR to `develop`.
 |---|-------|-------|------|--------|--------|
 | **B1** | Soft-delete filters on category queries | Backend repos (predictions, insights, recommendations) | Minimal | S (~1h) | 🟢 Done (2026-05-17) |
 | **B2** | Consolidate service providers | Frontend (eliminate `ApiService()` in widgets) | Low | M (~4h) | 🟢 Done (2026-05-17) |
-| **B3** | `Navigator.pop` → `context.pop` + i18n cleanup | Frontend (12 files + 1 ARB key) | Low | S (~2h) | ⚪ Pending |
+| **B3** | `Navigator.pop` → `context.pop` + i18n cleanup | Frontend (16 files + 1 ARB key) | Low | S (~2h) | 🟢 Done (2026-05-17) |
 | **B4** | Remove `PrismaService` from use cases | Backend (`challenges`, `education` → new repo ports) | Medium | M (~1d) | ⚪ Pending |
 | **B5** | Migrate `setState` business logic to Riverpod | Frontend (`ai_chat`, login lockout, quiz) | Medium | L (~6h) | ⚪ Pending |
-| **B6** | Create `financial-progress` module | Backend (wire `UserFinancialProgress` entity into DDD layers) | Medium | M (~4h) | ⚪ Pending |
+| **B6** | Create `financial-progress` module | Backend (wire `UserFinancialProgress` entity into DDD layers) | Medium | M (~4h) | 🟢 Done (2026-05-17) |
 | **B7** | Extract `surveys` module + new `conversations` module | Backend (move `AiConversation/Message` out of recommendations; fill empty surveys module) | Medium-High | L (~1.5d) | ⚪ Pending |
 | **B8** | Cross-cutting `audit-events` module + extract analytics from LoginUseCase | Backend (`AnalyticsEvent`, `AuditLog`, `Feedback`) | Medium | M (~6h) | ⚪ Pending |
 | **B9** | Decouple `insights` repo from `goals` | Backend (ACL facade between insights and goals) | Medium | M (~4h) | ⚪ Pending |
@@ -129,4 +129,6 @@ See audit findings (above) for full scope. To be detailed when each batch is sch
 
 | Batch | PR | Merged | Notes |
 |-------|----|--------|-------|
-| B1 + B2 | _(pending)_ | – | Bundled — both low risk. `Badge` model has no `deletedAt`, so B1 ended up touching 3 repos (predictions, insights, recommendations) instead of 4. New `lib/providers/services_providers.dart` introduced for `authApiServiceProvider`, `feedbackApiServiceProvider`, `insightsApiServiceProvider`. 8 widget/handler call-sites refactored to consume providers via `ref.read`. |
+| B1 + B2 | backend#14 · frontend#13 · root#15 | 2026-05-17 | Bundled — both low risk. `Badge` model has no `deletedAt`, so B1 ended up touching 3 repos (predictions, insights, recommendations) instead of 4. New `lib/providers/services_providers.dart` introduced for `authApiServiceProvider`, `feedbackApiServiceProvider`, `insightsApiServiceProvider`. 8 widget/handler call-sites refactored to consume providers via `ref.read`. |
+| B3 | frontend#14 | 2026-05-17 | 16 files migrated to `context.pop()` / `ctx.pop()`. `lib/core/widgets/delete_confirm_sheet.dart` intentionally kept on `Navigator.pop` (low-level reusable widget should stay GoRouter-agnostic). 7 files gained the `go_router` import. `aiChatWelcomeDemo` extracted to ARB; `_ChatBubble` gained `isWelcome` flag to filter the welcome message from API history without string equality. |
+| B6 | backend#15 | 2026-05-17 | Full DDD module under `src/modules/financial-progress/` with all 4 layers, plus `IFinancialProgressRepository` exported for the future aggregation job. Exposes `GET /api/financial-progress` and `GET /api/financial-progress/current`. The job that *populates* snapshots is intentionally out of scope and will be a follow-up. |
