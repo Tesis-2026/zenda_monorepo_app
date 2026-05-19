@@ -369,6 +369,25 @@ Table ai_messages {
   }
 }
 
+// Monthly snapshot per user — behavioral progress for learning-vs-behavior correlation (obs. #9).
+Table user_financial_progress {
+  id                          uuid         [primary key]
+  user_id                     uuid         [not null]
+  period                      varchar      [not null, note: 'Format: YYYY-MM']
+  budget_compliance_score     decimal(5,2) [note: '% categories within budget (0–100)']
+  savings_rate_pct            decimal(5,2) [note: '(income - expenses) / income * 100']
+  overspend_categories_count  int          [default: 0]
+  recommendations_shown       int          [default: 0]
+  recommendations_accepted    int          [default: 0]
+  quizzes_completed           int          [default: 0]
+  avg_quiz_score              decimal(5,2) [note: '0–100']
+  created_at                  timestamp
+
+  indexes {
+    (user_id, period) [unique]
+  }
+}
+
 // ─────────────────────────────────────────────────────────────────
 // SURVEYS
 // ─────────────────────────────────────────────────────────────────
@@ -503,6 +522,7 @@ Ref prediction_user:          predictions.user_id > users.id
 Ref recommendation_user:      recommendations.user_id > users.id
 Ref conversation_user:        ai_conversations.user_id > users.id
 Ref message_conversation:     ai_messages.conversation_id > ai_conversations.id
+Ref financial_progress_user:  user_financial_progress.user_id > users.id
 
 // Surveys
 Ref survey_response_user:     survey_responses.user_id > users.id
@@ -555,6 +575,7 @@ TableGroup AI {
   recommendations
   ai_conversations
   ai_messages
+  user_financial_progress
 }
 
 TableGroup Surveys {

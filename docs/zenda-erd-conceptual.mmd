@@ -1,0 +1,227 @@
+%% Zenda — Conceptual ERD (Mermaid version)
+%% AI-validation focus: data capture → AI generation → impact measurement
+%% Render at: https://mermaid.live  (paste this whole file)
+%% Source of truth: docs/zenda-erd.dbml + zenda_backend_app/prisma/schema.prisma
+%%
+%% Cardinality legend (Mermaid crow's foot):
+%%   ||--||  one and only one
+%%   ||--o{  one  →  zero or many
+%%   ||--|{  one  →  one or many
+%%   |o--o{  zero or one  →  zero or many   (nullable FK)
+%%   }o--o{  many to many
+
+erDiagram
+
+  %% ──────────────────────────────────────────────
+  %% 1 · FINANCIAL DATA  (AI input)
+  %% ──────────────────────────────────────────────
+
+  USERS ||--o{ TRANSACTIONS         : "records"
+  USERS ||--o{ BUDGETS              : "sets"
+  USERS ||--o{ SAVINGS_GOALS        : "pursues"
+  USERS |o--o{ CATEGORIES           : "owns (custom)"
+  CATEGORIES |o--o{ TRANSACTIONS    : "classifies (final)"
+  CATEGORIES |o--o{ TRANSACTIONS    : "«AI» suggests"
+  CATEGORIES |o--o{ BUDGETS         : "limits"
+  SAVINGS_GOALS ||--o{ GOAL_CONTRIBUTIONS : "receives"
+
+  %% ──────────────────────────────────────────────
+  %% 2 · AI GENERATION  (model output)
+  %% ──────────────────────────────────────────────
+
+  USERS ||--o{ PREDICTIONS          : "«AI» forecasts for"
+  USERS ||--o{ RECOMMENDATIONS      : "«AI» receives"
+  USERS ||--o{ AI_CONVERSATIONS     : "chats in"
+  AI_CONVERSATIONS ||--|{ AI_MESSAGES : "contains"
+
+  %% ──────────────────────────────────────────────
+  %% 3 · IMPACT MEASUREMENT  (KPI evidence)
+  %% ──────────────────────────────────────────────
+
+  USERS ||--o{ USER_FINANCIAL_PROGRESS : "monthly snapshot"
+
+  %% ──────────────────────────────────────────────
+  %% 4 · EDUCATION  (literacy KPI ≥20%)
+  %% ──────────────────────────────────────────────
+
+  EDUCATIONAL_TOPICS |o--o{ QUIZ_QUESTIONS    : "groups"
+  USERS ||--o{ QUIZ_ATTEMPTS                  : "answers"
+  QUIZ_QUESTIONS ||--o{ QUIZ_ATTEMPTS         : "is answered in"
+  EDUCATIONAL_TOPICS |o--o{ QUIZ_ATTEMPTS     : "tagged on"
+  USERS ||--o{ USER_TOPIC_PROGRESS            : "progresses on"
+  EDUCATIONAL_TOPICS ||--o{ USER_TOPIC_PROGRESS : "tracked by"
+
+  %% ──────────────────────────────────────────────
+  %% 5 · ACADEMIC VALIDATION  (pre/post + SUS)
+  %% ──────────────────────────────────────────────
+
+  USERS ||--o{ SURVEY_RESPONSES     : "answers"
+  SURVEYS ||--o{ SURVEY_RESPONSES   : "collected via"
+
+  %% ──────────────────────────────────────────────
+  %% ENTITY ATTRIBUTES
+  %% ──────────────────────────────────────────────
+
+  USERS {
+    uuid    id PK
+    varchar email UK
+    varchar full_name
+    int     age
+    varchar university
+    varchar income_type
+    decimal average_monthly_income
+    varchar financial_literacy_level "baseline for KPI"
+  }
+
+  CATEGORIES {
+    uuid    id PK
+    varchar name
+    enum    type "SYSTEM | CUSTOM"
+    uuid    user_id FK "null = system"
+  }
+
+  TRANSACTIONS {
+    uuid    id PK
+    uuid    user_id FK
+    uuid    category_id FK "final"
+    uuid    suggested_category_id FK "«AI» original suggestion"
+    decimal ai_confidence "«AI» 0.00–1.00"
+    enum    category_source "«AI» AI/AI_OVERRIDDEN/USER"
+    enum    type "INCOME | EXPENSE"
+    decimal amount
+    varchar description
+    timestamp occurred_at
+  }
+
+  BUDGETS {
+    uuid    id PK
+    uuid    user_id FK
+    uuid    category_id FK "null = global"
+    decimal amount_limit
+    int     month
+    int     year
+  }
+
+  SAVINGS_GOALS {
+    uuid    id PK
+    uuid    user_id FK
+    varchar name
+    decimal target_amount
+    decimal current_amount
+    timestamp due_date
+  }
+
+  GOAL_CONTRIBUTIONS {
+    uuid    id PK
+    uuid    goal_id FK
+    decimal amount
+  }
+
+  PREDICTIONS {
+    uuid    id PK
+    uuid    user_id FK
+    varchar period "YYYY-MM"
+    enum    type
+    decimal predicted_total
+    json    predicted_by_category
+    varchar model_version "«AI»"
+    decimal actual_total "post-period"
+    decimal accuracy "«AI» KPI evidence"
+  }
+
+  RECOMMENDATIONS {
+    uuid    id PK
+    uuid    user_id FK
+    enum    type "SAVINGS | BUDGET | GOAL"
+    text    message
+    varchar suggested_action
+    varchar model_version "«AI»"
+    varchar source "«AI» local-rules | azure-foundry"
+    json    input_context_json "«AI» reproducibility"
+    timestamp viewed_at
+    timestamp dismissed_at
+    timestamp expires_at
+    boolean feedback_accepted "«AI» user signal"
+    timestamp feedback_at
+  }
+
+  AI_CONVERSATIONS {
+    uuid    id PK
+    uuid    user_id FK
+    enum    status "ACTIVE | CLOSED"
+    timestamp started_at
+    timestamp ended_at
+  }
+
+  AI_MESSAGES {
+    uuid    id PK
+    uuid    conversation_id FK
+    enum    role "USER | ASSISTANT"
+    text    content
+    timestamp created_at
+  }
+
+  USER_FINANCIAL_PROGRESS {
+    uuid    id PK
+    uuid    user_id FK
+    varchar period "YYYY-MM"
+    decimal budget_compliance_score
+    decimal savings_rate_pct
+    int     overspend_categories_count
+    int     recommendations_shown
+    int     recommendations_accepted "«AI» acceptance"
+    int     quizzes_completed
+    decimal avg_quiz_score
+  }
+
+  EDUCATIONAL_TOPICS {
+    uuid    id PK
+    varchar title
+    text    content
+    enum    difficulty
+    int     order
+  }
+
+  QUIZ_QUESTIONS {
+    uuid    id PK
+    uuid    topic_id FK
+    varchar language "en | es"
+    enum    difficulty
+    text    text
+    json    options
+    varchar correct_answer
+  }
+
+  QUIZ_ATTEMPTS {
+    uuid    id PK
+    uuid    user_id FK
+    uuid    question_id FK
+    uuid    topic_id FK "denormalized"
+    varchar selected_answer
+    boolean is_correct
+    timestamp attempted_at
+  }
+
+  USER_TOPIC_PROGRESS {
+    uuid    id PK
+    uuid    user_id FK
+    uuid    topic_id FK
+    timestamp completed_at
+    decimal score
+    int     attempts_count
+  }
+
+  SURVEYS {
+    uuid    id PK
+    enum    type "PRE | POST | SUS"
+    json    questions_json
+  }
+
+  SURVEY_RESPONSES {
+    uuid    id PK
+    uuid    user_id FK
+    uuid    survey_id FK
+    json    answers_json
+    decimal score "0–100 (pre/post delta)"
+    timestamp completed_at
+  }
