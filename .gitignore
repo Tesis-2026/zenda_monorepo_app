@@ -50,3 +50,6 @@ lcov.info
 
 # Docker
 *.override.yml
+
+# Structurizr Lite working directory — regenerated from docs/workspace.dsl
+docs/.structurizr/
