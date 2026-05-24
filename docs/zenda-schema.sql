@@ -1,406 +1,669 @@
--- ─────────────────────────────────────────────────────────────────
--- Zenda — PostgreSQL Schema
--- ─────────────────────────────────────────────────────────────────
+warn The configuration property `package.json#prisma` is deprecated and will be removed in Prisma 7. Please migrate to a Prisma config file (e.g., `prisma.config.ts`).
+For more information, see: https://pris.ly/prisma-config
 
-CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+-- CreateSchema
+CREATE SCHEMA IF NOT EXISTS "public";
 
--- ─────────────────────────────────────────────────────────────────
--- ENUMS
--- ─────────────────────────────────────────────────────────────────
+-- CreateEnum
+CREATE TYPE "TransactionType" AS ENUM ('INCOME', 'EXPENSE');
 
-CREATE TYPE transaction_type          AS ENUM ('INCOME', 'EXPENSE');
-CREATE TYPE category_type             AS ENUM ('SYSTEM', 'CUSTOM');
-CREATE TYPE income_type               AS ENUM ('SCHOLARSHIP', 'PART_TIME', 'FAMILY', 'MIXED');
-CREATE TYPE financial_literacy_level  AS ENUM ('LOW', 'MEDIUM', 'HIGH');
-CREATE TYPE topic_difficulty          AS ENUM ('BEGINNER', 'INTERMEDIATE', 'ADVANCED');
-CREATE TYPE recommendation_type       AS ENUM ('SAVINGS', 'BUDGET', 'GOAL');
-CREATE TYPE survey_type               AS ENUM ('PRE', 'POST', 'SUS');
-CREATE TYPE notification_type         AS ENUM (
-  'BUDGET_ALERT', 'ANOMALY_ALERT', 'PREDICTION_READY',
-  'CHALLENGE_REMINDER', 'DAILY_REMINDER', 'BADGE_EARNED'
-);
-CREATE TYPE feedback_type             AS ENUM ('BUG', 'SUGGESTION', 'GENERAL');
-CREATE TYPE audit_status              AS ENUM ('SUCCESS', 'FAILURE');
-CREATE TYPE auth_challenge_kind       AS ENUM ('RESET_TOKEN', 'OTP');
+-- CreateEnum
+CREATE TYPE "CategoryType" AS ENUM ('SYSTEM', 'CUSTOM');
 
--- ─────────────────────────────────────────────────────────────────
--- CORE
--- ─────────────────────────────────────────────────────────────────
+-- CreateEnum
+CREATE TYPE "IncomeType" AS ENUM ('SCHOLARSHIP', 'PART_TIME', 'FAMILY', 'MIXED');
 
-CREATE TABLE users (
-  id                       UUID                    PRIMARY KEY DEFAULT gen_random_uuid(),
-  email                    VARCHAR                 NOT NULL UNIQUE,
-  password_hash            VARCHAR                 NOT NULL,
-  full_name                VARCHAR                 NOT NULL,
-  age                      INTEGER,
-  university               VARCHAR,
-  income_type              income_type,
-  average_monthly_income   NUMERIC(12, 2),
-  financial_literacy_level financial_literacy_level,
-  profile_completed        BOOLEAN                 NOT NULL DEFAULT FALSE,
-  currency                 VARCHAR                 NOT NULL DEFAULT 'PEN',
-  consent_given            BOOLEAN                 NOT NULL DEFAULT FALSE,
-  consent_at               TIMESTAMP,
-  failed_login_attempts    INTEGER                 NOT NULL DEFAULT 0,
-  locked_until             TIMESTAMP,
-  notification_prefs       JSONB                   NOT NULL DEFAULT '{}', -- { NotificationType: boolean }; missing keys default to true
-  created_at               TIMESTAMP               NOT NULL DEFAULT NOW(),
-  updated_at               TIMESTAMP               NOT NULL DEFAULT NOW(),
-  deleted_at               TIMESTAMP
-);
+-- CreateEnum
+CREATE TYPE "FinancialLiteracyLevel" AS ENUM ('LOW', 'MEDIUM', 'HIGH');
 
-CREATE TABLE categories (
-  id               UUID             PRIMARY KEY DEFAULT gen_random_uuid(),
-  name             VARCHAR          NOT NULL,
-  type             category_type    NOT NULL DEFAULT 'CUSTOM',
-  transaction_type transaction_type,                         -- null = applies to both types
-  user_id          UUID             REFERENCES users(id) ON DELETE CASCADE, -- null = system category
-  created_at       TIMESTAMP        NOT NULL DEFAULT NOW(),
-  updated_at       TIMESTAMP        NOT NULL DEFAULT NOW(),
-  deleted_at       TIMESTAMP
-);
+-- CreateEnum
+CREATE TYPE "TopicDifficulty" AS ENUM ('BEGINNER', 'INTERMEDIATE', 'ADVANCED');
 
-CREATE TABLE transactions (
-  id          UUID             PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id     UUID             NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  category_id UUID             REFERENCES categories(id) ON DELETE SET NULL,
-  type        transaction_type NOT NULL,
-  amount      NUMERIC(12, 2)   NOT NULL,
-  currency    VARCHAR          NOT NULL DEFAULT 'PEN',
-  description VARCHAR          NOT NULL,
-  occurred_at TIMESTAMP        NOT NULL DEFAULT NOW(),
-  created_at  TIMESTAMP        NOT NULL DEFAULT NOW(),
-  updated_at  TIMESTAMP        NOT NULL DEFAULT NOW(),
-  deleted_at  TIMESTAMP
+-- CreateEnum
+CREATE TYPE "RecommendationType" AS ENUM ('SAVINGS', 'BUDGET', 'GOAL');
+
+-- CreateEnum
+CREATE TYPE "SurveyType" AS ENUM ('PRE', 'POST', 'SUS');
+
+-- CreateEnum
+CREATE TYPE "NotificationType" AS ENUM ('BUDGET_ALERT', 'ANOMALY_ALERT', 'PREDICTION_READY', 'CHALLENGE_REMINDER', 'DAILY_REMINDER', 'BADGE_EARNED');
+
+-- CreateEnum
+CREATE TYPE "FeedbackType" AS ENUM ('BUG', 'SUGGESTION', 'GENERAL');
+
+-- CreateEnum
+CREATE TYPE "AiConversationStatus" AS ENUM ('ACTIVE', 'CLOSED');
+
+-- CreateEnum
+CREATE TYPE "AiMessageRole" AS ENUM ('USER', 'ASSISTANT');
+
+-- CreateEnum
+CREATE TYPE "CategorySource" AS ENUM ('AI', 'AI_OVERRIDDEN', 'USER');
+
+-- CreateEnum
+CREATE TYPE "AuditStatus" AS ENUM ('SUCCESS', 'FAILURE');
+
+-- CreateEnum
+CREATE TYPE "AuthChallengeKind" AS ENUM ('RESET_TOKEN', 'OTP');
+
+-- CreateTable
+CREATE TABLE "User" (
+    "id" UUID NOT NULL,
+    "email" TEXT NOT NULL,
+    "passwordHash" TEXT NOT NULL,
+    "fullName" TEXT NOT NULL,
+    "age" INTEGER,
+    "university" TEXT,
+    "incomeType" "IncomeType",
+    "averageMonthlyIncome" DECIMAL(12,2),
+    "financialLiteracyLevel" "FinancialLiteracyLevel",
+    "profileCompleted" BOOLEAN NOT NULL DEFAULT false,
+    "currency" TEXT NOT NULL DEFAULT 'PEN',
+    "consentGiven" BOOLEAN NOT NULL DEFAULT false,
+    "consentAt" TIMESTAMP(3),
+    "failedLoginAttempts" INTEGER NOT NULL DEFAULT 0,
+    "lockedUntil" TIMESTAMP(3),
+    "notificationPrefs" JSONB NOT NULL DEFAULT '{}',
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "deletedAt" TIMESTAMP(3),
+
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
 
-CREATE TABLE savings_goals (
-  id             UUID           PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id        UUID           NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  name           VARCHAR        NOT NULL,
-  target_amount  NUMERIC(12, 2) NOT NULL,
-  current_amount NUMERIC(12, 2) NOT NULL DEFAULT 0,
-  due_date       TIMESTAMP,
-  created_at     TIMESTAMP      NOT NULL DEFAULT NOW(),
-  updated_at     TIMESTAMP      NOT NULL DEFAULT NOW(),
-  deleted_at     TIMESTAMP
+-- CreateTable
+CREATE TABLE "Category" (
+    "id" UUID NOT NULL,
+    "name" TEXT NOT NULL,
+    "type" "CategoryType" NOT NULL DEFAULT 'CUSTOM',
+    "transactionType" "TransactionType",
+    "userId" UUID,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "deletedAt" TIMESTAMP(3),
+
+    CONSTRAINT "Category_pkey" PRIMARY KEY ("id")
 );
 
-CREATE TABLE goal_contributions (
-  id         UUID           PRIMARY KEY DEFAULT gen_random_uuid(),
-  goal_id    UUID           NOT NULL REFERENCES savings_goals(id) ON DELETE CASCADE,
-  amount     NUMERIC(12, 2) NOT NULL,
-  created_at TIMESTAMP      NOT NULL DEFAULT NOW()
+-- CreateTable
+CREATE TABLE "Transaction" (
+    "id" UUID NOT NULL,
+    "userId" UUID NOT NULL,
+    "categoryId" UUID,
+    "type" "TransactionType" NOT NULL,
+    "currency" TEXT NOT NULL DEFAULT 'PEN',
+    "amount" DECIMAL(12,2) NOT NULL,
+    "description" TEXT NOT NULL,
+    "occurredAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "suggestedCategoryId" UUID,
+    "aiConfidence" DECIMAL(3,2),
+    "categorySource" "CategorySource" NOT NULL DEFAULT 'USER',
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "deletedAt" TIMESTAMP(3),
+
+    CONSTRAINT "Transaction_pkey" PRIMARY KEY ("id")
 );
 
-CREATE TABLE budgets (
-  id           UUID           PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id      UUID           NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  category_id  UUID           REFERENCES categories(id) ON DELETE SET NULL, -- null = global budget
-  amount_limit NUMERIC(12, 2) NOT NULL,
-  month        INTEGER        NOT NULL,
-  year         INTEGER        NOT NULL,
-  created_at   TIMESTAMP      NOT NULL DEFAULT NOW(),
-  updated_at   TIMESTAMP      NOT NULL DEFAULT NOW(),
-  deleted_at   TIMESTAMP,
-  UNIQUE (user_id, category_id, month, year)
+-- CreateTable
+CREATE TABLE "SavingsGoal" (
+    "id" UUID NOT NULL,
+    "userId" UUID NOT NULL,
+    "name" TEXT NOT NULL,
+    "targetAmount" DECIMAL(12,2) NOT NULL,
+    "currentAmount" DECIMAL(12,2) NOT NULL DEFAULT 0,
+    "dueDate" TIMESTAMP(3),
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "deletedAt" TIMESTAMP(3),
+
+    CONSTRAINT "SavingsGoal_pkey" PRIMARY KEY ("id")
 );
 
--- ─────────────────────────────────────────────────────────────────
--- NOTIFICATIONS — preferences live as JSON on users.notification_prefs
--- ─────────────────────────────────────────────────────────────────
+-- CreateTable
+CREATE TABLE "GoalContribution" (
+    "id" UUID NOT NULL,
+    "goalId" UUID NOT NULL,
+    "amount" DECIMAL(12,2) NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
--- ─────────────────────────────────────────────────────────────────
--- EDUCATION & GAMIFICATION
--- ─────────────────────────────────────────────────────────────────
-
-CREATE TABLE educational_topics (
-  id         UUID             PRIMARY KEY DEFAULT gen_random_uuid(),
-  title      VARCHAR          NOT NULL,
-  content    TEXT             NOT NULL,
-  difficulty topic_difficulty NOT NULL DEFAULT 'BEGINNER',
-  "order"    INTEGER          NOT NULL DEFAULT 0,
-  created_at TIMESTAMP        NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMP        NOT NULL DEFAULT NOW()
+    CONSTRAINT "GoalContribution_pkey" PRIMARY KEY ("id")
 );
 
-CREATE TABLE quiz_questions (
-  id                 UUID             PRIMARY KEY DEFAULT gen_random_uuid(),
-  topic_id           UUID             REFERENCES educational_topics(id) ON DELETE SET NULL,
-  question_group_key VARCHAR          NOT NULL, -- groups EN + ES variants of the same question
-  language           VARCHAR          NOT NULL, -- 'en' or 'es'
-  difficulty         topic_difficulty NOT NULL,
-  text               TEXT             NOT NULL,
-  options            JSONB            NOT NULL, -- String[]
-  correct_answer     VARCHAR          NOT NULL,
-  created_at         TIMESTAMP        NOT NULL DEFAULT NOW(),
-  updated_at         TIMESTAMP        NOT NULL DEFAULT NOW()
+-- CreateTable
+CREATE TABLE "Budget" (
+    "id" UUID NOT NULL,
+    "userId" UUID NOT NULL,
+    "categoryId" UUID,
+    "amountLimit" DECIMAL(12,2) NOT NULL,
+    "month" INTEGER NOT NULL,
+    "year" INTEGER NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "deletedAt" TIMESTAMP(3),
+
+    CONSTRAINT "Budget_pkey" PRIMARY KEY ("id")
 );
 
-CREATE TABLE user_topic_progress (
-  id             UUID          PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id        UUID          NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  topic_id       UUID          NOT NULL REFERENCES educational_topics(id) ON DELETE CASCADE,
-  completed_at   TIMESTAMP,
-  score          NUMERIC(5, 2),                  -- 0–100, latest quiz score for this topic
-  attempts_count INTEGER       NOT NULL DEFAULT 0,
-  created_at     TIMESTAMP     NOT NULL DEFAULT NOW(),
-  UNIQUE (user_id, topic_id)
+-- CreateTable
+CREATE TABLE "EducationalTopic" (
+    "id" UUID NOT NULL,
+    "title" TEXT NOT NULL,
+    "content" TEXT NOT NULL,
+    "difficulty" "TopicDifficulty" NOT NULL DEFAULT 'BEGINNER',
+    "order" INTEGER NOT NULL DEFAULT 0,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "EducationalTopic_pkey" PRIMARY KEY ("id")
 );
 
--- Per-attempt quiz history (US-1004). Powers the >=20% literacy-improvement KPI.
-CREATE TABLE quiz_attempts (
-  id              UUID      PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id         UUID      NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  question_id     UUID      NOT NULL REFERENCES quiz_questions(id) ON DELETE CASCADE,
-  topic_id        UUID      REFERENCES educational_topics(id) ON DELETE SET NULL,
-  selected_answer VARCHAR   NOT NULL,
-  is_correct      BOOLEAN   NOT NULL,
-  attempted_at    TIMESTAMP NOT NULL DEFAULT NOW(),
-  created_at      TIMESTAMP NOT NULL DEFAULT NOW()
+-- CreateTable
+CREATE TABLE "QuizQuestion" (
+    "id" UUID NOT NULL,
+    "topicId" UUID,
+    "questionGroupKey" TEXT NOT NULL,
+    "language" TEXT NOT NULL,
+    "difficulty" "TopicDifficulty" NOT NULL,
+    "text" TEXT NOT NULL,
+    "options" JSONB NOT NULL,
+    "correctAnswer" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "QuizQuestion_pkey" PRIMARY KEY ("id")
 );
 
-CREATE TABLE challenges (
-  id            UUID      PRIMARY KEY DEFAULT gen_random_uuid(),
-  title         VARCHAR   NOT NULL,
-  description   TEXT      NOT NULL,
-  criteria_json JSONB     NOT NULL,
-  reward        VARCHAR,
-  created_at    TIMESTAMP NOT NULL DEFAULT NOW(),
-  updated_at    TIMESTAMP NOT NULL DEFAULT NOW()
+-- CreateTable
+CREATE TABLE "UserTopicProgress" (
+    "id" UUID NOT NULL,
+    "userId" UUID NOT NULL,
+    "topicId" UUID NOT NULL,
+    "completedAt" TIMESTAMP(3),
+    "score" DECIMAL(5,2),
+    "attemptsCount" INTEGER NOT NULL DEFAULT 0,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "UserTopicProgress_pkey" PRIMARY KEY ("id")
 );
 
--- Status (AVAILABLE / ACTIVE / COMPLETED) is derived from (accepted_at, completed_at) — see
--- deriveChallengeStatus() in src/modules/challenges/domain/challenge.entity.ts.
-CREATE TABLE user_challenges (
-  id           UUID      PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id      UUID      NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  challenge_id UUID      NOT NULL REFERENCES challenges(id) ON DELETE CASCADE,
-  accepted_at  TIMESTAMP,
-  completed_at TIMESTAMP,
-  created_at   TIMESTAMP NOT NULL DEFAULT NOW(),
-  updated_at   TIMESTAMP NOT NULL DEFAULT NOW(),
-  UNIQUE (user_id, challenge_id)
+-- CreateTable
+CREATE TABLE "QuizAttempt" (
+    "id" UUID NOT NULL,
+    "userId" UUID NOT NULL,
+    "questionId" UUID NOT NULL,
+    "topicId" UUID,
+    "selectedAnswer" TEXT NOT NULL,
+    "isCorrect" BOOLEAN NOT NULL,
+    "attemptedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "QuizAttempt_pkey" PRIMARY KEY ("id")
 );
 
-CREATE TABLE badges (
-  id          UUID      PRIMARY KEY DEFAULT gen_random_uuid(),
-  name        VARCHAR   NOT NULL UNIQUE,
-  description TEXT      NOT NULL,
-  criteria    VARCHAR   NOT NULL,
-  icon_url    VARCHAR,
-  created_at  TIMESTAMP NOT NULL DEFAULT NOW(),
-  updated_at  TIMESTAMP NOT NULL DEFAULT NOW()
+-- CreateTable
+CREATE TABLE "Challenge" (
+    "id" UUID NOT NULL,
+    "title" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "criteriaJson" JSONB NOT NULL,
+    "reward" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Challenge_pkey" PRIMARY KEY ("id")
 );
 
-CREATE TABLE user_badges (
-  id        UUID      PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id   UUID      NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  badge_id  UUID      NOT NULL REFERENCES badges(id) ON DELETE CASCADE,
-  earned_at TIMESTAMP NOT NULL DEFAULT NOW(),
-  UNIQUE (user_id, badge_id)
+-- CreateTable
+CREATE TABLE "UserChallenge" (
+    "id" UUID NOT NULL,
+    "userId" UUID NOT NULL,
+    "challengeId" UUID NOT NULL,
+    "acceptedAt" TIMESTAMP(3),
+    "completedAt" TIMESTAMP(3),
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "UserChallenge_pkey" PRIMARY KEY ("id")
 );
 
--- ─────────────────────────────────────────────────────────────────
--- AI / ML
--- ─────────────────────────────────────────────────────────────────
+-- CreateTable
+CREATE TABLE "Badge" (
+    "id" UUID NOT NULL,
+    "name" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "criteria" TEXT NOT NULL,
+    "iconUrl" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
-CREATE TABLE predictions (
-  id                    UUID             PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id               UUID             NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  period                VARCHAR          NOT NULL, -- Format: YYYY-MM
-  type                  transaction_type NOT NULL,
-  predicted_total       NUMERIC(12, 2)   NOT NULL,
-  predicted_by_category JSONB,           -- {category_id, category_name, amount}[]
-  confidence_interval   JSONB,           -- {lower, upper}
-  model_version         VARCHAR,
-  actual_total          NUMERIC(12, 2),  -- filled after period ends
-  accuracy              NUMERIC(5, 2),   -- retrospective accuracy %
-  created_at            TIMESTAMP        NOT NULL DEFAULT NOW(),
-  updated_at            TIMESTAMP        NOT NULL DEFAULT NOW(),
-  UNIQUE (user_id, period, type)
+    CONSTRAINT "Badge_pkey" PRIMARY KEY ("id")
 );
 
-CREATE TABLE recommendations (
-  id                 UUID                PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id            UUID                NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  type               recommendation_type NOT NULL,
-  message            TEXT                NOT NULL,
-  suggested_action   VARCHAR,
-  is_active          BOOLEAN             NOT NULL DEFAULT TRUE,
-  -- Traceability for the AI-history KPI (>=80% accuracy support)
-  model_version      VARCHAR,                                       -- e.g. rules-v1 | azure-foundry-gpt-4o-2024-08-06
-  source             VARCHAR,                                       -- e.g. local-rules | azure-foundry
-  input_context_json JSONB,                                         -- snapshot of inputs used to generate
-  -- Lifecycle history
-  viewed_at          TIMESTAMP,
-  dismissed_at       TIMESTAMP,
-  expires_at         TIMESTAMP,
-  -- Inlined feedback (was previously recommendation_feedback 1:1 table)
-  feedback_accepted  BOOLEAN,
-  feedback_at        TIMESTAMP,
-  created_at         TIMESTAMP           NOT NULL DEFAULT NOW(),
-  updated_at         TIMESTAMP           NOT NULL DEFAULT NOW()
+-- CreateTable
+CREATE TABLE "UserBadge" (
+    "id" UUID NOT NULL,
+    "userId" UUID NOT NULL,
+    "badgeId" UUID NOT NULL,
+    "earnedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "UserBadge_pkey" PRIMARY KEY ("id")
 );
 
--- ─────────────────────────────────────────────────────────────────
--- SURVEYS
--- ─────────────────────────────────────────────────────────────────
+-- CreateTable
+CREATE TABLE "Prediction" (
+    "id" UUID NOT NULL,
+    "userId" UUID NOT NULL,
+    "period" TEXT NOT NULL,
+    "type" "TransactionType" NOT NULL,
+    "predictedTotal" DECIMAL(12,2) NOT NULL,
+    "predictedByCategory" JSONB,
+    "confidenceInterval" JSONB,
+    "modelVersion" TEXT,
+    "actualTotal" DECIMAL(12,2),
+    "accuracy" DECIMAL(5,2),
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
--- Questions are embedded as JSON inside surveys.questions_json (was a separate survey_questions table).
--- Shape: [{ id: uuid, order: int, text: string, options: string[], correctAnswer: string | null }]
-CREATE TABLE surveys (
-  id             UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
-  type           survey_type NOT NULL,
-  questions_json JSONB       NOT NULL DEFAULT '[]',
-  created_at     TIMESTAMP   NOT NULL DEFAULT NOW(),
-  updated_at     TIMESTAMP   NOT NULL DEFAULT NOW()
+    CONSTRAINT "Prediction_pkey" PRIMARY KEY ("id")
 );
 
-CREATE TABLE survey_responses (
-  id           UUID           PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id      UUID           NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  survey_id    UUID           NOT NULL REFERENCES surveys(id) ON DELETE CASCADE,
-  answers_json JSONB          NOT NULL, -- question_id → selected_option
-  score        NUMERIC(5, 2),           -- 0–100
-  completed_at TIMESTAMP      NOT NULL DEFAULT NOW(),
-  UNIQUE (user_id, survey_id)
+-- CreateTable
+CREATE TABLE "Recommendation" (
+    "id" UUID NOT NULL,
+    "userId" UUID NOT NULL,
+    "type" "RecommendationType" NOT NULL,
+    "message" TEXT NOT NULL,
+    "suggestedAction" TEXT,
+    "isActive" BOOLEAN NOT NULL DEFAULT true,
+    "modelVersion" TEXT,
+    "source" TEXT,
+    "inputContextJson" JSONB,
+    "viewedAt" TIMESTAMP(3),
+    "dismissedAt" TIMESTAMP(3),
+    "expiresAt" TIMESTAMP(3),
+    "feedbackAccepted" BOOLEAN,
+    "feedbackAt" TIMESTAMP(3),
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Recommendation_pkey" PRIMARY KEY ("id")
 );
 
--- ─────────────────────────────────────────────────────────────────
--- ANALYTICS & SECURITY
--- ─────────────────────────────────────────────────────────────────
+-- CreateTable
+CREATE TABLE "UserFinancialProgress" (
+    "id" UUID NOT NULL,
+    "userId" UUID NOT NULL,
+    "period" TEXT NOT NULL,
+    "budgetComplianceScore" DECIMAL(5,2),
+    "savingsRatePct" DECIMAL(5,2),
+    "overspendCategoriesCount" INTEGER NOT NULL DEFAULT 0,
+    "recommendationsShown" INTEGER NOT NULL DEFAULT 0,
+    "recommendationsAccepted" INTEGER NOT NULL DEFAULT 0,
+    "quizzesCompleted" INTEGER NOT NULL DEFAULT 0,
+    "avgQuizScore" DECIMAL(5,2),
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-CREATE TABLE analytics_events (
-  id         UUID      PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id    UUID      NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  event_type VARCHAR   NOT NULL,
-  metadata   JSONB,
-  created_at TIMESTAMP NOT NULL DEFAULT NOW()
+    CONSTRAINT "UserFinancialProgress_pkey" PRIMARY KEY ("id")
 );
 
-CREATE TABLE audit_logs (
-  id          UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id     UUID         REFERENCES users(id) ON DELETE SET NULL, -- actor; null = system/cron
-  action      VARCHAR      NOT NULL,                                 -- e.g. DELETE_ACCOUNT, RESET_PASSWORD
-  resource    VARCHAR      NOT NULL,                                 -- e.g. User, Transaction
-  resource_id UUID,                                                  -- UUID of the affected resource
-  status      audit_status NOT NULL DEFAULT 'SUCCESS',
-  request_id  VARCHAR,                                               -- correlation id across same-request logs
-  http_method VARCHAR,                                               -- GET, POST, PUT, DELETE…
-  http_path   VARCHAR,                                               -- e.g. /api/transactions/:id
-  ip_address  VARCHAR,
-  user_agent  VARCHAR,
-  before_json JSONB,                                                 -- state before the change
-  after_json  JSONB,                                                 -- state after the change
-  metadata    JSONB,
-  created_at  TIMESTAMP    NOT NULL DEFAULT NOW()
+-- CreateTable
+CREATE TABLE "Survey" (
+    "id" UUID NOT NULL,
+    "type" "SurveyType" NOT NULL,
+    "questionsJson" JSONB NOT NULL DEFAULT '[]',
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Survey_pkey" PRIMARY KEY ("id")
 );
 
--- Unified auth challenges (was password_reset_tokens + password_reset_otps).
--- secret stores sha256(raw_token) for RESET_TOKEN or sha256(raw_code) for OTP.
-CREATE TABLE auth_challenges (
-  id         UUID                PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id    UUID                NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  kind       auth_challenge_kind NOT NULL,
-  secret     VARCHAR             NOT NULL,
-  email      VARCHAR,                                          -- only for OTP
-  expires_at TIMESTAMP           NOT NULL,
-  used_at    TIMESTAMP,
-  created_at TIMESTAMP           NOT NULL DEFAULT NOW(),
-  UNIQUE (kind, secret)
+-- CreateTable
+CREATE TABLE "SurveyResponse" (
+    "id" UUID NOT NULL,
+    "userId" UUID NOT NULL,
+    "surveyId" UUID NOT NULL,
+    "answersJson" JSONB NOT NULL,
+    "score" DECIMAL(5,2),
+    "completedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "SurveyResponse_pkey" PRIMARY KEY ("id")
 );
 
-CREATE TABLE refresh_tokens (
-  id         UUID      PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id    UUID      NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  token      VARCHAR   NOT NULL UNIQUE,
-  expires_at TIMESTAMP NOT NULL,
-  created_at TIMESTAMP NOT NULL DEFAULT NOW()
+-- CreateTable
+CREATE TABLE "AnalyticsEvent" (
+    "id" UUID NOT NULL,
+    "userId" UUID NOT NULL,
+    "eventType" TEXT NOT NULL,
+    "metadata" JSONB,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "AnalyticsEvent_pkey" PRIMARY KEY ("id")
 );
 
-CREATE TABLE feedback (
-  id          UUID          PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id     UUID          NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  type        feedback_type NOT NULL DEFAULT 'GENERAL',
-  message     TEXT          NOT NULL,
-  screen_name VARCHAR,
-  rating      INTEGER       CHECK (rating BETWEEN 1 AND 5),
-  created_at  TIMESTAMP     NOT NULL DEFAULT NOW()
+-- CreateTable
+CREATE TABLE "AuditLog" (
+    "id" UUID NOT NULL,
+    "userId" UUID,
+    "action" TEXT NOT NULL,
+    "resource" TEXT NOT NULL,
+    "resourceId" UUID,
+    "status" "AuditStatus" NOT NULL DEFAULT 'SUCCESS',
+    "requestId" TEXT,
+    "httpMethod" TEXT,
+    "httpPath" TEXT,
+    "ipAddress" TEXT,
+    "userAgent" TEXT,
+    "beforeJson" JSONB,
+    "afterJson" JSONB,
+    "metadata" JSONB,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "AuditLog_pkey" PRIMARY KEY ("id")
 );
 
--- ─────────────────────────────────────────────────────────────────
--- INDEXES
--- ─────────────────────────────────────────────────────────────────
+-- CreateTable
+CREATE TABLE "AuthChallenge" (
+    "id" UUID NOT NULL,
+    "userId" UUID NOT NULL,
+    "kind" "AuthChallengeKind" NOT NULL,
+    "secret" TEXT NOT NULL,
+    "email" TEXT,
+    "expiresAt" TIMESTAMP(3) NOT NULL,
+    "usedAt" TIMESTAMP(3),
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
--- users
-CREATE INDEX idx_users_email                   ON users(email);
+    CONSTRAINT "AuthChallenge_pkey" PRIMARY KEY ("id")
+);
 
--- categories
-CREATE INDEX idx_categories_type_user          ON categories(type, user_id, deleted_at);
+-- CreateTable
+CREATE TABLE "RefreshToken" (
+    "id" UUID NOT NULL,
+    "userId" UUID NOT NULL,
+    "token" TEXT NOT NULL,
+    "expiresAt" TIMESTAMP(3) NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
--- transactions
-CREATE INDEX idx_transactions_user_date        ON transactions(user_id, occurred_at);
-CREATE INDEX idx_transactions_user_category    ON transactions(user_id, category_id);
-CREATE INDEX idx_transactions_user_type_date   ON transactions(user_id, type, occurred_at);
+    CONSTRAINT "RefreshToken_pkey" PRIMARY KEY ("id")
+);
 
--- savings_goals
-CREATE INDEX idx_savings_goals_user            ON savings_goals(user_id);
+-- CreateTable
+CREATE TABLE "Feedback" (
+    "id" UUID NOT NULL,
+    "userId" UUID NOT NULL,
+    "type" "FeedbackType" NOT NULL DEFAULT 'GENERAL',
+    "message" TEXT NOT NULL,
+    "screenName" TEXT,
+    "rating" INTEGER,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
--- goal_contributions
-CREATE INDEX idx_goal_contributions_goal       ON goal_contributions(goal_id);
+    CONSTRAINT "Feedback_pkey" PRIMARY KEY ("id")
+);
 
--- budgets
-CREATE INDEX idx_budgets_user_period           ON budgets(user_id, month, year);
+-- CreateTable
+CREATE TABLE "AiConversation" (
+    "id" UUID NOT NULL,
+    "userId" UUID NOT NULL,
+    "status" "AiConversationStatus" NOT NULL DEFAULT 'ACTIVE',
+    "startedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "endedAt" TIMESTAMP(3),
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
--- quiz_questions
-CREATE INDEX idx_quiz_questions_topic          ON quiz_questions(topic_id, difficulty, language);
-CREATE INDEX idx_quiz_questions_group_key      ON quiz_questions(question_group_key);
+    CONSTRAINT "AiConversation_pkey" PRIMARY KEY ("id")
+);
 
--- user_topic_progress
-CREATE INDEX idx_user_topic_progress_user      ON user_topic_progress(user_id);
+-- CreateTable
+CREATE TABLE "AiMessage" (
+    "id" UUID NOT NULL,
+    "conversationId" UUID NOT NULL,
+    "role" "AiMessageRole" NOT NULL,
+    "content" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
--- quiz_attempts
-CREATE INDEX idx_quiz_attempts_user_topic_date ON quiz_attempts(user_id, topic_id, attempted_at);
-CREATE INDEX idx_quiz_attempts_user_date       ON quiz_attempts(user_id, attempted_at);
-CREATE INDEX idx_quiz_attempts_question        ON quiz_attempts(question_id);
+    CONSTRAINT "AiMessage_pkey" PRIMARY KEY ("id")
+);
 
--- user_challenges
-CREATE INDEX idx_user_challenges_user_completed ON user_challenges(user_id, completed_at);
-CREATE INDEX idx_user_challenges_user_accepted  ON user_challenges(user_id, accepted_at);
+-- CreateIndex
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
--- user_badges
-CREATE INDEX idx_user_badges_user              ON user_badges(user_id);
+-- CreateIndex
+CREATE INDEX "User_email_idx" ON "User"("email");
 
--- predictions
-CREATE INDEX idx_predictions_user_period       ON predictions(user_id, period);
+-- CreateIndex
+CREATE INDEX "Category_type_userId_deletedAt_idx" ON "Category"("type", "userId", "deletedAt");
 
--- recommendations
-CREATE INDEX idx_recommendations_user_active    ON recommendations(user_id, is_active);
-CREATE INDEX idx_recommendations_user_created   ON recommendations(user_id, created_at);
-CREATE INDEX idx_recommendations_user_dismissed ON recommendations(user_id, dismissed_at);
+-- CreateIndex
+CREATE INDEX "Category_name_idx" ON "Category"("name");
 
--- survey_responses
-CREATE INDEX idx_survey_responses_user         ON survey_responses(user_id);
+-- CreateIndex
+CREATE INDEX "Transaction_userId_occurredAt_idx" ON "Transaction"("userId", "occurredAt");
 
--- analytics_events
-CREATE INDEX idx_analytics_events_user_type    ON analytics_events(user_id, event_type);
-CREATE INDEX idx_analytics_events_created      ON analytics_events(created_at);
+-- CreateIndex
+CREATE INDEX "Transaction_userId_categoryId_idx" ON "Transaction"("userId", "categoryId");
 
--- audit_logs
-CREATE INDEX idx_audit_logs_user_created       ON audit_logs(user_id, created_at);
-CREATE INDEX idx_audit_logs_action_resource    ON audit_logs(action, resource);
-CREATE INDEX idx_audit_logs_resource_resid     ON audit_logs(resource, resource_id);
-CREATE INDEX idx_audit_logs_request            ON audit_logs(request_id);
-CREATE INDEX idx_audit_logs_created            ON audit_logs(created_at);
+-- CreateIndex
+CREATE INDEX "Transaction_userId_type_occurredAt_idx" ON "Transaction"("userId", "type", "occurredAt");
 
--- auth_challenges
-CREATE INDEX idx_auth_challenges_user_kind     ON auth_challenges(user_id, kind);
-CREATE INDEX idx_auth_challenges_email_kind    ON auth_challenges(email, kind);
+-- CreateIndex
+CREATE INDEX "Transaction_userId_categorySource_idx" ON "Transaction"("userId", "categorySource");
 
--- refresh_tokens
-CREATE INDEX idx_refresh_tokens_user           ON refresh_tokens(user_id);
+-- CreateIndex
+CREATE INDEX "SavingsGoal_userId_idx" ON "SavingsGoal"("userId");
 
--- feedback
-CREATE INDEX idx_feedback_user                 ON feedback(user_id);
-CREATE INDEX idx_feedback_type                 ON feedback(type);
+-- CreateIndex
+CREATE INDEX "GoalContribution_goalId_idx" ON "GoalContribution"("goalId");
+
+-- CreateIndex
+CREATE INDEX "Budget_userId_month_year_idx" ON "Budget"("userId", "month", "year");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Budget_userId_categoryId_month_year_key" ON "Budget"("userId", "categoryId", "month", "year");
+
+-- CreateIndex
+CREATE INDEX "QuizQuestion_topicId_difficulty_language_idx" ON "QuizQuestion"("topicId", "difficulty", "language");
+
+-- CreateIndex
+CREATE INDEX "QuizQuestion_questionGroupKey_idx" ON "QuizQuestion"("questionGroupKey");
+
+-- CreateIndex
+CREATE INDEX "UserTopicProgress_userId_idx" ON "UserTopicProgress"("userId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "UserTopicProgress_userId_topicId_key" ON "UserTopicProgress"("userId", "topicId");
+
+-- CreateIndex
+CREATE INDEX "QuizAttempt_userId_topicId_attemptedAt_idx" ON "QuizAttempt"("userId", "topicId", "attemptedAt");
+
+-- CreateIndex
+CREATE INDEX "QuizAttempt_userId_attemptedAt_idx" ON "QuizAttempt"("userId", "attemptedAt");
+
+-- CreateIndex
+CREATE INDEX "QuizAttempt_questionId_idx" ON "QuizAttempt"("questionId");
+
+-- CreateIndex
+CREATE INDEX "UserChallenge_userId_completedAt_idx" ON "UserChallenge"("userId", "completedAt");
+
+-- CreateIndex
+CREATE INDEX "UserChallenge_userId_acceptedAt_idx" ON "UserChallenge"("userId", "acceptedAt");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "UserChallenge_userId_challengeId_key" ON "UserChallenge"("userId", "challengeId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Badge_name_key" ON "Badge"("name");
+
+-- CreateIndex
+CREATE INDEX "UserBadge_userId_idx" ON "UserBadge"("userId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "UserBadge_userId_badgeId_key" ON "UserBadge"("userId", "badgeId");
+
+-- CreateIndex
+CREATE INDEX "Prediction_userId_period_idx" ON "Prediction"("userId", "period");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Prediction_userId_period_type_key" ON "Prediction"("userId", "period", "type");
+
+-- CreateIndex
+CREATE INDEX "Recommendation_userId_isActive_idx" ON "Recommendation"("userId", "isActive");
+
+-- CreateIndex
+CREATE INDEX "Recommendation_userId_createdAt_idx" ON "Recommendation"("userId", "createdAt");
+
+-- CreateIndex
+CREATE INDEX "Recommendation_userId_dismissedAt_idx" ON "Recommendation"("userId", "dismissedAt");
+
+-- CreateIndex
+CREATE INDEX "UserFinancialProgress_userId_period_idx" ON "UserFinancialProgress"("userId", "period");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "UserFinancialProgress_userId_period_key" ON "UserFinancialProgress"("userId", "period");
+
+-- CreateIndex
+CREATE INDEX "SurveyResponse_userId_idx" ON "SurveyResponse"("userId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "SurveyResponse_userId_surveyId_key" ON "SurveyResponse"("userId", "surveyId");
+
+-- CreateIndex
+CREATE INDEX "AnalyticsEvent_userId_eventType_idx" ON "AnalyticsEvent"("userId", "eventType");
+
+-- CreateIndex
+CREATE INDEX "AnalyticsEvent_createdAt_idx" ON "AnalyticsEvent"("createdAt");
+
+-- CreateIndex
+CREATE INDEX "AuditLog_userId_createdAt_idx" ON "AuditLog"("userId", "createdAt");
+
+-- CreateIndex
+CREATE INDEX "AuditLog_action_resource_idx" ON "AuditLog"("action", "resource");
+
+-- CreateIndex
+CREATE INDEX "AuditLog_resource_resourceId_idx" ON "AuditLog"("resource", "resourceId");
+
+-- CreateIndex
+CREATE INDEX "AuditLog_requestId_idx" ON "AuditLog"("requestId");
+
+-- CreateIndex
+CREATE INDEX "AuditLog_createdAt_idx" ON "AuditLog"("createdAt");
+
+-- CreateIndex
+CREATE INDEX "AuthChallenge_userId_kind_idx" ON "AuthChallenge"("userId", "kind");
+
+-- CreateIndex
+CREATE INDEX "AuthChallenge_email_kind_idx" ON "AuthChallenge"("email", "kind");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "AuthChallenge_kind_secret_key" ON "AuthChallenge"("kind", "secret");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "RefreshToken_token_key" ON "RefreshToken"("token");
+
+-- CreateIndex
+CREATE INDEX "RefreshToken_token_idx" ON "RefreshToken"("token");
+
+-- CreateIndex
+CREATE INDEX "RefreshToken_userId_idx" ON "RefreshToken"("userId");
+
+-- CreateIndex
+CREATE INDEX "Feedback_userId_idx" ON "Feedback"("userId");
+
+-- CreateIndex
+CREATE INDEX "Feedback_type_idx" ON "Feedback"("type");
+
+-- CreateIndex
+CREATE INDEX "AiConversation_userId_status_idx" ON "AiConversation"("userId", "status");
+
+-- CreateIndex
+CREATE INDEX "AiMessage_conversationId_createdAt_idx" ON "AiMessage"("conversationId", "createdAt");
+
+-- AddForeignKey
+ALTER TABLE "Category" ADD CONSTRAINT "Category_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Transaction" ADD CONSTRAINT "Transaction_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Transaction" ADD CONSTRAINT "Transaction_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Transaction" ADD CONSTRAINT "Transaction_suggestedCategoryId_fkey" FOREIGN KEY ("suggestedCategoryId") REFERENCES "Category"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "SavingsGoal" ADD CONSTRAINT "SavingsGoal_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "GoalContribution" ADD CONSTRAINT "GoalContribution_goalId_fkey" FOREIGN KEY ("goalId") REFERENCES "SavingsGoal"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Budget" ADD CONSTRAINT "Budget_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Budget" ADD CONSTRAINT "Budget_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "QuizQuestion" ADD CONSTRAINT "QuizQuestion_topicId_fkey" FOREIGN KEY ("topicId") REFERENCES "EducationalTopic"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "UserTopicProgress" ADD CONSTRAINT "UserTopicProgress_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "UserTopicProgress" ADD CONSTRAINT "UserTopicProgress_topicId_fkey" FOREIGN KEY ("topicId") REFERENCES "EducationalTopic"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "QuizAttempt" ADD CONSTRAINT "QuizAttempt_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "QuizAttempt" ADD CONSTRAINT "QuizAttempt_questionId_fkey" FOREIGN KEY ("questionId") REFERENCES "QuizQuestion"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "QuizAttempt" ADD CONSTRAINT "QuizAttempt_topicId_fkey" FOREIGN KEY ("topicId") REFERENCES "EducationalTopic"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "UserChallenge" ADD CONSTRAINT "UserChallenge_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "UserChallenge" ADD CONSTRAINT "UserChallenge_challengeId_fkey" FOREIGN KEY ("challengeId") REFERENCES "Challenge"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "UserBadge" ADD CONSTRAINT "UserBadge_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "UserBadge" ADD CONSTRAINT "UserBadge_badgeId_fkey" FOREIGN KEY ("badgeId") REFERENCES "Badge"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Prediction" ADD CONSTRAINT "Prediction_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Recommendation" ADD CONSTRAINT "Recommendation_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "UserFinancialProgress" ADD CONSTRAINT "UserFinancialProgress_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "SurveyResponse" ADD CONSTRAINT "SurveyResponse_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "SurveyResponse" ADD CONSTRAINT "SurveyResponse_surveyId_fkey" FOREIGN KEY ("surveyId") REFERENCES "Survey"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "AnalyticsEvent" ADD CONSTRAINT "AnalyticsEvent_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "AuditLog" ADD CONSTRAINT "AuditLog_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "AuthChallenge" ADD CONSTRAINT "AuthChallenge_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "RefreshToken" ADD CONSTRAINT "RefreshToken_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Feedback" ADD CONSTRAINT "Feedback_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "AiConversation" ADD CONSTRAINT "AiConversation_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "AiMessage" ADD CONSTRAINT "AiMessage_conversationId_fkey" FOREIGN KEY ("conversationId") REFERENCES "AiConversation"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
