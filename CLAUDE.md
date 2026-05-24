@@ -88,8 +88,9 @@ Tesis2026/
 ```
 
 ## Language
-- All code, comments, variable names, and user-facing strings must be in **English**.
-- Enum values in `transaction.dart` (e.g., `comida`, `necesidad`) are kept as-is for serialization compatibility — only display labels are translated.
+- All code, comments, and variable names must be in **English**.
+- All user-facing strings (UI text, ARB values, mocked/seed data shown to the user) must be in **Spanish only** — the app targets a Spanish-speaking audience (Peruvian university students). The locale is forced to `es` in `lib/app.dart`; there is no language switcher.
+- Enum values in `transaction.dart` (e.g., `comida`, `necesidad`) are kept as-is for serialization compatibility — display labels come from `CategoryUtils.labelEs()` or `AppLocalizations`.
 - Currency remains PEN (Peruvian Sol) with `S/` symbol.
 
 ## Backend (zenda_backend_app)
@@ -121,8 +122,8 @@ Tesis2026/
   - Theme: Light theme only in `lib/core/theme/` (dark mode is not supported)
   - Models in `lib/core/models/`, API services in `lib/core/services/`
   - API client: `ApiClient` in `lib/core/services/api_client.dart` — base HTTP wrapper
-  - i18n: `flutter_localizations` with `app_en.arb` + `app_es.arb`; access via `context.l10n.*` (L10nX extension)
-  - No hardcoded UI strings in `build()` methods — all strings come from `AppLocalizations`
+  - i18n: `flutter_localizations` infrastructure kept but **locale is forced to `es` only** in `lib/app.dart` (no runtime switch, device locale is ignored). `app_es.arb` is the authoritative source; `app_en.arb` remains as the codegen template only.
+  - Prefer `context.l10n.*` (L10nX extension) for UI strings. Hardcoded Spanish strings in `build()` are tolerated only for one-off demo/mock copy — never English.
   - Run `flutter gen-l10n` after adding new ARB keys
 
 ## Key Design Decisions
@@ -207,7 +208,7 @@ Phase specs live in `.claude/specs/<phase>/`. **After implementing any roadmap p
 ### Current phases
 - `phase-1a` — Backend scaffolding and core infrastructure (NestJS, Prisma, JWT auth, 6 feature modules)
 - `phase-1b` — Database design (full Prisma schema: 19 models, 9 enums, seed data)
-- `phase-2` — Flutter frontend foundation (auth flows, onboarding, dashboard, transactions, profile, i18n EN+ES)
+- `phase-2` — Flutter frontend foundation (auth flows, onboarding, dashboard, transactions, profile, Spanish-only localization)
 - `phase-3` — Transaction recording: backend GET/:id + PUT/:id, Flutter TransactionListScreen, fire-and-forget API sync
 - `phase-4` — Categorization: backend PUT /api/categories/:id (rename), Flutter CategoryManagementScreen (create/rename/delete custom categories)
 - `phase-5` — Reports: backend monthly insights aggregation, Flutter ReportsScreen with pie chart + PDF export

@@ -1,0 +1,317 @@
+// Zenda — Conceptual ERD (AI-validation focus)
+// Purpose: academic presentation. Strips infra/security/telemetry tables,
+// keeps the end-to-end AI loop: data capture → AI generation → impact measurement.
+// Source of truth for the physical schema: zenda-erd.dbml + prisma/schema.prisma
+// Docs: https://dbml.dbdiagram.io/docs
+
+// ─────────────────────────────────────────────────────────────────
+// ENUMS (only those that carry business meaning at conceptual level)
+// ─────────────────────────────────────────────────────────────────
+
+Enum transaction_type {
+  INCOME
+  EXPENSE
+}
+
+Enum category_type {
+  SYSTEM
+  CUSTOM
+}
+
+// «AI» origin of the category on a transaction
+Enum category_source {
+  AI
+  AI_OVERRIDDEN
+  USER
+}
+
+Enum recommendation_type {
+  SAVINGS
+  BUDGET
+  GOAL
+}
+
+Enum ai_conv_status {
+  ACTIVE
+  CLOSED
+}
+
+Enum ai_msg_role {
+  USER
+  ASSISTANT
+}
+
+Enum survey_type {
+  PRE
+  POST
+  SUS
+}
+
+Enum topic_difficulty {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+// ─────────────────────────────────────────────────────────────────
+// CORE — financial data captured by the user (input to the AI)
+// ─────────────────────────────────────────────────────────────────
+
+Table users {
+  id                       uuid     [primary key]
+  email                    varchar  [unique, not null]
+  full_name                varchar  [not null]
+  age                      int
+  university               varchar
+  income_type              varchar  [note: 'SCHOLARSHIP | PART_TIME | FAMILY | MIXED']
+  average_monthly_income   decimal(12,2)
+  financial_literacy_level varchar  [note: 'LOW | MEDIUM | HIGH — baseline for KPI ≥20%']
+}
+
+Table categories {
+  id      uuid             [primary key]
+  name    varchar          [not null]
+  type    category_type    [default: 'CUSTOM']
+  user_id uuid             [note: 'null = system category (shared)']
+}
+
+Table transactions {
+  id                     uuid             [primary key]
+  user_id                uuid             [not null]
+  category_id            uuid             [note: 'final category — what counts for budgets/insights']
+  suggested_category_id  uuid             [note: '«AI» what the model proposed at create time']
+  ai_confidence          decimal(3,2)     [note: '«AI» 0.00–1.00; null = no AI involved']
+  category_source        category_source  [default: 'USER', note: '«AI» derived → enables accuracy KPI ≥80%']
+  type                   transaction_type [not null]
+  amount                 decimal(12,2)    [not null]
+  description            varchar          [not null]
+  occurred_at            timestamp
+}
+
+Table budgets {
+  id           uuid          [primary key]
+  user_id      uuid          [not null]
+  category_id  uuid          [note: 'null = global budget for the period']
+  amount_limit decimal(12,2) [not null]
+  month        int           [not null]
+  year         int           [not null]
+}
+
+// ─────────────────────────────────────────────────────────────────
+// GOALS — savings target tracking
+// ─────────────────────────────────────────────────────────────────
+
+Table savings_goals {
+  id             uuid          [primary key]
+  user_id        uuid          [not null]
+  name           varchar       [not null]
+  target_amount  decimal(12,2) [not null]
+  current_amount decimal(12,2) [default: 0]
+  due_date       timestamp
+}
+
+Table goal_contributions {
+  id      uuid          [primary key]
+  goal_id uuid          [not null]
+  amount  decimal(12,2) [not null]
+}
+
+// ─────────────────────────────────────────────────────────────────
+// AI — generation layer (what the model produces)
+// ─────────────────────────────────────────────────────────────────
+
+Table predictions {
+  id                    uuid             [primary key]
+  user_id               uuid             [not null]
+  period                varchar          [not null, note: 'YYYY-MM']
+  type                  transaction_type [not null]
+  predicted_total       decimal(12,2)    [not null]
+  predicted_by_category json             [note: 'breakdown per category']
+  model_version         varchar          [note: '«AI» traceability']
+  actual_total          decimal(12,2)    [note: 'filled after period ends — enables accuracy KPI']
+  accuracy              decimal(5,2)     [note: '«AI» retrospective accuracy %']
+}
+
+Table recommendations {
+  id                 uuid                [primary key]
+  user_id            uuid                [not null]
+  type               recommendation_type [not null]
+  message            text                [not null]
+  suggested_action   varchar
+  model_version      varchar             [note: '«AI» which model/ruleset generated it']
+  source             varchar             [note: '«AI» local-rules | azure-foundry']
+  input_context_json json                [note: '«AI» snapshot of inputs — reproducibility']
+  viewed_at          timestamp
+  dismissed_at       timestamp
+  expires_at         timestamp
+  feedback_accepted  boolean             [note: '«AI» user feedback — validates relevance']
+  feedback_at        timestamp
+}
+
+Table ai_conversations {
+  id         uuid           [primary key]
+  user_id    uuid           [not null]
+  status     ai_conv_status [default: 'ACTIVE']
+  started_at timestamp
+  ended_at   timestamp
+}
+
+Table ai_messages {
+  id              uuid         [primary key]
+  conversation_id uuid         [not null]
+  role            ai_msg_role  [not null]
+  content         text         [not null]
+  created_at      timestamp
+}
+
+// ─────────────────────────────────────────────────────────────────
+// IMPACT — measuring whether the AI is actually changing behavior
+// ─────────────────────────────────────────────────────────────────
+
+// Monthly behavioral snapshot per user — feeds the AI-impact KPIs
+// (retention ≥40%, daily active ≥50%, behavior change correlation).
+Table user_financial_progress {
+  id                         uuid         [primary key]
+  user_id                    uuid         [not null]
+  period                     varchar      [not null, note: 'YYYY-MM']
+  budget_compliance_score    decimal(5,2) [note: '% categories within budget (0–100)']
+  savings_rate_pct           decimal(5,2) [note: '(income - expenses) / income * 100']
+  overspend_categories_count int          [default: 0]
+  recommendations_shown      int          [default: 0]
+  recommendations_accepted   int          [default: 0, note: '«AI» acceptance rate signal']
+  quizzes_completed          int          [default: 0]
+  avg_quiz_score             decimal(5,2) [note: '0–100 — literacy progression']
+}
+
+// ─────────────────────────────────────────────────────────────────
+// EDUCATION — content + assessment (validates literacy KPI ≥20%)
+// ─────────────────────────────────────────────────────────────────
+
+Table educational_topics {
+  id         uuid             [primary key]
+  title      varchar          [not null]
+  content    text             [not null]
+  difficulty topic_difficulty [default: 'BEGINNER']
+  order      int              [default: 0]
+}
+
+Table quiz_questions {
+  id             uuid             [primary key]
+  topic_id       uuid             [note: 'null = standalone question']
+  language       varchar          [not null, note: 'en | es']
+  difficulty     topic_difficulty [not null]
+  text           text             [not null]
+  options        json             [not null, note: 'string[]']
+  correct_answer varchar          [not null]
+}
+
+Table quiz_attempts {
+  id              uuid    [primary key]
+  user_id         uuid    [not null]
+  question_id     uuid    [not null]
+  topic_id        uuid    [note: 'denormalized for per-topic filtering']
+  selected_answer varchar [not null]
+  is_correct      boolean [not null]
+  attempted_at    timestamp
+}
+
+Table user_topic_progress {
+  id             uuid         [primary key]
+  user_id        uuid         [not null]
+  topic_id       uuid         [not null]
+  completed_at   timestamp
+  score          decimal(5,2) [note: '0–100, latest quiz score']
+  attempts_count int          [default: 0]
+}
+
+// ─────────────────────────────────────────────────────────────────
+// SURVEYS — pre/post and SUS instruments (academic validation)
+// ─────────────────────────────────────────────────────────────────
+
+Table surveys {
+  id             uuid        [primary key]
+  type           survey_type [not null]
+  questions_json json        [default: `'[]'`, note: 'embedded questions']
+}
+
+Table survey_responses {
+  id           uuid         [primary key]
+  user_id      uuid         [not null]
+  survey_id    uuid         [not null]
+  answers_json json         [not null]
+  score        decimal(5,2) [note: '0–100 — used to measure pre/post delta']
+  completed_at timestamp
+}
+
+// ─────────────────────────────────────────────────────────────────
+// RELATIONSHIPS  (cardinalities rendered as crow's foot in dbdiagram.io)
+// ─────────────────────────────────────────────────────────────────
+
+// Core
+Ref: categories.user_id                  > users.id           // 0..N : 1 (null = system)
+Ref: transactions.user_id                > users.id           // N : 1
+Ref: transactions.category_id            > categories.id      // 0..N : 0..1
+Ref: transactions.suggested_category_id  > categories.id      // 0..N : 0..1  «AI»
+Ref: budgets.user_id                     > users.id           // N : 1
+Ref: budgets.category_id                 > categories.id      // 0..N : 0..1
+
+// Goals
+Ref: savings_goals.user_id               > users.id           // N : 1
+Ref: goal_contributions.goal_id          > savings_goals.id   // N : 1
+
+// AI generation
+Ref: predictions.user_id                 > users.id           // N : 1
+Ref: recommendations.user_id             > users.id           // N : 1
+Ref: ai_conversations.user_id            > users.id           // N : 1
+Ref: ai_messages.conversation_id         > ai_conversations.id // N : 1
+
+// Impact
+Ref: user_financial_progress.user_id     > users.id           // N : 1 (monthly snapshots)
+
+// Education
+Ref: quiz_questions.topic_id             > educational_topics.id  // 0..N : 0..1
+Ref: quiz_attempts.user_id               > users.id               // N : 1
+Ref: quiz_attempts.question_id           > quiz_questions.id      // N : 1
+Ref: quiz_attempts.topic_id              > educational_topics.id  // 0..N : 0..1
+Ref: user_topic_progress.user_id         > users.id               // N : 1
+Ref: user_topic_progress.topic_id        > educational_topics.id  // N : 1
+
+// Surveys
+Ref: survey_responses.user_id            > users.id           // N : 1
+Ref: survey_responses.survey_id          > surveys.id         // N : 1
+
+// ─────────────────────────────────────────────────────────────────
+// CONCEPTUAL GROUPS — the AI validation loop
+// ─────────────────────────────────────────────────────────────────
+
+TableGroup "1 · Financial Data (AI input)" {
+  users
+  categories
+  transactions
+  budgets
+  savings_goals
+  goal_contributions
+}
+
+TableGroup "2 · AI Generation" {
+  predictions
+  recommendations
+  ai_conversations
+  ai_messages
+}
+
+TableGroup "3 · Impact Measurement" {
+  user_financial_progress
+}
+
+TableGroup "4 · Education & Literacy KPI" {
+  educational_topics
+  quiz_questions
+  quiz_attempts
+  user_topic_progress
+}
+
+TableGroup "5 · Academic Validation" {
+  surveys
+  survey_responses
+}

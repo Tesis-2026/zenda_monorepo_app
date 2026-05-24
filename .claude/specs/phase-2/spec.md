@@ -2,7 +2,7 @@
 
 ## Context
 
-Before this phase, the project had a fully operational NestJS backend (Phase 1A) and a complete Prisma schema (Phase 1B), but zero frontend code. This phase bootstraps the entire Flutter mobile app: app infrastructure, all auth flows wired to the backend API, onboarding, a functional dashboard with 50/30/20 budget visualization, transaction entry, profile management, and full EN/ES internationalization. User stories covered: US-027, US-028, (infrastructure: JWT guard), (infrastructure: password recovery), US-030 / US-032, US-005, US-019.
+Before this phase, the project had a fully operational NestJS backend (Phase 1A) and a complete Prisma schema (Phase 1B), but zero frontend code. This phase bootstraps the entire Flutter mobile app: app infrastructure, all auth flows wired to the backend API, onboarding, a functional dashboard with 50/30/20 budget visualization, transaction entry, profile management, and Spanish-only localization (the audience is Spanish-speaking Peruvian university students; locale is forced to `es` and there is no language switcher). User stories covered: US-027, US-028, (infrastructure: JWT guard), (infrastructure: password recovery), US-030 / US-032, US-005, US-019.
 
 ## Tasks Completed
 
@@ -101,13 +101,14 @@ View and edit: full name, age, university, currency, income type, monthly income
 
 ### Internationalization
 
-| File | Keys | Locale |
-|------|------|--------|
-| `app_en.arb` | 130 | English |
-| `app_es.arb` | 130 | Spanish |
+| File | Keys | Locale | Role |
+|------|------|--------|------|
+| `app_es.arb` | 130 | Spanish | Authoritative source — what users see |
+| `app_en.arb` | 130 | English | Codegen template only (Flutter `gen-l10n` requires `template-arb-file`) |
 
-- No hardcoded UI strings in any `build()` method
-- `L10nX` extension for clean `context.l10n.key` access
-- ICU plural for streak: `{count, plural, =1{1-day streak} other{{count}-day streak}}`
-- Named placeholder for greeting: `{name}`
-- Device locale auto-selected; falls back to `en`
+- App locale is **forced to `es` in `lib/app.dart`** — device locale is ignored and there is no in-app language switcher. The previous `LocaleNotifier` / `localeProvider` and the language entry in `SettingsScreen` were removed.
+- `supportedLocales` is `[Locale('es')]` only.
+- `L10nX` extension for clean `context.l10n.key` access.
+- ICU plural for streak: `{count, plural, =1{1-day streak} other{{count}-day streak}}` (Spanish copy in `app_es.arb`).
+- Named placeholder for greeting: `{name}`.
+- Hardcoded **mock/demo** data (transactions, education topics, badges, AI chat responses) is written in Spanish directly inside `lib/core/mock/demo_data.dart` and `mock_services.dart` — it does not flow through ARB files because it represents API payloads, not UI chrome.
