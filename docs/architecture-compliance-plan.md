@@ -5,6 +5,8 @@ Tracking doc for refactor batches that align the Zenda backend and frontend with
 > Baseline audit date: **2026-05-17**
 > Initial compliance: Backend ~65%, Frontend ~85% (mostly mechanical drift)
 > Target compliance: **>=95%** after all batches.
+>
+> **Last execution session: 2026-05-24** — closed 14 batches (B15, B16, B18, B20, B21, B22, B24, B25, B26, B28, B29, B30, B31 + B23 partial). 20/32 batches now 🟢 Done, 1 ⚫ superseded, 11 ⚪ pending.
 
 ---
 
@@ -67,23 +69,23 @@ Each batch ships as one commit on its own branch with PR to `develop`.
 | **B12** | Backend `RecommendationResponseDto` lifecycle fields | Backend (expose `viewedAt`/`dismissedAt`/`expiresAt`/`feedbackAt`/`modelVersion`/`source`/`inputContextJson` + matching frontend parser) | Low | S (~2h) | ⚪ Pending — see ARCH-09 |
 | **B13** | Refactor `notifications.controller.ts` into DDD | Backend (introduce `NotificationPreferencesService` + use case wrapper; controller stops calling Prisma directly) | Low | M (~3h) | ⚪ Pending — see ARCH-03 (partial) |
 | **B14** | Auth wire format for lockout state | Backend (add error body schema to 401 with `failedAttempts`/`lockedUntil`, OR add `/auth/me` exposing lockout) | Medium | M (~4h) | ⚪ Pending — see ARCH-10. Unblocks B11. |
-| **B15** | Regenerate `docs/zenda-schema.sql` from Prisma | Docs (`npx prisma migrate diff --from-empty --to-schema-datamodel --script > docs/zenda-schema.sql`) | Minimal | XS (~30min) | ⚪ Pending — see ARCH-08 |
-| **B16** | `CategoryResponseDto` add `transactionType` | Backend (DTO + mapper + frontend `CategoryModel` parser) | Low | XS (~30min) | ⚪ Pending — see ARCH-14 |
+| **B15** | Regenerate `docs/zenda-schema.sql` from Prisma | Docs (`npx prisma migrate diff --from-empty --to-schema-datamodel --script > docs/zenda-schema.sql`) | Minimal | XS (~30min) | 🟢 Done (2026-05-24, root#21) |
+| **B16** | `CategoryResponseDto` add `transactionType` | Backend (DTO + mapper + frontend `CategoryModel` parser) | Low | XS (~30min) | 🟢 Done (2026-05-24, backend#20) — backend side; frontend parser deferred until B5 merges to avoid conflict |
 | **B17** | `PredictionEntity` + DTO add `confidenceInterval` | Backend (entity field, mapper from JSON column, DTO, frontend parser) — **also closes ARCH-04** if same refactor untangles the `modelVersion` packed columns | Medium | M (~4h) | ⚪ Pending — see ARCH-15. Promotes ARCH-04 from "out of scope" to "addressed together". |
-| **B18** | `BudgetResponseDto` remove `deletedAt` (UX-06 regression fix) | Backend (DTO + mapper) | Minimal | XS (~15min) | ⚪ Pending — see ARCH-16 |
+| **B18** | `BudgetResponseDto` remove `deletedAt` (UX-06 regression fix) | Backend (DTO + mapper) | Minimal | XS (~15min) | 🟢 Done (2026-05-24, backend#20) — also caught + fixed the same regression on `GoalResponseDto` |
 | **B19** | Cross-context ACL facades | Backend (introduce facade tokens for `BadgesModule`, `ChallengesModule`, `CategoriesModule`, `AuthModule`; stop direct module imports). **Supersedes B9** (insights→goals becomes one of N cases) | High | XL (~2d) | ⚪ Pending — see ARCH-17 |
-| **B20** | `SubmitQuizDto` bounds + key validation | Backend (`@ArrayMaxSize`/custom validator constraining keys to known question IDs) | Minimal | XS (~30min) | ⚪ Pending — see ARCH-18 |
-| **B21** | JWT payload + guard hardening | Backend (add `consentGiven` to payload; custom JWT strategy that re-checks `deletedAt` OR uses `tokenVersion` field on user) | Medium | M (~4h) | ⚪ Pending — see ARCH-19, ARCH-20 |
-| **B22** | Prisma error mapping in `GlobalExceptionFilter` | Backend (translate P2002/P2025/P2003 to 409/404/400; remove per-use-case manual catches) | Low | S (~2h) | ⚪ Pending — see ARCH-21 |
-| **B23** | Swagger `@ApiResponse` coverage | Backend (add success + error response schemas across all controllers; standardize error body) | Low | M (~6h) | ⚪ Pending — see ARCH-22 |
-| **B24** | Env config validation at boot | Backend (Joi/zod schema or `class-validator` on `configuration.ts`; switch `process.env.X` to `configService.getOrThrow`) | Low | M (~3h) | ⚪ Pending — see ARCH-23. Compose with `.env.example` review. |
-| **B25** | `User.tokenVersion` + JWT version claim | Backend (schema migration + auth use cases + guard) — closes ARCH-24, partially helps ARCH-20 | Medium | M (~4h) | ⚪ Pending — see ARCH-24 |
-| **B26** | Request log redaction + response-side logging | Backend (extend `RequestLoggingInterceptor` to strip `password`, `Authorization`, `token` patterns from path/headers; log response status + size) | Low | S (~2h) | ⚪ Pending — see ARCH-25 |
+| **B20** | `SubmitQuizDto` bounds + key validation | Backend (`@ArrayMaxSize`/custom validator constraining keys to known question IDs) | Minimal | XS (~30min) | 🟢 Done (2026-05-24, backend#20) |
+| **B21** | JWT payload + guard hardening | Backend (add `consentGiven` to payload; custom JWT strategy that re-checks `deletedAt` OR uses `tokenVersion` field on user) | Medium | M (~4h) | 🟢 Done (2026-05-24, backend#23) — shipped together with B25 |
+| **B22** | Prisma error mapping in `GlobalExceptionFilter` | Backend (translate P2002/P2025/P2003 to 409/404/400; remove per-use-case manual catches) | Low | S (~2h) | 🟢 Done (2026-05-24, backend#21) |
+| **B23** | Swagger `@ApiResponse` coverage | Backend (add success + error response schemas across all controllers; standardize error body) | Low | M (~6h) | 🟡 Partial (2026-05-24, backend#24) — shared infra + 5 of ~13 controllers (auth, transactions, budgets, goals, categories). Follow-up B23-pt2 (~3h) for remaining 8 controllers. |
+| **B24** | Env config validation at boot | Backend (Joi/zod schema or `class-validator` on `configuration.ts`; switch `process.env.X` to `configService.getOrThrow`) | Low | M (~3h) | 🟢 Done (2026-05-24, backend#22) |
+| **B25** | `User.tokenVersion` + JWT version claim | Backend (schema migration + auth use cases + guard) — closes ARCH-24, partially helps ARCH-20 | Medium | M (~4h) | 🟢 Done (2026-05-24, backend#23) — shipped together with B21 |
+| **B26** | Request log redaction + response-side logging | Backend (extend `RequestLoggingInterceptor` to strip `password`, `Authorization`, `token` patterns from path/headers; log response status + size) | Low | S (~2h) | 🟢 Done (2026-05-24, backend#21) |
 | **B27** | Audit log writer (cross-cutting) | Backend (interceptor or decorator on mutation use cases; populate `AuditLog.before_json/after_json/request_id` for CRUD on Transaction/Budget/Goal/Category + auth events) | Medium-High | L (~1d) | ⚪ Pending — see ARCH-26. **Builds on B8** which created the `audit-events` module. |
-| **B28** | Idempotency-Key support | Backend (DTO header + dedup table or Redis cache + middleware on POST routes); also frontend `api_client.dart` sends keys on retryable POSTs | Medium | M (~6h) | ⚪ Pending — see ARCH-27 |
-| **B29** | Production Dockerfile + multi-stage build | Backend (`Dockerfile` with build stage + runtime stage; `.dockerignore`; document run/health/restart) | Low | S (~2h) | ⚪ Pending — see ARCH-28 |
-| **B30** | `@Throttle` on remaining POST endpoints | Backend (Transactions/Budgets/Goals POST: standard limits; AI `/chat`: stricter — e.g., 10/min per user) | Minimal | XS (~30min) | ⚪ Pending — see ARCH-29 |
-| **B31** | Health endpoint with DB ping + `/ready` | Backend (use `@nestjs/terminus` or simple `prisma.$queryRaw` ping in `/health`; add `/ready` checking deps; keep `/live` trivial) | Low | S (~2h) | ⚪ Pending — see ARCH-30 |
+| **B28** | Idempotency-Key support | Backend (DTO header + dedup table or Redis cache + middleware on POST routes); also frontend `api_client.dart` sends keys on retryable POSTs | Medium | M (~6h) | 🟢 Done (2026-05-24, backend#25) — backend side; frontend `api_client.dart` header support deferred until B5 merges. **Follow-up:** TTL pruning cron not yet implemented. |
+| **B29** | Production Dockerfile + multi-stage build | Backend (`Dockerfile` with build stage + runtime stage; `.dockerignore`; document run/health/restart) | Low | S (~2h) | 🟢 Done (2026-05-24, backend#21) |
+| **B30** | `@Throttle` on remaining POST endpoints | Backend (Transactions/Budgets/Goals POST: standard limits; AI `/chat`: stricter — e.g., 10/min per user) | Minimal | XS (~30min) | 🟢 Done (2026-05-24, backend#20) |
+| **B31** | Health endpoint with DB ping + `/ready` | Backend (use `@nestjs/terminus` or simple `prisma.$queryRaw` ping in `/health`; add `/ready` checking deps; keep `/live` trivial) | Low | S (~2h) | 🟢 Done (2026-05-24, backend#22) |
 | **B32** | Update phase-2 spec path | Docs (replace `lib/features/auth/local_auth_service.dart` references with `lib/core/services/api_client.dart`; bundle with next phase spec refresh) | Minimal | XS (~15min) | ⚪ Pending — see ARCH-31 |
 
 **Legend:** ⚪ Pending · 🟡 In Progress · 🟢 Done · 🔴 Blocked
@@ -171,10 +173,10 @@ Original-plan pending (kept):
 
 Re-prioritized after finding ARCH-14, -15, -16 in the fourth-tier audit. The "quick wins" pool is bigger than first thought.
 
-**Tier 1 — XS quick wins (under 1h each, zero risk):**
-1. **B15** (regenerate SQL) — 30 min
-2. **B18** (remove `deletedAt` from `BudgetResponseDto`) — 15 min, UX-06 regression
-3. **B16** (`CategoryResponseDto.transactionType`) — 30 min
+**Tier 1 — XS quick wins (under 1h each, zero risk):** ✅ ALL DONE
+1. ~~B15~~ ✅ root#21
+2. ~~B18~~ ✅ backend#20 (also caught Goal regression)
+3. ~~B16~~ ✅ backend#20
 
 **Tier 2 — S/M model alignment (1h–4h):**
 4. **B12** (`RecommendationResponseDto` + 8 missing fields + frontend parser) — 2h
@@ -184,18 +186,18 @@ Re-prioritized after finding ARCH-14, -15, -16 in the fourth-tier audit. The "qu
 8. **B11** (`User` model security fields) — 2h, depends on B14
 9. **B13** (notifications controller → DDD) — 3h
 
-**Tier 3 — Security/ops quick wins (6th-pass additions, mostly XS-S):**
-10. **B20** (`SubmitQuizDto` bounds) — 30 min, security quick win
-11. **B30** (`@Throttle` remaining POST + AI chat) — 30 min, hardening quick win
-12. **B22** (Prisma error mapping) — 2h
-13. **B26** (request log redaction + status) — 2h
-14. **B29** (production Dockerfile) — 2h
-15. **B24** (env config validation at boot) — 3h
-16. **B31** (health endpoint with DB ping + `/ready`) — 2h
-17. **B21** (JWT hardening: `consentGiven` + soft-delete check) — 4h
-18. **B25** (`User.tokenVersion` for session invalidation) — 4h
-19. **B23** (Swagger `@ApiResponse` sweep) — 6h
-20. **B28** (Idempotency-Key support) — 6h
+**Tier 3 — Security/ops quick wins (6th-pass additions, mostly XS-S):** ✅ ALL DONE (B23 partial)
+10. ~~B20~~ ✅ backend#20
+11. ~~B30~~ ✅ backend#20
+12. ~~B22~~ ✅ backend#21
+13. ~~B26~~ ✅ backend#21
+14. ~~B29~~ ✅ backend#21
+15. ~~B24~~ ✅ backend#22
+16. ~~B31~~ ✅ backend#22
+17. ~~B21~~ ✅ backend#23 (bundled with B25)
+18. ~~B25~~ ✅ backend#23
+19. ~~B23~~ 🟡 backend#24 — partial (5/13 controllers); B23-pt2 ~3h for the rest
+20. ~~B28~~ ✅ backend#25
 
 **Tier 4 — Larger structural work (1d+):**
 21. **B27** (audit log writer cross-cutting) — 1d
@@ -226,3 +228,10 @@ Re-prioritized after finding ARCH-14, -15, -16 in the fourth-tier audit. The "qu
 | B6 | backend#15 | 2026-05-17 | Full DDD module under `src/modules/financial-progress/` with all 4 layers, plus `IFinancialProgressRepository` exported for the future aggregation job. Exposes `GET /api/financial-progress` and `GET /api/financial-progress/current`. The job that *populates* snapshots is intentionally out of scope and will be a follow-up. |
 | B4 | backend#16 | 2026-05-17 | New `IChallengeVerificationPort` (challenges) + `IPersonalizedQuizContextPort` (education) replace direct `PrismaService` usage in `VerifyChallengesUseCase` and `GetPersonalizedQuizUseCase`. Drive-by fix: `deletedAt: null` filter added to the category hydration inside `PrismaPersonalizedQuizContextRepository` that the original use case was missing. Zero `PrismaService` references remain in any `application/` layer. |
 | B8 | backend#17 | 2026-05-18 | Scope narrowed: `AnalyticsEvent` and `AuditLog` already live behind cross-cutting infra services (`AnalyticsService` + the request-logging interceptor), so they did not need new modules. Actions taken: (1) `Feedback` extracted from `education/` into its own `src/modules/feedback/` bounded context with full DDD layout — the old controller imported `PrismaService` directly which was a layer violation. (2) `AnalyticsService` removed from `LoginUseCase`, `RegisterUseCase`, and `GetPersonalizedQuizUseCase`; tracking now happens in their controllers. Public APIs unchanged. Zero `AnalyticsService` references remain in any `application/` layer. |
+| B15 | root#21 | 2026-05-24 | Regenerated `docs/zenda-schema.sql` from Prisma. 669 lines / 40 CREATE statements (vs 406 before — all 3 missing tables + 3 enums + indexes/FKs added in the May refactor are now present). |
+| B16 + B18 + B20 + B30 | backend#20 | 2026-05-24 | Tier 1 + Tier 3 quick-wins bundle. B16 adds `transactionType` to `CategoryResponseDto`. B18 removes `deletedAt` from `BudgetResponseDto` AND `GoalResponseDto` (Goal had the same UX-06 regression — caught during the fix). B20 bounds `SubmitQuizDto.answers` with a custom `@IsBoundedAnswersMap()` decorator. B30 adds per-endpoint `@Throttle` to Transactions/Budgets/Goals POST + AI chat. |
+| B22 + B26 + B29 | backend#21 | 2026-05-24 | Tier 3 hardening bundle. B22 maps Prisma errors in `GlobalExceptionFilter` (P2002→409, P2003→400, P2025→404). B26 extends `RequestLoggingInterceptor` to redact sensitive query params + capture response status + error details. B29 adds production multi-stage `Dockerfile` + `.dockerignore`. |
+| B24 + B31 | backend#22 | 2026-05-24 | Tier 3 deploy hygiene bundle. B24 validates env at boot via `EnvSchema` (class-validator) wired into `ConfigModule.forRoot`; `DATABASE_URL` / `JWT_SECRET` required at any env, real SMTP enforced in production. B31 adds `/api/live` (trivial liveness), `/api/ready` (DB ping), and upgrades `/api/health` to do the DB ping too (Dockerfile HEALTHCHECK stays valid). |
+| B21 + B25 | backend#23 | 2026-05-24 | JWT hardening bundle (closes ARCH-19, -20, -24 together since they all reach the JWT pipeline). Schema migration `20260524000000_add_user_token_version` adds `User.tokenVersion`. JWT now carries `tokenVersion` + `consentGiven`. `JwtStrategy.validate()` re-loads the user and rejects soft-deleted accounts and stale-version tokens. `ResetPasswordUseCase` bumps `tokenVersion`, implicitly logging out every previously-issued session. **Behavior change:** access tokens issued before deploy get one 401 and must re-login (same effect as rotating JWT_SECRET). |
+| B23 (partial) | backend#24 | 2026-05-24 | Created shared Swagger infra: `ApiErrorResponseDto` matching the GlobalExceptionFilter output + 9 composable decorators (`ApiOk`/`ApiCreated`/`ApiNoContent`/`ApiValidationError`/`ApiAuthErrors`/`ApiForbiddenError`/`ApiNotFoundError`/`ApiConflictError`/`ApiServerError`). Applied to 5 controllers (auth/transactions/budgets/goals/categories — 28 endpoints). **Follow-up B23-pt2** (~3h): apply same pattern to recommendations/chat, education, insights, predictions, feedback, financial-progress, notifications, users. |
+| B28 | backend#25 | 2026-05-24 | RFC-draft Idempotency-Key support. Schema migration `20260524010000_add_idempotency_keys` adds `IdempotencyKey` model (`@@unique([key, userId])`, indexed `createdAt` for future TTL pruning). `IdempotencyService` (stable SHA-256 of `${METHOD} ${PATH}\n${stable(body)}`) + `IdempotencyInterceptor` registered as APP_INTERCEPTOR. Opt-in via `Idempotency-Key` header. Replays cached response with `Idempotency-Replayed: true` on hash match; 409 on hash mismatch. **Follow-up:** TTL pruning cron, frontend `api_client.dart` sending keys on retryable POSTs. |
