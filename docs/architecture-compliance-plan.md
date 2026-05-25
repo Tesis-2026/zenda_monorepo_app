@@ -81,7 +81,7 @@ Each batch ships as one commit on its own branch with PR to `develop`.
 | **B24** | Env config validation at boot | Backend (Joi/zod schema or `class-validator` on `configuration.ts`; switch `process.env.X` to `configService.getOrThrow`) | Low | M (~3h) | 🟢 Done (2026-05-24, backend#22) |
 | **B25** | `User.tokenVersion` + JWT version claim | Backend (schema migration + auth use cases + guard) — closes ARCH-24, partially helps ARCH-20 | Medium | M (~4h) | 🟢 Done (2026-05-24, backend#23) — shipped together with B21 |
 | **B26** | Request log redaction + response-side logging | Backend (extend `RequestLoggingInterceptor` to strip `password`, `Authorization`, `token` patterns from path/headers; log response status + size) | Low | S (~2h) | 🟢 Done (2026-05-24, backend#21) |
-| **B27** | Audit log writer (cross-cutting) | Backend (interceptor or decorator on mutation use cases; populate `AuditLog.before_json/after_json/request_id` for CRUD on Transaction/Budget/Goal/Category + auth events) | Medium-High | L (~1d) | ⚪ Pending — see ARCH-26. **Builds on B8** which created the `audit-events` module. |
+| **B27** | Audit log writer (cross-cutting) | Backend (interceptor or decorator on mutation use cases; populate `AuditLog.before_json/after_json/request_id` for CRUD on Transaction/Budget/Goal/Category + auth events) | Medium-High | L (~1d) | 🟢 Done (2026-05-25, backend#36) — closes ARCH-26. Builds on B8. New audited actions: UPDATE_CATEGORY, CONTRIBUTE_TO_GOAL, REGISTER, LOGOUT, FORGOT_PASSWORD, SEND_OTP, VERIFY_OTP. Failed forgot-password/send-otp/verify-otp attempts logged with `status=FAILURE` + email in metadata (preserves anti-enumeration at API boundary while keeping probes visible). Refresh-token rotation intentionally not audited (high volume, low value). |
 | **B28** | Idempotency-Key support | Backend (DTO header + dedup table or Redis cache + middleware on POST routes); also frontend `api_client.dart` sends keys on retryable POSTs | Medium | M (~6h) | 🟢 Done (2026-05-24, backend#25) — backend side; frontend `api_client.dart` header support deferred until B5 merges. **Follow-up:** TTL pruning cron not yet implemented. |
 | **B29** | Production Dockerfile + multi-stage build | Backend (`Dockerfile` with build stage + runtime stage; `.dockerignore`; document run/health/restart) | Low | S (~2h) | 🟢 Done (2026-05-24, backend#21) |
 | **B30** | `@Throttle` on remaining POST endpoints | Backend (Transactions/Budgets/Goals POST: standard limits; AI `/chat`: stricter — e.g., 10/min per user) | Minimal | XS (~30min) | 🟢 Done (2026-05-24, backend#20) |
@@ -200,7 +200,7 @@ Re-prioritized after finding ARCH-14, -15, -16 in the fourth-tier audit. The "qu
 20. ~~B28~~ ✅ backend#25
 
 **Tier 4 — Larger structural work (1d+):**
-21. **B27** (audit log writer cross-cutting) — 1d
+21. ~~B27~~ ✅ backend#36 — closes ARCH-26
 22. ~~B5~~ ✅ frontend#20 — 8 screens migrated to provider-based services + cross-screen number-format provider
 23. ~~B19~~ ✅ backend#34 — closes ARCH-17 (badges/challenges/categories). Auth + insights→goals deferred.
 24. **B7** (extract surveys + conversations modules) — 1.5d, highest risk; last
