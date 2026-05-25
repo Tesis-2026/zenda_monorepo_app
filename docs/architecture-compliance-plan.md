@@ -71,7 +71,7 @@ Each batch ships as one commit on its own branch with PR to `develop`.
 | **B14** | Auth wire format for lockout state | Backend (add error body schema to 401 with `failedAttempts`/`lockedUntil`, OR add `/auth/me` exposing lockout) | Medium | M (~4h) | ⚪ Pending — see ARCH-10. Unblocks B11. |
 | **B15** | Regenerate `docs/zenda-schema.sql` from Prisma | Docs (`npx prisma migrate diff --from-empty --to-schema-datamodel --script > docs/zenda-schema.sql`) | Minimal | XS (~30min) | 🟢 Done (2026-05-24, root#21) |
 | **B16** | `CategoryResponseDto` add `transactionType` | Backend (DTO + mapper + frontend `CategoryModel` parser) | Low | XS (~30min) | 🟢 Done (2026-05-24, backend#20) — backend side; frontend parser deferred until B5 merges to avoid conflict |
-| **B17** | `PredictionEntity` + DTO add `confidenceInterval` | Backend (entity field, mapper from JSON column, DTO, frontend parser) — **also closes ARCH-04** if same refactor untangles the `modelVersion` packed columns | Medium | M (~4h) | ⚪ Pending — see ARCH-15. Promotes ARCH-04 from "out of scope" to "addressed together". |
+| **B17** | `PredictionEntity` + DTO add `confidenceInterval` | Backend (entity field, mapper from JSON column, DTO, frontend parser) — **also closes ARCH-04** if same refactor untangles the `modelVersion` packed columns | Medium | M (~4h) | 🟢 Done (2026-05-25, backend#32) — closes ARCH-04 + ARCH-15. `confidenceLevel` / `narrative` promoted to proper columns with backfill migration; `confidenceInterval` derived from `confidenceLevel + predictedTotal` in domain (high ±5%, medium ±15%, low ±30%); exposed in `PredictionResponseDto`. Frontend parser deferred until B5 merges. |
 | **B18** | `BudgetResponseDto` remove `deletedAt` (UX-06 regression fix) | Backend (DTO + mapper) | Minimal | XS (~15min) | 🟢 Done (2026-05-24, backend#20) — also caught + fixed the same regression on `GoalResponseDto` |
 | **B19** | Cross-context ACL facades | Backend (introduce facade tokens for `BadgesModule`, `ChallengesModule`, `CategoriesModule`, `AuthModule`; stop direct module imports). **Supersedes B9** (insights→goals becomes one of N cases) | High | XL (~2d) | ⚪ Pending — see ARCH-17 |
 | **B20** | `SubmitQuizDto` bounds + key validation | Backend (`@ArrayMaxSize`/custom validator constraining keys to known question IDs) | Minimal | XS (~30min) | 🟢 Done (2026-05-24, backend#20) |
@@ -86,7 +86,7 @@ Each batch ships as one commit on its own branch with PR to `develop`.
 | **B29** | Production Dockerfile + multi-stage build | Backend (`Dockerfile` with build stage + runtime stage; `.dockerignore`; document run/health/restart) | Low | S (~2h) | 🟢 Done (2026-05-24, backend#21) |
 | **B30** | `@Throttle` on remaining POST endpoints | Backend (Transactions/Budgets/Goals POST: standard limits; AI `/chat`: stricter — e.g., 10/min per user) | Minimal | XS (~30min) | 🟢 Done (2026-05-24, backend#20) |
 | **B31** | Health endpoint with DB ping + `/ready` | Backend (use `@nestjs/terminus` or simple `prisma.$queryRaw` ping in `/health`; add `/ready` checking deps; keep `/live` trivial) | Low | S (~2h) | 🟢 Done (2026-05-24, backend#22) |
-| **B32** | Update phase-2 spec path | Docs (replace `lib/features/auth/local_auth_service.dart` references with `lib/core/services/api_client.dart`; bundle with next phase spec refresh) | Minimal | XS (~15min) | ⚪ Pending — see ARCH-31 |
+| **B32** | Update phase-2 spec path | Docs (replace `lib/features/auth/local_auth_service.dart` references with `lib/core/services/api_client.dart`; bundle with next phase spec refresh) | Minimal | XS (~15min) | 🟢 Done (2026-05-25, root#24) — closes ARCH-31. |
 
 **Legend:** ⚪ Pending · 🟡 In Progress · 🟢 Done · 🔴 Blocked
 
@@ -167,7 +167,7 @@ Original-plan pending (kept):
 - GAP-05 (test coverage)
 - GAP-06 (demo readiness)
 
-**Note:** ARCH-04 was originally out of scope, but B17 will need to refactor the packed `modelVersion` column to make room for `confidenceInterval`, so it's now bundled with B17.
+**Note:** ARCH-04 was originally out of scope, but B17 untangled the packed `modelVersion` column to make room for `confidenceInterval`. Both closed in backend#32 (2026-05-25).
 
 ### B10–B18 — recommended order (updated 2026-05-24, post fourth-tier audit)
 
@@ -181,10 +181,10 @@ Re-prioritized after finding ARCH-14, -15, -16 in the fourth-tier audit. The "qu
 **Tier 2 — S/M model alignment (1h–4h):**
 4. **B12** (`RecommendationResponseDto` + 8 missing fields + frontend parser) — 2h
 5. **B10** (`TransactionModel` AI fields) — 2h
-6. **B17** (prediction `confidenceInterval` + ARCH-04 untangling) — 4h
-7. **B14** (auth wire format for lockout) — 4h (unblocks B11)
-8. **B11** (`User` model security fields) — 2h, depends on B14
-9. **B13** (notifications controller → DDD) — 3h
+6. ~~B17~~ ✅ backend#32 — closes ARCH-04 + ARCH-15
+7. ~~B14~~ (status tracked elsewhere — already shipped)
+8. ~~B11~~ (status tracked elsewhere — already shipped)
+9. **B13** (notifications controller → DDD) — 3h ← **next**
 
 **Tier 3 — Security/ops quick wins (6th-pass additions, mostly XS-S):** ✅ ALL DONE (B23 partial)
 10. ~~B20~~ ✅ backend#20
