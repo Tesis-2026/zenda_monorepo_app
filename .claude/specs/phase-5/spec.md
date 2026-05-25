@@ -4,7 +4,7 @@
 
 Before this phase, users could record transactions and manage categories (Phases 3–4), but had no way to visualize their spending patterns over time. The dashboard's `BudgetPieChart` and `SummaryCard` provided only static 50/30/20 breakdown and today/week totals. Phase 5 closes the gap by introducing a dedicated reporting layer: four new backend aggregation endpoints, a PDF export endpoint, and a full-screen reports UI with interactive charts.
 
-User stories covered: US-0401 (monthly summary), US-0402 (weekly summary), US-0403 (daily summary), US-0404 (monthly comparison), US-0405 (charts by category), US-0406 (PDF export).
+User stories covered: US-009 / US-038 (monthly summary), US-008 (weekly summary), US-007 (daily summary), US-011 (monthly comparison), US-010 (charts by category), US-013 (PDF export).
 
 ## Tasks Completed
 
@@ -35,7 +35,7 @@ User stories covered: US-0401 (monthly summary), US-0402 (weekly summary), US-04
 
 ## What Was Built
 
-### Summary Endpoints (US-0401, US-0402, US-0403)
+### Summary Endpoints (US-009 / US-038, US-008, US-007)
 
 All three period endpoints share the same response shape via `PeriodSummaryData`:
 
@@ -55,7 +55,7 @@ All three period endpoints share the same response shape via `PeriodSummaryData`
 
 ISO week bounds are computed using the standard Jan-4 anchor rule (week 1 always contains the first Thursday of the year).
 
-### Monthly Comparison Endpoint (US-0404)
+### Monthly Comparison Endpoint (US-011)
 
 `GET /api/summary/comparison?months=N` returns an array of N entries for the last N calendar months (oldest first), each with:
 
@@ -69,7 +69,7 @@ ISO week bounds are computed using the standard Jan-4 anchor rule (week 1 always
 
 Valid range for `months`: 2–12.
 
-### PDF Export Endpoint (US-0406)
+### PDF Export Endpoint (US-013)
 
 `GET /api/reports/export/pdf?year=Y&month=M` streams a PDF buffer with:
 - `Content-Type: application/pdf`
@@ -82,7 +82,7 @@ PDF layout:
 4. **Savings Goals** — progress bar per goal, current/target amounts, percentage label
 5. **Footer** — generation date centered
 
-### ReportsScreen (US-0405)
+### ReportsScreen (US-010)
 
 Accessible via `/reports` route, linked from the Profile tab of `DashboardScreen`.
 

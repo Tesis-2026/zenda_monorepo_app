@@ -28,4 +28,4 @@
 - **`year` range 2000–3000** — enforced by `@Min(2000) @Max(3000)` on `CreateBudgetDto` and `ListBudgetsDto`
 - **`deletedAt: null` on all queries** — enforced in `PrismaBudgetsRepository` on every `findMany`, `findFirst`, and the `currentSpent` aggregate `where` clause; no transparent soft-delete middleware
 - **`Decimal` → `number` conversion at repository boundary** — `amountLimit.toNumber()` and `_sum.amount?.toNumber()` called in `toEntity()`; application and domain layers never see Prisma `Decimal`
-- **Goal detail screen deferred** — US-0503 (contribution history, progress chart, completion projection) is P2 and was not implemented in this phase
+- **Goal detail screen deferred** — US-022 (contribution history, progress chart, completion projection) is P2 and was not implemented in this phase

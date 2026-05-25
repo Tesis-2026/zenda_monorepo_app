@@ -4,7 +4,7 @@
 
 Before this phase, users could record transactions and view reports (Phases 3–5), but had no way to set spending limits or track savings targets. The Budget model and `@@unique` constraint had been defined in Phase 1B, and the Goals backend (create, list, contribute, delete) was implemented in Phase 3. Phase 6 closes the gap by adding the Budget CRUD backend, and building dedicated Flutter screens for both budgets and goals.
 
-User stories covered: US-0501 (budget management), US-0502 (savings goals frontend), US-0503 (goal detail screen).
+User stories covered: US-019 / US-042 (budget management), US-021 / US-044 (savings goals frontend), US-022 (goal detail screen).
 
 ## Tasks Completed
 
@@ -36,7 +36,7 @@ User stories covered: US-0501 (budget management), US-0502 (savings goals fronte
 
 ## What Was Built
 
-### Budget CRUD (US-0501)
+### Budget CRUD (US-019 / US-042)
 
 `GET /api/budgets?month=M&year=Y` returns all budgets for the authenticated user, enriched with current spending:
 
@@ -58,7 +58,7 @@ User stories covered: US-0501 (budget management), US-0502 (savings goals fronte
 | `PUT /api/budgets/:id` | Update amountLimit |
 | `DELETE /api/budgets/:id` | Soft delete |
 
-### BudgetScreen (US-0501)
+### BudgetScreen (US-019 / US-042)
 
 Accessible via `/budgets`, linked from the Profile tab.
 
@@ -69,7 +69,7 @@ Accessible via `/budgets`, linked from the Profile tab.
 - Edit icon on each card to update amountLimit
 - Delete icon with confirm dialog
 
-### GoalsScreen (US-0502)
+### GoalsScreen (US-021 / US-044)
 
 Accessible via `/goals`, linked from the Profile tab.
 
@@ -80,7 +80,7 @@ Accessible via `/goals`, linked from the Profile tab.
 - Delete icon with confirm dialog
 - Tapping a card navigates to `/goals/:id` (GoalDetailScreen), passing the `SavingsGoal` object via GoRouter `extra`
 
-### GoalDetailScreen (US-0503)
+### GoalDetailScreen (US-022)
 
 Accessible via `/goals/:id`, reached by tapping any goal card in GoalsScreen.
 

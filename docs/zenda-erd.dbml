@@ -1,0 +1,590 @@
+// Zenda — Entity Relationship Diagram
+// Docs: https://dbml.dbdiagram.io/docs
+
+// ─────────────────────────────────────────────────────────────────
+// ENUMS
+// ─────────────────────────────────────────────────────────────────
+
+Enum transaction_type {
+  INCOME
+  EXPENSE
+}
+
+Enum category_type {
+  SYSTEM
+  CUSTOM
+}
+
+Enum income_type {
+  SCHOLARSHIP
+  PART_TIME
+  FAMILY
+  MIXED
+}
+
+Enum financial_literacy_level {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+Enum topic_difficulty {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+Enum recommendation_type {
+  SAVINGS
+  BUDGET
+  GOAL
+}
+
+Enum survey_type {
+  PRE
+  POST
+  SUS
+}
+
+Enum notification_type {
+  BUDGET_ALERT
+  ANOMALY_ALERT
+  PREDICTION_READY
+  CHALLENGE_REMINDER
+  DAILY_REMINDER
+  BADGE_EARNED
+}
+
+Enum feedback_type {
+  BUG
+  SUGGESTION
+  GENERAL
+}
+
+Enum ai_conversation_status {
+  ACTIVE
+  CLOSED
+}
+
+Enum ai_message_role {
+  USER
+  ASSISTANT
+}
+
+Enum category_source {
+  AI               // AI suggested and the user accepted as-is
+  AI_OVERRIDDEN    // AI suggested but the user picked a different category
+  USER             // user picked the category manually (no AI suggestion)
+}
+
+Enum audit_status {
+  SUCCESS
+  FAILURE
+}
+
+Enum auth_challenge_kind {
+  RESET_TOKEN
+  OTP
+}
+
+// ─────────────────────────────────────────────────────────────────
+// CORE
+// ─────────────────────────────────────────────────────────────────
+
+Table users {
+  id                     uuid                    [primary key]
+  email                  varchar                 [unique, not null]
+  password_hash          varchar                 [not null]
+  full_name              varchar                 [not null]
+  age                    int
+  university             varchar
+  income_type            income_type
+  average_monthly_income decimal(12,2)
+  financial_literacy_level financial_literacy_level
+  profile_completed      boolean                 [default: false]
+  currency               varchar                 [default: "PEN"]
+  consent_given          boolean                 [default: false]
+  consent_at             timestamp
+  failed_login_attempts  int                     [default: 0]
+  locked_until           timestamp
+  notification_prefs     json                    [default: `'{}'`, note: 'shape: { NotificationType: boolean }; missing keys default to true']
+  created_at             timestamp
+  updated_at             timestamp
+  deleted_at             timestamp
+}
+
+Table categories {
+  id               uuid           [primary key]
+  name             varchar        [not null]
+  type             category_type  [default: "CUSTOM"]
+  transaction_type transaction_type [note: 'null = applies to both types']
+  user_id          uuid           [note: 'null = system category']
+  created_at       timestamp
+  updated_at       timestamp
+  deleted_at       timestamp
+}
+
+Table transactions {
+  id                    uuid             [primary key]
+  user_id               uuid             [not null]
+  category_id           uuid             [note: 'final category — what counts for budgets/insights']
+  suggested_category_id uuid             [note: 'what the AI proposed at create time; null = no AI involved']
+  ai_confidence         decimal(3,2)     [note: '0.00–1.00; null = no AI involved']
+  category_source       category_source  [default: "USER", note: 'AI / AI_OVERRIDDEN / USER — derived from (suggested_category_id, category_id)']
+  type                  transaction_type [not null]
+  amount                decimal(12,2)    [not null]
+  currency              varchar          [default: "PEN"]
+  description           varchar          [not null]
+  occurred_at           timestamp
+  created_at            timestamp
+  updated_at            timestamp
+  deleted_at            timestamp
+}
+
+Table savings_goals {
+  id             uuid          [primary key]
+  user_id        uuid          [not null]
+  name           varchar       [not null]
+  target_amount  decimal(12,2) [not null]
+  current_amount decimal(12,2) [default: 0]
+  due_date       timestamp
+  created_at     timestamp
+  updated_at     timestamp
+  deleted_at     timestamp
+}
+
+Table goal_contributions {
+  id         uuid          [primary key]
+  goal_id    uuid          [not null]
+  amount     decimal(12,2) [not null]
+  created_at timestamp
+}
+
+Table budgets {
+  id           uuid          [primary key]
+  user_id      uuid          [not null]
+  category_id  uuid          [note: 'null = global budget for the period']
+  amount_limit decimal(12,2) [not null]
+  month        int           [not null]
+  year         int           [not null]
+  created_at   timestamp
+  updated_at   timestamp
+  deleted_at   timestamp
+
+  indexes {
+    (user_id, category_id, month, year) [unique]
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────
+// NOTIFICATIONS
+// Preferences live as JSON on users.notification_prefs.
+// ─────────────────────────────────────────────────────────────────
+
+// ─────────────────────────────────────────────────────────────────
+// EDUCATION & GAMIFICATION
+// ─────────────────────────────────────────────────────────────────
+
+Table educational_topics {
+  id         uuid             [primary key]
+  title      varchar          [not null]
+  content    text             [not null]
+  difficulty topic_difficulty [default: "BEGINNER"]
+  order      int              [default: 0]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table quiz_questions {
+  id                uuid             [primary key]
+  topic_id          uuid
+  question_group_key varchar         [not null, note: 'groups EN + ES variants of the same question']
+  language          varchar          [not null, note: 'en or es']
+  difficulty        topic_difficulty [not null]
+  text              text             [not null]
+  options           json             [not null, note: 'String[]']
+  correct_answer    varchar          [not null]
+  created_at        timestamp
+  updated_at        timestamp
+}
+
+Table user_topic_progress {
+  id             uuid         [primary key]
+  user_id        uuid         [not null]
+  topic_id       uuid         [not null]
+  completed_at   timestamp
+  score          decimal(5,2) [note: '0–100, latest quiz score for this topic']
+  attempts_count int          [default: 0, note: 'total quiz attempts on this topic']
+  created_at     timestamp
+
+  indexes {
+    (user_id, topic_id) [unique]
+  }
+}
+
+Table quiz_attempts {
+  id              uuid    [primary key]
+  user_id         uuid    [not null]
+  question_id     uuid    [not null]
+  topic_id        uuid    [note: 'denormalized for fast per-topic filtering']
+  selected_answer varchar [not null]
+  is_correct      boolean [not null]
+  attempted_at    timestamp
+  created_at      timestamp
+
+  indexes {
+    (user_id, topic_id, attempted_at)
+    (user_id, attempted_at)
+    (question_id)
+  }
+}
+
+Table challenges {
+  id            uuid      [primary key]
+  title         varchar   [not null]
+  description   text      [not null]
+  criteria_json json      [not null]
+  reward        varchar
+  created_at    timestamp
+  updated_at    timestamp
+}
+
+// Status (AVAILABLE / ACTIVE / COMPLETED) is derived from (accepted_at, completed_at) — not stored.
+// Rule: accepted_at = null → AVAILABLE · accepted_at set, completed_at null → ACTIVE · completed_at set → COMPLETED.
+Table user_challenges {
+  id           uuid      [primary key]
+  user_id      uuid      [not null]
+  challenge_id uuid      [not null]
+  accepted_at  timestamp
+  completed_at timestamp
+  created_at   timestamp
+  updated_at   timestamp
+
+  indexes {
+    (user_id, challenge_id) [unique]
+    (user_id, completed_at)
+    (user_id, accepted_at)
+  }
+}
+
+Table badges {
+  id          uuid      [primary key]
+  name        varchar   [unique, not null]
+  description text      [not null]
+  criteria    varchar   [not null]
+  icon_url    varchar
+  created_at  timestamp
+  updated_at  timestamp
+}
+
+Table user_badges {
+  id        uuid      [primary key]
+  user_id   uuid      [not null]
+  badge_id  uuid      [not null]
+  earned_at timestamp
+
+  indexes {
+    (user_id, badge_id) [unique]
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────
+// AI / ML
+// ─────────────────────────────────────────────────────────────────
+
+Table predictions {
+  id                   uuid             [primary key]
+  user_id              uuid             [not null]
+  period               varchar          [not null, note: 'Format: YYYY-MM']
+  type                 transaction_type [not null]
+  predicted_total      decimal(12,2)    [not null]
+  predicted_by_category json            [note: '{category_id, category_name, amount}[]']
+  confidence_interval  json             [note: '{lower, upper}']
+  model_version        varchar
+  actual_total         decimal(12,2)    [note: 'filled after period ends']
+  accuracy             decimal(5,2)     [note: 'retrospective accuracy %']
+  created_at           timestamp
+  updated_at           timestamp
+
+  indexes {
+    (user_id, period, type) [unique]
+  }
+}
+
+Table recommendations {
+  id                 uuid                [primary key]
+  user_id            uuid                [not null]
+  type               recommendation_type [not null]
+  message            text                [not null]
+  suggested_action   varchar
+  is_active          boolean             [default: true]
+  // Traceability for the AI-history KPI (>=80% accuracy support)
+  model_version      varchar             [note: 'e.g. rules-v1 | azure-foundry-gpt-4o-2024-08-06']
+  source             varchar             [note: 'e.g. local-rules | azure-foundry']
+  input_context_json json                [note: 'snapshot of inputs used to generate']
+  // Lifecycle history
+  viewed_at          timestamp
+  dismissed_at       timestamp
+  expires_at         timestamp
+  // Inlined feedback (was previously recommendation_feedback 1:1 table)
+  feedback_accepted  boolean
+  feedback_at        timestamp
+  created_at         timestamp
+  updated_at         timestamp
+
+  indexes {
+    (user_id, is_active)
+    (user_id, created_at)
+    (user_id, dismissed_at)
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────
+// AI CHAT — CONVERSATIONAL ASSISTANT
+// ─────────────────────────────────────────────────────────────────
+
+Table ai_conversations {
+  id         uuid                   [primary key]
+  user_id    uuid                   [not null]
+  status     ai_conversation_status [default: "ACTIVE", note: 'one ACTIVE conversation per user — enforced in the service layer']
+  started_at timestamp
+  ended_at   timestamp              [note: 'set when the conversation is closed, e.g. on logout']
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (user_id, status)
+  }
+}
+
+Table ai_messages {
+  id              uuid            [primary key]
+  conversation_id uuid            [not null]
+  role            ai_message_role [not null]
+  content         text            [not null]
+  created_at      timestamp
+
+  indexes {
+    (conversation_id, created_at)
+  }
+}
+
+// Monthly snapshot per user — behavioral progress for learning-vs-behavior correlation (obs. #9).
+Table user_financial_progress {
+  id                          uuid         [primary key]
+  user_id                     uuid         [not null]
+  period                      varchar      [not null, note: 'Format: YYYY-MM']
+  budget_compliance_score     decimal(5,2) [note: '% categories within budget (0–100)']
+  savings_rate_pct            decimal(5,2) [note: '(income - expenses) / income * 100']
+  overspend_categories_count  int          [default: 0]
+  recommendations_shown       int          [default: 0]
+  recommendations_accepted    int          [default: 0]
+  quizzes_completed           int          [default: 0]
+  avg_quiz_score              decimal(5,2) [note: '0–100']
+  created_at                  timestamp
+
+  indexes {
+    (user_id, period) [unique]
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────
+// SURVEYS
+// ─────────────────────────────────────────────────────────────────
+
+// Surveys embed their questions as JSON (was a separate survey_questions table).
+// questions_json shape: [{ id: uuid, order: int, text: string, options: string[], correctAnswer: string | null }]
+// IDs are UUIDs preserved across migrations so survey_responses.answers_json keys stay valid.
+Table surveys {
+  id             uuid        [primary key]
+  type           survey_type [not null]
+  questions_json json        [default: `'[]'`, note: 'embedded SurveyQuestionJson[]']
+  created_at     timestamp
+  updated_at     timestamp
+}
+
+Table survey_responses {
+  id           uuid         [primary key]
+  user_id      uuid         [not null]
+  survey_id    uuid         [not null]
+  answers_json json         [not null, note: 'question_id → selected_option']
+  score        decimal(5,2) [note: '0–100']
+  completed_at timestamp
+
+  indexes {
+    (user_id, survey_id) [unique]
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────
+// ANALYTICS & SECURITY
+// ─────────────────────────────────────────────────────────────────
+
+Table analytics_events {
+  id         uuid    [primary key]
+  user_id    uuid    [not null]
+  event_type varchar [not null]
+  metadata   json
+  created_at timestamp
+}
+
+Table audit_logs {
+  id          uuid         [primary key]
+  user_id     uuid         [note: 'actor — who performed the action; null = system/cron']
+  action      varchar      [not null, note: 'e.g. DELETE_ACCOUNT, RESET_PASSWORD']
+  resource    varchar      [not null, note: 'e.g. User, Transaction']
+  resource_id uuid         [note: 'UUID of the specific resource affected']
+  status      audit_status [default: "SUCCESS"]
+  request_id  varchar      [note: 'correlation id across logs in the same request']
+  http_method varchar      [note: 'GET, POST, PUT, DELETE…']
+  http_path   varchar      [note: 'e.g. /api/transactions/:id']
+  ip_address  varchar
+  user_agent  varchar
+  before_json json         [note: 'state before the change']
+  after_json  json         [note: 'state after the change']
+  metadata    json
+  created_at  timestamp
+
+  indexes {
+    (user_id, created_at)
+    (action, resource)
+    (resource, resource_id)
+    (request_id)
+    (created_at)
+  }
+}
+
+// Unified auth challenges (was password_reset_tokens + password_reset_otps).
+// secret stores the hashed token (RESET_TOKEN) or hashed OTP code (OTP).
+Table auth_challenges {
+  id         uuid                [primary key]
+  user_id    uuid                [not null]
+  kind       auth_challenge_kind [not null]
+  secret     varchar             [not null, note: 'sha256 hash of raw token/code']
+  email      varchar             [note: 'only set for OTP — enables findByEmail+code']
+  expires_at timestamp           [not null]
+  used_at    timestamp
+  created_at timestamp
+
+  indexes {
+    (kind, secret) [unique]
+    (user_id, kind)
+    (email, kind)
+  }
+}
+
+Table refresh_tokens {
+  id         uuid      [primary key]
+  user_id    uuid      [not null]
+  token      varchar   [unique, not null]
+  expires_at timestamp [not null]
+  created_at timestamp
+}
+
+Table feedback {
+  id          uuid          [primary key]
+  user_id     uuid          [not null]
+  type        feedback_type [default: "GENERAL"]
+  message     text          [not null]
+  screen_name varchar
+  rating      int           [note: '1–5']
+  created_at  timestamp
+}
+
+// ─────────────────────────────────────────────────────────────────
+// REFS
+// ─────────────────────────────────────────────────────────────────
+
+// Core
+Ref category_owner:           categories.user_id > users.id
+Ref transaction_user:                  transactions.user_id > users.id
+Ref transaction_category:              transactions.category_id > categories.id
+Ref transaction_suggested_category:    transactions.suggested_category_id > categories.id
+Ref goal_owner:               savings_goals.user_id > users.id
+Ref contribution_goal:        goal_contributions.goal_id > savings_goals.id
+Ref budget_owner:             budgets.user_id > users.id
+Ref budget_category:          budgets.category_id > categories.id
+
+// Education & Gamification
+Ref quiz_topic:               quiz_questions.topic_id > educational_topics.id
+Ref topic_progress_user:      user_topic_progress.user_id > users.id
+Ref topic_progress_topic:     user_topic_progress.topic_id > educational_topics.id
+Ref quiz_attempt_user:        quiz_attempts.user_id > users.id
+Ref quiz_attempt_question:    quiz_attempts.question_id > quiz_questions.id
+Ref quiz_attempt_topic:       quiz_attempts.topic_id > educational_topics.id
+Ref user_challenge_user:      user_challenges.user_id > users.id
+Ref user_challenge_challenge: user_challenges.challenge_id > challenges.id
+Ref user_badge_user:          user_badges.user_id > users.id
+Ref user_badge_badge:         user_badges.badge_id > badges.id
+
+// AI / ML
+Ref prediction_user:          predictions.user_id > users.id
+Ref recommendation_user:      recommendations.user_id > users.id
+Ref conversation_user:        ai_conversations.user_id > users.id
+Ref message_conversation:     ai_messages.conversation_id > ai_conversations.id
+Ref financial_progress_user:  user_financial_progress.user_id > users.id
+
+// Surveys
+Ref survey_response_user:     survey_responses.user_id > users.id
+Ref survey_response_survey:   survey_responses.survey_id > surveys.id
+
+// Analytics & Security
+Ref analytics_user:           analytics_events.user_id > users.id
+Ref audit_user:               audit_logs.user_id > users.id
+Ref auth_challenge_user:      auth_challenges.user_id > users.id
+Ref refresh_token_user:       refresh_tokens.user_id > users.id
+Ref feedback_user:            feedback.user_id > users.id
+
+// ─────────────────────────────────────────────────────────────────
+// TABLE GROUPS — Bounded Contexts
+// ─────────────────────────────────────────────────────────────────
+
+TableGroup Auth {
+  users
+  refresh_tokens
+  auth_challenges
+}
+
+TableGroup TransactionsAndCategories {
+  transactions
+  categories
+}
+
+TableGroup BudgetsAndGoals {
+  budgets
+  savings_goals
+  goal_contributions
+}
+
+TableGroup Education {
+  educational_topics
+  quiz_questions
+  quiz_attempts
+  user_topic_progress
+}
+
+TableGroup Gamification {
+  challenges
+  user_challenges
+  badges
+  user_badges
+}
+
+TableGroup AI {
+  predictions
+  recommendations
+  ai_conversations
+  ai_messages
+  user_financial_progress
+}
+
+TableGroup Surveys {
+  surveys
+  survey_responses
+}
+
+TableGroup AnalyticsAndAudit {
+  analytics_events
+  audit_logs
+  feedback
+}

@@ -50,28 +50,28 @@ Read `.github/PULL_REQUEST_TEMPLATE.md` (or similar in `.github/`) to get the ex
 
 ### Step 3: Fill the Template
 
-### 📝 Description
+### Description
 - Analyze the diff and commits to write a clear summary of **what** changed and **why**.
 - Focus on business value, not implementation details.
 - Group changes logically if multiple areas were modified.
 - Reference Linear/issue IDs from branch name or commits if present (e.g., `PUL3-34`).
 
-### 🔧 Type of Change
+### Type of Change
 - Match commit prefixes to types: `feat` → New feature, `fix` → Bug fix, `refactor` → Refactoring, `test` → Test changes, `docs` → Documentation, `chore`/`build` → Build/Config.
 - Use `[x]` to check matching boxes, `[ ]` for the rest.
 - Multiple types can be checked.
 - Use the **exact checkbox labels** from the template — do not rewrite them.
 
-### 💥 Breaking Changes
+### Breaking Changes
 - Analyze if any of these changed: public API contracts, database schemas, environment variables, config file formats, removed exports.
 - If yes: check Yes and explain what breaks + migration steps.
 - If no: check No.
 
-### 📸 Screenshots / Videos
+### Screenshots / Videos
 - If changes touch `client/components/` or UI files, add: `<!-- Please attach screenshots for UI changes -->`.
 - Otherwise: `N/A — No UI changes.`
 
-### 📋 Additional Notes
+### Additional Notes
 - Mention deployment steps if needed.
 - Mention dependencies on other PRs or services.
 - Add reviewer instructions if the changes require specific testing.

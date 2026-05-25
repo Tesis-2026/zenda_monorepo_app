@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__pencil__get_screenshot",
+      "mcp__pencil__batch_get",
+      "mcp__pencil__get_editor_state",
+      "mcp__pencil__open_document",
+      "mcp__pencil__get_guidelines",
+      "mcp__pencil__snapshot_layout",
+      "mcp__pencil__get_variables",
+      "mcp__pencil__find_empty_space_on_canvas"
+    ]
+  }
+}

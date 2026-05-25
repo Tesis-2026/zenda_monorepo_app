@@ -81,7 +81,7 @@ async function main(): Promise<void> {
     await seedEducationalTopics(tx);
     await seedSurveys(tx);
   });
-  console.log('✓ Seed completed');
+  console.log('Seed completed');
 }
 ```
 

@@ -2,15 +2,15 @@
 
 ## Context
 
-Before this phase, the project had a fully operational NestJS backend (Phase 1A) and a complete Prisma schema (Phase 1B), but zero frontend code. This phase bootstraps the entire Flutter mobile app: app infrastructure, all auth flows wired to the backend API, onboarding, a functional dashboard with 50/30/20 budget visualization, transaction entry, profile management, and full EN/ES internationalization. User stories covered: US-0101, US-0102, US-0103, US-0104, US-0105, US-0301, US-0501.
+Before this phase, the project had a fully operational NestJS backend (Phase 1A) and a complete Prisma schema (Phase 1B), but zero frontend code. This phase bootstraps the entire Flutter mobile app: app infrastructure, all auth flows wired to the backend API, onboarding, a functional dashboard with 50/30/20 budget visualization, transaction entry, profile management, and Spanish-only localization (the audience is Spanish-speaking Peruvian university students; locale is forced to `es` and there is no language switcher). User stories covered: US-027, US-028, (infrastructure: JWT guard), (infrastructure: password recovery), US-030 / US-032, US-005, US-019.
 
 ## Tasks Completed
 
 1. `pubspec.yaml` — Flutter project with dependencies: `flutter_riverpod ^3.0.3`, `go_router ^17.0.0`, `google_fonts`, `fl_chart`, `image_picker`, `intl`, `shared_preferences`, `crypto`, `http`, `flutter_secure_storage`, `flutter_localizations`
 2. `lib/main.dart` — entry point with `ProviderScope` wrapping `App`
-3. `lib/app.dart` — `MaterialApp.router` with GoRouter, localization delegates, light/dark themes
+3. `lib/app.dart` — `MaterialApp.router` with GoRouter, localization delegates, light theme (forced via `themeMode: ThemeMode.light`)
 4. `lib/routing/app_router.dart` — GoRouter with all routes: `/`, `/onboarding`, `/auth/login`, `/auth/register`, `/auth/forgot-password`, `/auth/reset-password`, `/dashboard`, `/add-transaction`
-5. `lib/core/theme/` — `AppTheme`, `LightTheme`, `DarkTheme` using Material 3
+5. `lib/core/theme/` — `AppTheme` (light only) using Material 3
 6. `lib/core/models/` — `User`, `Transaction`, `Account`, `Streak`, `Breakdown503020`
 7. `lib/core/services/api_client.dart` — base HTTP client with auth token injection and error normalization
 8. `lib/core/services/auth_api_service.dart` — register, login, forgotPassword, resetPassword hitting the NestJS API
@@ -22,7 +22,7 @@ Before this phase, the project had a fully operational NestJS backend (Phase 1A)
 14. `lib/core/services/ai_advice_service.dart` — stub returning hardcoded financial tips
 15. `lib/core/services/ocr_service.dart` — stub (image picker integration, OCR pending Phase 7)
 16. `lib/features/auth/auth_controller.dart` — Riverpod `Notifier` for auth state (login, register, clearError)
-17. `lib/features/auth/local_auth_service.dart` — local credential storage using `flutter_secure_storage`
+17. `lib/core/services/api_client.dart` — base HTTP client with `flutter_secure_storage`-backed JWT and refresh handling
 18. `lib/features/auth/auth_gate.dart` — redirect guard: authenticated users bypassed from auth screens
 19. `lib/features/auth/login_screen.dart` — email/password form, forgot-password link, "account not found" dialog
 20. `lib/features/auth/register_screen.dart` — name/email/password form, privacy note
@@ -68,7 +68,7 @@ Before this phase, the project had a fully operational NestJS backend (Phase 1A)
 | `/dashboard` | `DashboardScreen` | Yes |
 | `/add-transaction` | `AddTransactionScreen` | Yes |
 
-### Auth Flow (US-0101, US-0102, US-0103)
+### Auth Flow (US-027, US-028, infrastructure: JWT guard)
 
 - **Login**: email + password → `AuthApiService.login()` → JWT stored in `flutter_secure_storage` → navigate to `/dashboard`
 - **Register**: name + email + password → `AuthApiService.register()` → auto-login → `/dashboard`
@@ -76,11 +76,11 @@ Before this phase, the project had a fully operational NestJS backend (Phase 1A)
 - **Reset password**: code + new password → `AuthApiService.resetPassword()` → snackbar → `/auth/login`
 - **Auth guard**: `AuthGate` wraps login/register screens — authenticated users are skipped to `/dashboard`
 
-### Onboarding (US-0104)
+### Onboarding (infrastructure: password recovery)
 
 Three-page carousel explaining: (1) record expenses, (2) 50/30/20 rule, (3) streak/consistency. Controls: skip (goes to login), next, register (goes to onboarding with register flow), start. Completion flag stored in SharedPreferences — seen once only.
 
-### Dashboard (US-0501)
+### Dashboard (US-019)
 
 Bottom navigation shell with four tabs. Home tab shows:
 - Greeting with user's first name
@@ -91,23 +91,24 @@ Bottom navigation shell with four tabs. Home tab shows:
 - Summary card (today's spend, this-week total)
 - Streak card with ICU plural label
 
-### Transaction Entry (US-0301)
+### Transaction Entry (US-005)
 
 `AddTransactionScreen` supports three types: Expense, Income, Transfer. Fields: account, amount (PEN), category (grid picker), note, date. Category grid maps to 50/30/20 buckets via `bucketForCategory()`. Saves locally to `TransactionsRepository`.
 
-### Profile (US-0105)
+### Profile (US-030 / US-032)
 
 View and edit: full name, age, university, currency, income type, monthly income, financial literacy level. Sign-out with `AlertDialog` confirmation. Calls `UserApiService.updateProfile()` on save.
 
 ### Internationalization
 
-| File | Keys | Locale |
-|------|------|--------|
-| `app_en.arb` | 130 | English |
-| `app_es.arb` | 130 | Spanish |
+| File | Keys | Locale | Role |
+|------|------|--------|------|
+| `app_es.arb` | 130 | Spanish | Authoritative source — what users see |
+| `app_en.arb` | 130 | English | Codegen template only (Flutter `gen-l10n` requires `template-arb-file`) |
 
-- No hardcoded UI strings in any `build()` method
-- `L10nX` extension for clean `context.l10n.key` access
-- ICU plural for streak: `{count, plural, =1{1-day streak} other{{count}-day streak}}`
-- Named placeholder for greeting: `{name}`
-- Device locale auto-selected; falls back to `en`
+- App locale is **forced to `es` in `lib/app.dart`** — device locale is ignored and there is no in-app language switcher. The previous `LocaleNotifier` / `localeProvider` and the language entry in `SettingsScreen` were removed.
+- `supportedLocales` is `[Locale('es')]` only.
+- `L10nX` extension for clean `context.l10n.key` access.
+- ICU plural for streak: `{count, plural, =1{1-day streak} other{{count}-day streak}}` (Spanish copy in `app_es.arb`).
+- Named placeholder for greeting: `{name}`.
+- Hardcoded **mock/demo** data (transactions, education topics, badges, AI chat responses) is written in Spanish directly inside `lib/core/mock/demo_data.dart` and `mock_services.dart` — it does not flow through ARB files because it represents API payloads, not UI chrome.

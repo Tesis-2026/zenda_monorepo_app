@@ -14,7 +14,7 @@
 
 - **`AnalyticsEvent` has no `updatedAt`** — events are immutable once written. Including `updatedAt` would imply they can be edited, which violates the append-only contract. Omitting it makes that intent explicit in the schema.
 
-- **`AuditLog.userId` uses `onDelete: SetNull` rather than `Cascade`** — if a user deletes their account (US-1306), their audit logs must be preserved for compliance (Law 29733). `Cascade` would destroy them. `SetNull` preserves the log record with the user reference cleared.
+- **`AuditLog.userId` uses `onDelete: SetNull` rather than `Cascade`** — if a user deletes their account (infrastructure: right to deletion), their audit logs must be preserved for compliance (Law 29733). `Cascade` would destroy them. `SetNull` preserves the log record with the user reference cleared.
 
 - **`SurveyQuestion.options` stored as JSON array** — the answer options for each question vary in count and content. Normalising them into a separate table (`SurveyOption`) would add a join for every question fetch with no analytical benefit — questions are always consumed with their options. JSON is appropriate here because the options are read as a unit and never queried individually.
 

@@ -7,11 +7,10 @@
 | `pubspec.yaml` | Added all dependencies: riverpod, go_router, google_fonts, fl_chart, image_picker, intl, shared_preferences, crypto, http, flutter_secure_storage, flutter_localizations; `generate: true` flag |
 | `l10n.yaml` | Created — codegen config for flutter gen-l10n |
 | `lib/main.dart` | Created — `ProviderScope` wrapping `App` |
-| `lib/app.dart` | Created — `MaterialApp.router` with localization delegates, light/dark themes, GoRouter |
+| `lib/app.dart` | Created — `MaterialApp.router` with localization delegates, light theme only (`themeMode: ThemeMode.light`), GoRouter |
 | `lib/routing/app_router.dart` | Created — all 8 routes declared |
 | `lib/core/theme/app_theme.dart` | Created — theme entry point |
 | `lib/core/theme/light_theme.dart` | Created — light theme definition |
-| `lib/core/theme/dark_theme.dart` | Created — dark theme definition |
 | `lib/core/models/user.dart` | Created — `User` model |
 | `lib/core/models/transaction.dart` | Created — `Transaction` model with `bucketForCategory()` |
 | `lib/core/models/account.dart` | Created — `Account` model (cash, debit, credit) |
@@ -27,7 +26,7 @@
 | `lib/core/services/ai_advice_service.dart` | Created — stub AI tip provider |
 | `lib/core/services/ocr_service.dart` | Created — stub OCR (image picker wired, processing pending) |
 | `lib/features/auth/auth_controller.dart` | Created — Riverpod Notifier for auth state |
-| `lib/features/auth/local_auth_service.dart` | Created — secure token storage |
+| `lib/core/services/api_client.dart` | Created — base HTTP client + secure token storage |
 | `lib/features/auth/auth_gate.dart` | Created — redirect guard for auth screens |
 | `lib/features/auth/login_screen.dart` | Created — login form, "account not found" dialog |
 | `lib/features/auth/register_screen.dart` | Created — registration form |
