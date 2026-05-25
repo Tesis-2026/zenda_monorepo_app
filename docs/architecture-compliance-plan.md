@@ -67,7 +67,7 @@ Each batch ships as one commit on its own branch with PR to `develop`.
 | **B10** | Frontend `TransactionModel` AI tracking | Frontend (add `suggestedCategoryId`/`aiConfidence`/`categorySource` to model + API parser) | Low | S (~2h) | ⚪ Pending — see ARCH-11 |
 | **B11** | Frontend `User` model security/consent fields | Frontend (add `failedLoginAttempts`/`lockedUntil`/`consentGiven`/`consentAt`/`notificationPrefs`) | Low | S (~2h) | ⚪ Pending — see ARCH-12. **Blocked by B14** (no wire format for lockout). |
 | **B12** | Backend `RecommendationResponseDto` lifecycle fields | Backend (expose `viewedAt`/`dismissedAt`/`expiresAt`/`feedbackAt`/`modelVersion`/`source`/`inputContextJson` + matching frontend parser) | Low | S (~2h) | ⚪ Pending — see ARCH-09 |
-| **B13** | Refactor `notifications.controller.ts` into DDD | Backend (introduce `NotificationPreferencesService` + use case wrapper; controller stops calling Prisma directly) | Low | M (~3h) | ⚪ Pending — see ARCH-03 (partial) |
+| **B13** | Refactor `notifications.controller.ts` into DDD | Backend (introduce `NotificationPreferencesService` + use case wrapper; controller stops calling Prisma directly) | Low | M (~3h) | 🟢 Done (2026-05-25, backend#33) — closes ARCH-03 (notifications slice). Added domain value + port + Prisma repo + get/update use cases. Also fixed silent-poison bug: unknown `type` now returns 400. |
 | **B14** | Auth wire format for lockout state | Backend (add error body schema to 401 with `failedAttempts`/`lockedUntil`, OR add `/auth/me` exposing lockout) | Medium | M (~4h) | ⚪ Pending — see ARCH-10. Unblocks B11. |
 | **B15** | Regenerate `docs/zenda-schema.sql` from Prisma | Docs (`npx prisma migrate diff --from-empty --to-schema-datamodel --script > docs/zenda-schema.sql`) | Minimal | XS (~30min) | 🟢 Done (2026-05-24, root#21) |
 | **B16** | `CategoryResponseDto` add `transactionType` | Backend (DTO + mapper + frontend `CategoryModel` parser) | Low | XS (~30min) | 🟢 Done (2026-05-24, backend#20) — backend side; frontend parser deferred until B5 merges to avoid conflict |
@@ -184,7 +184,7 @@ Re-prioritized after finding ARCH-14, -15, -16 in the fourth-tier audit. The "qu
 6. ~~B17~~ ✅ backend#32 — closes ARCH-04 + ARCH-15
 7. ~~B14~~ (status tracked elsewhere — already shipped)
 8. ~~B11~~ (status tracked elsewhere — already shipped)
-9. **B13** (notifications controller → DDD) — 3h ← **next**
+9. ~~B13~~ ✅ backend#33 — closes ARCH-03 (notifications slice)
 
 **Tier 3 — Security/ops quick wins (6th-pass additions, mostly XS-S):** ✅ ALL DONE (B23 partial)
 10. ~~B20~~ ✅ backend#20
