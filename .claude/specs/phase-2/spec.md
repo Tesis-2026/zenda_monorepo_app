@@ -22,7 +22,7 @@ Before this phase, the project had a fully operational NestJS backend (Phase 1A)
 14. `lib/core/services/ai_advice_service.dart` — stub returning hardcoded financial tips
 15. `lib/core/services/ocr_service.dart` — stub (image picker integration, OCR pending Phase 7)
 16. `lib/features/auth/auth_controller.dart` — Riverpod `Notifier` for auth state (login, register, clearError)
-17. `lib/features/auth/local_auth_service.dart` — local credential storage using `flutter_secure_storage`
+17. `lib/core/services/api_client.dart` — base HTTP client with `flutter_secure_storage`-backed JWT and refresh handling
 18. `lib/features/auth/auth_gate.dart` — redirect guard: authenticated users bypassed from auth screens
 19. `lib/features/auth/login_screen.dart` — email/password form, forgot-password link, "account not found" dialog
 20. `lib/features/auth/register_screen.dart` — name/email/password form, privacy note

@@ -26,7 +26,7 @@
 | `lib/core/services/ai_advice_service.dart` | Created — stub AI tip provider |
 | `lib/core/services/ocr_service.dart` | Created — stub OCR (image picker wired, processing pending) |
 | `lib/features/auth/auth_controller.dart` | Created — Riverpod Notifier for auth state |
-| `lib/features/auth/local_auth_service.dart` | Created — secure token storage |
+| `lib/core/services/api_client.dart` | Created — base HTTP client + secure token storage |
 | `lib/features/auth/auth_gate.dart` | Created — redirect guard for auth screens |
 | `lib/features/auth/login_screen.dart` | Created — login form, "account not found" dialog |
 | `lib/features/auth/register_screen.dart` | Created — registration form |
