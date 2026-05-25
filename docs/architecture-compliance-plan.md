@@ -59,7 +59,7 @@ Each batch ships as one commit on its own branch with PR to `develop`.
 | **B2** | Consolidate service providers | Frontend (eliminate `ApiService()` in widgets) | Low | M (~4h) | 🟢 Done (2026-05-17) |
 | **B3** | `Navigator.pop` → `context.pop` + i18n cleanup | Frontend (16 files + 1 ARB key) | Low | S (~2h) | 🟢 Done (2026-05-17) |
 | **B4** | Remove `PrismaService` from use cases | Backend (`challenges`, `education` → new repo ports) | Medium | M (~1d) | 🟢 Done (2026-05-17) |
-| **B5** | Migrate `setState` business logic to Riverpod | Frontend (`ai_chat`, login lockout, quiz) | Medium | L (~6h) | ⚪ Pending |
+| **B5** | Migrate `setState` business logic to Riverpod | Frontend (`ai_chat`, login lockout, quiz) | Medium | L (~6h) | 🟢 Done (2026-05-25, frontend#20) — full triage of all 21 setState files (91 occurrences) found most are legitimate local UI; the real anti-pattern was screens dodging DI by `new`-ing API services. 8 screens migrated to provider-based services; cross-screen `numberFormatProvider` introduced (also fixes a stale-format bug across dashboard/reports). **Deferred:** login lockout countdown (waits on AuthState plumbing of server `lockedUntil`); consent_screen server wiring; duplicate `_*ServiceProvider` consolidation. |
 | **B6** | Create `financial-progress` module | Backend (wire `UserFinancialProgress` entity into DDD layers) | Medium | M (~4h) | 🟢 Done (2026-05-17) |
 | **B7** | Extract `surveys` module + new `conversations` module | Backend (move `AiConversation/Message` out of recommendations; fill empty surveys module) | Medium-High | L (~1.5d) | ⚪ Pending |
 | **B8** | Cross-cutting `audit-events` module + extract analytics from LoginUseCase | Backend (`AnalyticsEvent`, `AuditLog`, `Feedback`) | Medium | M (~6h) | 🟢 Done (2026-05-18) — scope narrowed (see notes) |
@@ -201,7 +201,7 @@ Re-prioritized after finding ARCH-14, -15, -16 in the fourth-tier audit. The "qu
 
 **Tier 4 — Larger structural work (1d+):**
 21. **B27** (audit log writer cross-cutting) — 1d
-22. **B5** (setState → Riverpod) — 6h, do after B11
+22. ~~B5~~ ✅ frontend#20 — 8 screens migrated to provider-based services + cross-screen number-format provider
 23. ~~B19~~ ✅ backend#34 — closes ARCH-17 (badges/challenges/categories). Auth + insights→goals deferred.
 24. **B7** (extract surveys + conversations modules) — 1.5d, highest risk; last
 
