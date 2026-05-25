@@ -61,7 +61,7 @@ Each batch ships as one commit on its own branch with PR to `develop`.
 | **B4** | Remove `PrismaService` from use cases | Backend (`challenges`, `education` → new repo ports) | Medium | M (~1d) | 🟢 Done (2026-05-17) |
 | **B5** | Migrate `setState` business logic to Riverpod | Frontend (`ai_chat`, login lockout, quiz) | Medium | L (~6h) | 🟢 Done (2026-05-25, frontend#20) — full triage of all 21 setState files (91 occurrences) found most are legitimate local UI; the real anti-pattern was screens dodging DI by `new`-ing API services. 8 screens migrated to provider-based services; cross-screen `numberFormatProvider` introduced (also fixes a stale-format bug across dashboard/reports). **Deferred:** login lockout countdown (waits on AuthState plumbing of server `lockedUntil`); consent_screen server wiring; duplicate `_*ServiceProvider` consolidation. |
 | **B6** | Create `financial-progress` module | Backend (wire `UserFinancialProgress` entity into DDD layers) | Medium | M (~4h) | 🟢 Done (2026-05-17) |
-| **B7** | Extract `surveys` module + new `conversations` module | Backend (move `AiConversation/Message` out of recommendations; fill empty surveys module) | Medium-High | L (~1.5d) | ⚪ Pending |
+| **B7** | Extract `surveys` module + new `conversations` module | Backend (move `AiConversation/Message` out of recommendations; fill empty surveys module) | Medium-High | L (~1.5d) | 🟢 Done (2026-05-25, backend#37) — `ConversationsModule` holds AI chat (conversation + messages + 3 use cases + chat.controller); `SurveysModule` holds PRE/POST/SUS controller + DTO + question types. All `git mv` so file history preserved. Routes `/ai/chat/*` and `/surveys/*` unchanged. **Deferred:** SurveysController still calls Prisma directly (legacy from pre-DDD); lift into a dedicated repository as follow-up. |
 | **B8** | Cross-cutting `audit-events` module + extract analytics from LoginUseCase | Backend (`AnalyticsEvent`, `AuditLog`, `Feedback`) | Medium | M (~6h) | 🟢 Done (2026-05-18) — scope narrowed (see notes) |
 | **B9** | Decouple `insights` repo from `goals` | Backend (ACL facade between insights and goals) | Medium | M (~4h) | ⚫ Superseded by B19 (2026-05-24) — ARCH-17 generalizes the same problem to 8+ module pairs |
 | **B10** | Frontend `TransactionModel` AI tracking | Frontend (add `suggestedCategoryId`/`aiConfidence`/`categorySource` to model + API parser) | Low | S (~2h) | ⚪ Pending — see ARCH-11 |
@@ -156,7 +156,7 @@ Each batch maps 1:1 to an entry in `docs/audit-issues.md` (ARCH-08 … ARCH-12).
 Original-plan pending (kept):
 7. **B9** (insights → goals ACL) — 4h.
 8. **B5** (setState → Riverpod) — 6h. Recommended after B11 so the new lockout fields flow through Riverpod.
-9. **B7** (extract surveys/conversations modules) — 1.5d, highest risk; do last.
+9. ~~B7~~ ✅ backend#37 — ConversationsModule + SurveysModule extracted
 
 **Out of scope for this plan** (tracked in `audit-issues.md` only):
 - ARCH-05 (`SavingsGoal.completedAt`)
@@ -203,7 +203,7 @@ Re-prioritized after finding ARCH-14, -15, -16 in the fourth-tier audit. The "qu
 21. ~~B27~~ ✅ backend#36 — closes ARCH-26
 22. ~~B5~~ ✅ frontend#20 — 8 screens migrated to provider-based services + cross-screen number-format provider
 23. ~~B19~~ ✅ backend#34 — closes ARCH-17 (badges/challenges/categories). Auth + insights→goals deferred.
-24. **B7** (extract surveys + conversations modules) — 1.5d, highest risk; last
+24. ~~B7~~ ✅ backend#37 — ConversationsModule + SurveysModule extracted
 
 ---
 
