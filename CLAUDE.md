@@ -28,24 +28,38 @@ Tesis2026/
 │   └── src/
 │       ├── health/         # GET /api/health endpoint
 │       ├── infra/          # Cross-cutting infrastructure (not bounded contexts)
-│       │   ├── ai/         # AiModule + LocalRulesProvider stubs (Phase 8+)
-│       │   ├── email/      # EmailModule + EmailService (nodemailer)
-│       │   └── prisma/     # Global PrismaModule + PrismaService
-│       ├── modules/        # DDD bounded contexts (7 modules)
-│       │   ├── auth/       # Register, login, JWT, forgot/reset password
-│       │   ├── budgets/    # Monthly budgets per category with progress tracking
-│       │   ├── categories/ # System + custom categories with soft delete
-│       │   ├── goals/      # Savings goals + contribute endpoint
-│       │   ├── insights/   # Monthly summary aggregation
-│       │   ├── transactions/ # CRUD + filters (type, date, category)
-│       │   └── users/      # User profile read/update
-│       └── shared/         # Shared utilities (not a bounded context)
-│           ├── config/     # Typed ConfigFactory
-│           ├── dto/        # SuccessResponseDto
-│           ├── exceptions/ # GlobalExceptionFilter
-│           ├── guards/     # JwtAuthGuard
-│           ├── logger/     # AppLogger + RequestLoggingInterceptor
-│           └── middleware/ # (reserved)
+│       │   ├── ai/             # AiModule + Azure Foundry / LocalRules providers
+│       │   ├── analytics/      # AnalyticsService (event capture)
+│       │   ├── email/          # EmailModule + EmailService (nodemailer)
+│       │   ├── prisma/         # Global PrismaModule + PrismaService
+│       │   ├── spending-alert/ # Anomaly detection on transactions
+│       │   └── telemetry/      # Request correlation + structured logging
+│       ├── modules/        # DDD bounded contexts (15 modules)
+│       │   ├── auth/             # Register, login, JWT (with tokenVersion + consentGiven claims),
+│       │   │                     # password reset (OTP + token), refresh tokens
+│       │   ├── badges/           # Badge catalog + awarding (US-1003)
+│       │   ├── budgets/          # Monthly budgets per category with progress tracking
+│       │   ├── categories/       # System + custom categories with soft delete
+│       │   ├── challenges/       # Challenge catalog + user acceptance/completion
+│       │   ├── education/        # Topics + per-topic quizzes + personalized quiz + surveys (PRE/POST/SUS)
+│       │   ├── feedback/         # App feedback submission (US-1501)
+│       │   ├── financial-progress/ # Monthly snapshots for obs. #9 correlation
+│       │   ├── goals/            # Savings goals + contribute + complete
+│       │   ├── insights/         # Day/week/month summaries + comparison + PDF export
+│       │   ├── predictions/      # Expense prediction + accuracy check (US-0801)
+│       │   ├── recommendations/  # AI recommendations + lifecycle + chat conversations
+│       │   ├── surveys/          # Reserved (current surveys logic lives in education/) — see B7 pending
+│       │   ├── transactions/     # CRUD + filters + AI classification + idempotent create
+│       │   └── users/            # Profile read/update + notifications preferences + account deletion
+│       └── shared/         # Cross-cutting utilities (not bounded contexts)
+│           ├── audit/         # AuditLogService + RequestContextService (AsyncLocalStorage) — B27
+│           ├── config/        # configuration.ts + EnvSchema validated at boot — B24
+│           ├── dto/           # SuccessResponseDto
+│           ├── exceptions/    # GlobalExceptionFilter with Prisma error mapping — B22
+│           ├── guards/        # JwtAuthGuard (extended in B21/B25 to reload user + check tokenVersion/deletedAt)
+│           ├── idempotency/   # IdempotencyService + IdempotencyInterceptor (RFC draft header) — B28
+│           ├── logger/        # AppLogger + RequestLoggingInterceptor (redacts secrets) — B26
+│           └── swagger/       # ApiErrorResponseDto + composable @ApiResponse helpers — B23
 │
 ├── zenda_fronted_app/      # Flutter + Riverpod mobile app (folder name has typo — keep as-is)
 │   └── lib/
@@ -270,14 +284,25 @@ specs/{phase-name}/
 - [`skills/platform/platform-testing/`](skills/platform/platform-testing/) — Testing rules: use real database (no mocks), test factories, mock boundaries not internals
 - [`skills/platform/platform-mobile/flutter/`](skills/platform/platform-mobile/flutter/) — Flutter/Dart conventions
 
+### Architecture & Audit Tracking (`docs/`)
+- [`docs/architecture-compliance-plan.md`](docs/architecture-compliance-plan.md) — Refactor batch tracker (B1–B32+); status, PR refs, recommended execution order
+- [`docs/audit-issues.md`](docs/audit-issues.md) — Findings tracker: P1 (thesis validity), S (security), AC (acceptance criteria), UX, ARCH (architecture debt), GAP (phase-level gaps); fix log
+- [`docs/zenda-erd.dbml`](docs/zenda-erd.dbml) — Logical ERD (DBML format)
+- [`docs/zenda-erd-conceptual.{dbml,mmd}`](docs/) — Conceptual ERD (DBML + Mermaid)
+- [`docs/zenda-schema.sql`](docs/zenda-schema.sql) — Auto-generated DDL from Prisma (B15 — regenerate via `npx prisma migrate diff`)
+- [`docs/zenda-*-architecture.drawio`](docs/) — Layered, logical, and physical architecture diagrams
+- [`docs/zenda.dsl`](docs/zenda.dsl) — Structurizr DSL model of the system
+
 ### Module READMEs (Backend)
 - [`zenda_backend_app/README.md`](zenda_backend_app/README.md) — Backend setup and overview
-- [`zenda_backend_app/src/common/exceptions/README.md`](zenda_backend_app/src/common/exceptions/README.md) — Exception handling patterns
-- [`zenda_backend_app/src/common/guards/README.md`](zenda_backend_app/src/common/guards/README.md) — Auth guard usage
-- [`zenda_backend_app/src/common/middleware/README.md`](zenda_backend_app/src/common/middleware/README.md) — Middleware conventions
-
+- [`zenda_backend_app/src/shared/exceptions/`](zenda_backend_app/src/shared/exceptions/) — `GlobalExceptionFilter` (B22 maps Prisma errors)
+- [`zenda_backend_app/src/shared/guards/`](zenda_backend_app/src/shared/guards/) — `JwtAuthGuard` (extended in B21/B25 to revalidate user)
+- [`zenda_backend_app/src/shared/audit/`](zenda_backend_app/src/shared/audit/) — Cross-cutting audit log writer (B27)
+- [`zenda_backend_app/src/shared/idempotency/`](zenda_backend_app/src/shared/idempotency/) — `Idempotency-Key` header support (B28)
+- [`zenda_backend_app/src/shared/swagger/`](zenda_backend_app/src/shared/swagger/) — Reusable `@ApiResponse` decorators (B23)
+- Per-module READMEs (auth, transactions, recommendations, etc.) are pending — see B33 follow-up
 
 ### Feature READMEs (Frontend)
 - [`zenda_fronted_app/README.md`](zenda_fronted_app/README.md) — Frontend setup and overview
-- [`zenda_fronted_app/lib/features/auth/README.md`](zenda_fronted_app/lib/features/auth/README.md) — Auth feature structure
 - [`zenda_fronted_app/lib/features/onboarding/README.md`](zenda_fronted_app/lib/features/onboarding/README.md) — Onboarding flow
+- Per-feature READMEs (auth, dashboard, transactions, etc.) are pending — see B34 follow-up
