@@ -73,7 +73,7 @@ Each batch ships as one commit on its own branch with PR to `develop`.
 | **B16** | `CategoryResponseDto` add `transactionType` | Backend (DTO + mapper + frontend `CategoryModel` parser) | Low | XS (~30min) | 🟢 Done (2026-05-24, backend#20) — backend side; frontend parser deferred until B5 merges to avoid conflict |
 | **B17** | `PredictionEntity` + DTO add `confidenceInterval` | Backend (entity field, mapper from JSON column, DTO, frontend parser) — **also closes ARCH-04** if same refactor untangles the `modelVersion` packed columns | Medium | M (~4h) | 🟢 Done (2026-05-25, backend#32) — closes ARCH-04 + ARCH-15. `confidenceLevel` / `narrative` promoted to proper columns with backfill migration; `confidenceInterval` derived from `confidenceLevel + predictedTotal` in domain (high ±5%, medium ±15%, low ±30%); exposed in `PredictionResponseDto`. Frontend parser deferred until B5 merges. |
 | **B18** | `BudgetResponseDto` remove `deletedAt` (UX-06 regression fix) | Backend (DTO + mapper) | Minimal | XS (~15min) | 🟢 Done (2026-05-24, backend#20) — also caught + fixed the same regression on `GoalResponseDto` |
-| **B19** | Cross-context ACL facades | Backend (introduce facade tokens for `BadgesModule`, `ChallengesModule`, `CategoriesModule`, `AuthModule`; stop direct module imports). **Supersedes B9** (insights→goals becomes one of N cases) | High | XL (~2d) | ⚪ Pending — see ARCH-17 |
+| **B19** | Cross-context ACL facades | Backend (introduce facade tokens for `BadgesModule`, `ChallengesModule`, `CategoriesModule`, `AuthModule`; stop direct module imports). **Supersedes B9** (insights→goals becomes one of N cases) | High | XL (~2d) | 🟢 Done (2026-05-25, backend#34) — closes ARCH-17 (badges/challenges/categories slice). `BadgesFacade` / `ChallengesFacade` / `CategoriesFacade` introduced; internal ports + use cases now module-private. **Deferred to follow-ups:** AuthModule guard/decorator move to `shared/auth/` (HTTP plumbing, 12 controllers); insights→goals direct Prisma read. |
 | **B20** | `SubmitQuizDto` bounds + key validation | Backend (`@ArrayMaxSize`/custom validator constraining keys to known question IDs) | Minimal | XS (~30min) | 🟢 Done (2026-05-24, backend#20) |
 | **B21** | JWT payload + guard hardening | Backend (add `consentGiven` to payload; custom JWT strategy that re-checks `deletedAt` OR uses `tokenVersion` field on user) | Medium | M (~4h) | 🟢 Done (2026-05-24, backend#23) — shipped together with B25 |
 | **B22** | Prisma error mapping in `GlobalExceptionFilter` | Backend (translate P2002/P2025/P2003 to 409/404/400; remove per-use-case manual catches) | Low | S (~2h) | 🟢 Done (2026-05-24, backend#21) |
@@ -202,7 +202,7 @@ Re-prioritized after finding ARCH-14, -15, -16 in the fourth-tier audit. The "qu
 **Tier 4 — Larger structural work (1d+):**
 21. **B27** (audit log writer cross-cutting) — 1d
 22. **B5** (setState → Riverpod) — 6h, do after B11
-23. **B19** (cross-context ACL facades — supersedes B9) — 2d
+23. ~~B19~~ ✅ backend#34 — closes ARCH-17 (badges/challenges/categories). Auth + insights→goals deferred.
 24. **B7** (extract surveys + conversations modules) — 1.5d, highest risk; last
 
 ---
