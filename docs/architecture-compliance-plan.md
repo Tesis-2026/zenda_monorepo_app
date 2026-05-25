@@ -77,7 +77,7 @@ Each batch ships as one commit on its own branch with PR to `develop`.
 | **B20** | `SubmitQuizDto` bounds + key validation | Backend (`@ArrayMaxSize`/custom validator constraining keys to known question IDs) | Minimal | XS (~30min) | 🟢 Done (2026-05-24, backend#20) |
 | **B21** | JWT payload + guard hardening | Backend (add `consentGiven` to payload; custom JWT strategy that re-checks `deletedAt` OR uses `tokenVersion` field on user) | Medium | M (~4h) | 🟢 Done (2026-05-24, backend#23) — shipped together with B25 |
 | **B22** | Prisma error mapping in `GlobalExceptionFilter` | Backend (translate P2002/P2025/P2003 to 409/404/400; remove per-use-case manual catches) | Low | S (~2h) | 🟢 Done (2026-05-24, backend#21) |
-| **B23** | Swagger `@ApiResponse` coverage | Backend (add success + error response schemas across all controllers; standardize error body) | Low | M (~6h) | 🟡 Partial (2026-05-24, backend#24) — shared infra + 5 of ~13 controllers (auth, transactions, budgets, goals, categories). Follow-up B23-pt2 (~3h) for remaining 8 controllers. |
+| **B23** | Swagger `@ApiResponse` coverage | Backend (add success + error response schemas across all controllers; standardize error body) | Low | M (~6h) | 🟢 Done (2026-05-25, backend#35) — pt2 typed the 4 remaining ad-hoc response shapes (feedback POST, recommendations /stats, summary /progress, predictions /accuracy-check). `/reports/export/pdf` keeps raw `@ApiResponse` (binary stream — no DTO fits). |
 | **B24** | Env config validation at boot | Backend (Joi/zod schema or `class-validator` on `configuration.ts`; switch `process.env.X` to `configService.getOrThrow`) | Low | M (~3h) | 🟢 Done (2026-05-24, backend#22) |
 | **B25** | `User.tokenVersion` + JWT version claim | Backend (schema migration + auth use cases + guard) — closes ARCH-24, partially helps ARCH-20 | Medium | M (~4h) | 🟢 Done (2026-05-24, backend#23) — shipped together with B21 |
 | **B26** | Request log redaction + response-side logging | Backend (extend `RequestLoggingInterceptor` to strip `password`, `Authorization`, `token` patterns from path/headers; log response status + size) | Low | S (~2h) | 🟢 Done (2026-05-24, backend#21) |
@@ -196,7 +196,7 @@ Re-prioritized after finding ARCH-14, -15, -16 in the fourth-tier audit. The "qu
 16. ~~B31~~ ✅ backend#22
 17. ~~B21~~ ✅ backend#23 (bundled with B25)
 18. ~~B25~~ ✅ backend#23
-19. ~~B23~~ 🟡 backend#24 — partial (5/13 controllers); B23-pt2 ~3h for the rest
+19. ~~B23~~ ✅ backend#24 + backend#35 — full coverage
 20. ~~B28~~ ✅ backend#25
 
 **Tier 4 — Larger structural work (1d+):**
