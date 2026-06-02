@@ -133,7 +133,7 @@
 - [x] Presented after first successful login (if `profileCompleted = false`)
 - [x] Fields: age, university, income type (scholarship/work/family/mixed), average monthly income, preferred currency (default PEN)
 - [x] Each field on individual screen with smooth transition
-- [x] Optional skip available
+- [x] ~~Optional skip available~~ — **removed by product decision (2026-05-31): profile completion is now mandatory** (no skip button; user must complete all steps)
 - [x] On completion: `profileCompleted = true`
 - [x] Data editable later in profile
 

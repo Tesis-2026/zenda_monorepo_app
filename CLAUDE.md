@@ -34,21 +34,23 @@ Tesis2026/
 │       │   ├── prisma/         # Global PrismaModule + PrismaService
 │       │   ├── spending-alert/ # Anomaly detection on transactions
 │       │   └── telemetry/      # Request correlation + structured logging
-│       ├── modules/        # DDD bounded contexts (15 modules)
+│       ├── modules/        # DDD bounded contexts (16 modules)
 │       │   ├── auth/             # Register, login, JWT (with tokenVersion + consentGiven claims),
 │       │   │                     # password reset (OTP + token), refresh tokens
 │       │   ├── badges/           # Badge catalog + awarding (US-1003)
 │       │   ├── budgets/          # Monthly budgets per category with progress tracking
 │       │   ├── categories/       # System + custom categories with soft delete
-│       │   ├── challenges/       # Challenge catalog + user acceptance/completion
-│       │   ├── education/        # Topics + per-topic quizzes + personalized quiz + surveys (PRE/POST/SUS)
+│       │   ├── challenges/       # Challenge catalog + user acceptance/completion + EXPIRED status (B36)
+│       │   ├── conversations/    # Persistent AI chat (/ai/chat/*) — extracted from recommendations (B7)
+│       │   ├── education/        # Topics + per-topic quizzes + personalized quiz (HIGH score → topic complete cascade)
 │       │   ├── feedback/         # App feedback submission (US-1501)
 │       │   ├── financial-progress/ # Monthly snapshots for obs. #9 correlation
 │       │   ├── goals/            # Savings goals + contribute + complete
 │       │   ├── insights/         # Day/week/month summaries + comparison + PDF export
 │       │   ├── predictions/      # Expense prediction + accuracy check (US-0801)
-│       │   ├── recommendations/  # AI recommendations + lifecycle + chat conversations
-│       │   ├── surveys/          # Reserved (current surveys logic lives in education/) — see B7 pending
+│       │   ├── recommendations/  # AI recommendations + lifecycle (viewed/dismissed/feedback) + AI traceability
+│       │   ├── surveys/          # PRE/POST literacy surveys + SUS usability instrument (academic validation) — filled in B7
+│       │                         #   NOTE: surveys.controller still injects PrismaService directly (ARCH-01, open)
 │       │   ├── transactions/     # CRUD + filters + AI classification + idempotent create
 │       │   └── users/            # Profile read/update + notifications preferences + account deletion
 │       └── shared/         # Cross-cutting utilities (not bounded contexts)
@@ -56,7 +58,9 @@ Tesis2026/
 │           ├── config/        # configuration.ts + EnvSchema validated at boot — B24
 │           ├── dto/           # SuccessResponseDto
 │           ├── exceptions/    # GlobalExceptionFilter with Prisma error mapping — B22
-│           ├── guards/        # JwtAuthGuard (extended in B21/B25 to reload user + check tokenVersion/deletedAt)
+│           ├── guards/        # Reserved for future cross-cutting guards (README only). JwtAuthGuard actually
+│           │                  #   lives in modules/auth/infrastructure — it depends on the auth-context IUserRepository
+│           │                  #   port, so it intentionally stays in the auth module (see shared/guards/README.md)
 │           ├── idempotency/   # IdempotencyService + IdempotencyInterceptor (RFC draft header) — B28
 │           ├── logger/        # AppLogger + RequestLoggingInterceptor (redacts secrets) — B26
 │           └── swagger/       # ApiErrorResponseDto + composable @ApiResponse helpers — B23
@@ -76,10 +80,11 @@ Tesis2026/
 │       │   ├── categories/ # CategoryManagementScreen
 │       │   ├── dashboard/  # DashboardScreen + widgets (SummaryCard, StreakCard,
 │       │   │               # BudgetPieChart, ZendaAiCard, AccountCard)
-│       │   ├── goals/      # GoalsScreen, GoalDetailScreen, goal providers
+│       │   ├── goals/      # GoalsScreen, GoalDetailScreen, goal providers (embedded in Gestión)
+│       │   ├── management/ # ManagementScreen — "Gestión" nav tab hosting Progreso/Presupuestos/Metas as 3 chip sub-tabs (each screen rendered embedded:true)
 │       │   ├── onboarding/ # OnboardingScreen, OnboardingPage, SplashDecider, OnboardingPrefs
 │       │   ├── profile/    # ProfileScreen
-│       │   ├── progress/   # ProgressScreen (stub)
+│       │   ├── progress/   # ProgressScreen (embedded in Gestión)
 │       │   ├── reports/    # ReportsScreen with monthly summary + PDF export
 │       │   ├── streak/     # StreakNotifier
 │       │   └── transactions/ # AddTransactionScreen, TransactionListScreen,
@@ -113,7 +118,7 @@ Tesis2026/
 - **API docs**: `http://localhost:3000/api/docs` (Swagger)
 - **Database**: `docker compose up -d`, then `npm run prisma:migrate && npm run prisma:seed`
 - **Conventions**:
-  - 7 bounded contexts in `src/modules/`: `auth`, `budgets`, `categories`, `goals`, `insights`, `transactions`, `users`
+  - 16 bounded contexts in `src/modules/`: `auth`, `badges`, `budgets`, `categories`, `challenges`, `conversations`, `education`, `feedback`, `financial-progress`, `goals`, `insights`, `predictions`, `recommendations`, `surveys`, `transactions`, `users` (`conversations` was extracted from `recommendations` in B7; `surveys` was filled from the previously-empty folder in the same batch)
   - Each module uses strict DDD layers: `application/use-cases/`, `domain/`, `infrastructure/`, `interface/`
   - Cross-cutting infrastructure lives in `src/infra/` (prisma, email, ai) — not bounded contexts
   - Shared utilities live in `src/shared/` (config, guards, logger, exceptions, dto)
@@ -287,6 +292,8 @@ specs/{phase-name}/
 ### Architecture & Audit Tracking (`docs/`)
 - [`docs/architecture-compliance-plan.md`](docs/architecture-compliance-plan.md) — Refactor batch tracker (B1–B32+); status, PR refs, recommended execution order
 - [`docs/audit-issues.md`](docs/audit-issues.md) — Findings tracker: P1 (thesis validity), S (security), AC (acceptance criteria), UX, ARCH (architecture debt), GAP (phase-level gaps); fix log
+- [`docs/frontend-backend-integration.md`](docs/frontend-backend-integration.md) — **FE↔BE integration status**: app runs in demo mode (`_kDemoMode`), how to wire to the real backend, verified contract compatibility, open data-mapping issues (challenge rewards, topic metadata), and debunked false positives. **Read this before connecting the Flutter app to the NestJS backend.**
+- [`docs/testing-plan.md`](docs/testing-plan.md) — **Backend testing plan** (contract tests with mocked data, no DB): Jest + supertest + `@nestjs/testing` with mocked persistence + schema-shaped fixtures, asserting the response shapes the Flutter `fromJson` expects. Structure, scripts, per-module coverage map, rollout order. Addresses GAP-05 at the contract level.
 - [`docs/zenda-erd.dbml`](docs/zenda-erd.dbml) — Logical ERD (DBML format)
 - [`docs/zenda-erd-conceptual.{dbml,mmd}`](docs/) — Conceptual ERD (DBML + Mermaid)
 - [`docs/zenda-schema.sql`](docs/zenda-schema.sql) — Auto-generated DDL from Prisma (B15 — regenerate via `npx prisma migrate diff`)
@@ -296,7 +303,7 @@ specs/{phase-name}/
 ### Module READMEs (Backend)
 - [`zenda_backend_app/README.md`](zenda_backend_app/README.md) — Backend setup and overview
 - [`zenda_backend_app/src/shared/exceptions/`](zenda_backend_app/src/shared/exceptions/) — `GlobalExceptionFilter` (B22 maps Prisma errors)
-- [`zenda_backend_app/src/shared/guards/`](zenda_backend_app/src/shared/guards/) — `JwtAuthGuard` (extended in B21/B25 to revalidate user)
+- [`zenda_backend_app/src/shared/guards/`](zenda_backend_app/src/shared/guards/) — reserved folder (README only); the active `JwtAuthGuard` lives in `modules/auth/infrastructure/` (B21/B25 revalidate user — depends on the auth-context `IUserRepository`, so it stays in the auth module)
 - [`zenda_backend_app/src/shared/audit/`](zenda_backend_app/src/shared/audit/) — Cross-cutting audit log writer (B27)
 - [`zenda_backend_app/src/shared/idempotency/`](zenda_backend_app/src/shared/idempotency/) — `Idempotency-Key` header support (B28)
 - [`zenda_backend_app/src/shared/swagger/`](zenda_backend_app/src/shared/swagger/) — Reusable `@ApiResponse` decorators (B23)
@@ -305,4 +312,5 @@ specs/{phase-name}/
 ### Feature READMEs (Frontend)
 - [`zenda_fronted_app/README.md`](zenda_fronted_app/README.md) — Frontend setup and overview
 - [`zenda_fronted_app/lib/features/onboarding/README.md`](zenda_fronted_app/lib/features/onboarding/README.md) — Onboarding flow
+- [`zenda_fronted_app/lib/core/widgets/README.md`](zenda_fronted_app/lib/core/widgets/README.md) — **Modal & form standard** for all create/edit/delete flows (bottom-sheet pattern, design tokens, `AppFormSheet`/`showConfirmSheet`, migration map). Follow this for any new create/edit/delete UI.
 - Per-feature READMEs (auth, dashboard, transactions, etc.) are pending — see B34 follow-up

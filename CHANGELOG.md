@@ -8,6 +8,10 @@ The repo is pre-1.0 (thesis MVP), so versions track refactor batches rather than
 
 ## [Unreleased]
 
+### Removed
+
+- **Deployment Docker** (2026-05-31) — deleted `zenda_backend_app/Dockerfile` + `.dockerignore` (added by B29) by product decision. The backend is run locally (`npm run start:dev`) against the docker-composed PostgreSQL. The local-DB `docker-compose.yml` is **kept**. Reverts ARCH-28; B29 marked reverted.
+
 ### Pending (see [`docs/architecture-compliance-plan.md`](docs/architecture-compliance-plan.md))
 
 - B5 — frontend `setState` → Riverpod (`ai_chat`, login lockout, quiz state machine)
@@ -23,7 +27,7 @@ The repo is pre-1.0 (thesis MVP), so versions track refactor batches rather than
 ### Added
 - **B27** (backend#27) — Cross-cutting `AuditLogService` + `RequestContextService` (AsyncLocalStorage). Records 14+ events: CREATE/UPDATE/DELETE on Transaction/Budget/Goal/Category + LOGIN_FAILED / LOGIN_LOCKED / RESET_PASSWORD. Closes ARCH-26.
 - **B28** (backend#25) — RFC-draft `Idempotency-Key` header support. New `IdempotencyKey` table + `IdempotencyInterceptor` registered globally. Closes ARCH-27.
-- **B29** (backend#21) — Production multi-stage `Dockerfile` + `.dockerignore`. Closes ARCH-28.
+- **B29** (backend#21) — Production multi-stage `Dockerfile` + `.dockerignore`. Closes ARCH-28. _(Reverted 2026-05-31 — see Removed under [Unreleased].)_
 - **B31** (backend#22) — `/api/live` (trivial), `/api/ready` (DB ping), upgraded `/api/health` to do the DB ping. Closes ARCH-30.
 - **B23** (backend#24 + #28) — Reusable Swagger `@ApiResponse` decorators in `src/shared/swagger/` + applied across all 18 controllers. Closes ARCH-22.
 - **B16** (backend#20) — `CategoryResponseDto.transactionType` exposed. Closes ARCH-14.
