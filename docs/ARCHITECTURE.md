@@ -39,7 +39,7 @@ Zenda is an AI-assisted personal-finance app for Peruvian university students (1
                               └─► nodemailer (SMTP for password reset)
 ```
 
-The dev environment uses Docker for Postgres only (`docker-compose.yml`). The backend itself has a production `Dockerfile` (B29) but the frontend is currently dev-only.
+The dev environment uses Docker for Postgres only (`docker-compose.yml`). There is no production `Dockerfile` — the backend runs locally (`npm run start:dev`) against the docker-composed PostgreSQL; production containerization was removed by product decision (2026-05-31).
 
 ---
 

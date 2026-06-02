@@ -148,6 +148,10 @@ Table savings_goals {
   target_amount  decimal(12,2) [not null]
   current_amount decimal(12,2) [default: 0]
   due_date       timestamp
+  // Explicit completion marker (US-045 / ARCH-05). Lets the system
+  // distinguish "user marked the goal done" from "balance happens to
+  // equal target". Auto-set when a contribution closes the gap.
+  completed_at   timestamp
   created_at     timestamp
   updated_at     timestamp
   deleted_at     timestamp
@@ -491,6 +495,24 @@ Table feedback {
   created_at  timestamp
 }
 
+// HTTP-layer table: stores idempotent POST/PUT responses keyed by the
+// `Idempotency-Key` header. Not part of the functional domain — kept
+// here so the ERD mirrors the physical schema 1:1 (B28).
+Table idempotency_keys {
+  id            uuid      [primary key]
+  key           varchar   [not null, note: 'value of the Idempotency-Key header']
+  user_id       uuid      [not null]
+  request_hash  varchar   [not null, note: 'sha256 of "<method> <path>\n<normalized-body>"']
+  status_code   int       [not null]
+  response_body json      [not null]
+  created_at    timestamp
+
+  indexes {
+    (key, user_id) [unique]
+    (created_at)
+  }
+}
+
 // ─────────────────────────────────────────────────────────────────
 // REFS
 // ─────────────────────────────────────────────────────────────────
@@ -534,6 +556,7 @@ Ref audit_user:               audit_logs.user_id > users.id
 Ref auth_challenge_user:      auth_challenges.user_id > users.id
 Ref refresh_token_user:       refresh_tokens.user_id > users.id
 Ref feedback_user:            feedback.user_id > users.id
+Ref idempotency_key_user:     idempotency_keys.user_id > users.id
 
 // ─────────────────────────────────────────────────────────────────
 // TABLE GROUPS — Bounded Contexts
@@ -587,4 +610,9 @@ TableGroup AnalyticsAndAudit {
   analytics_events
   audit_logs
   feedback
+}
+
+// HTTP/infrastructure layer — not a functional bounded context.
+TableGroup HttpInfra {
+  idempotency_keys
 }

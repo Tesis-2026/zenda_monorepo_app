@@ -13,26 +13,34 @@ workspace "Zenda" "Personal finance app for university students in Lima" {
 
             mobile = container "Mobile App" "Records transactions, views reports, completes challenges, chats with AI assistant" "Flutter · Android 9.0+" "Mobile"
 
-            api = container "Zenda API" "REST endpoints; JWT auth; Swagger UI at /api/docs. 10 bounded contexts: auth, users, transactions, categories, budgets, goals, insights, predictions, recommendations, education." "NestJS 11" {
+            api = container "Zenda API" "REST endpoints; JWT auth; Swagger UI at /api/docs. 16 bounded contexts: auth, users, transactions, categories, budgets, goals, insights, predictions, recommendations, conversations, education, challenges, badges, surveys, feedback, financial-progress. Cross-context coupling routes through ACL facades (BadgesFacade, ChallengesFacade, CategoriesFacade)." "NestJS 11" {
 
                 # ── Core modules ──────────────────────────────────────────────
-                authModule = component "Auth Module" "Register, login, JWT refresh, logout, forgot-password, OTP verify, reset-password. Lockout after 3 failed attempts." "NestJS Module"
-                usersModule = component "Users Module" "GET/PUT /users/me — profile read and update. Also manages push notification preferences. Profile fields feed AI context." "NestJS Module"
-                transactionsModule = component "Transactions Module" "CRUD /transactions. POST /transactions/classify auto-categorises by description + amount via AI. Spending anomaly check (>20% over 3-month average) runs on every create." "NestJS Module"
-                categoriesModule = component "Categories Module" "System + custom categories CRUD." "NestJS Module"
-                budgetsModule = component "Budgets Module" "Monthly budgets per category with current-spend tracking." "NestJS Module"
-                goalsModule = component "Goals Module" "Savings goals with contribute and complete endpoints." "NestJS Module"
-                insightsModule = component "Insights Module" "Day / week / month summaries, multi-month comparison, PDF report export." "NestJS Module"
+                authModule = component "Auth Module" "Register, login (3-attempt lockout), JWT refresh with tokenVersion claim, logout, forgot-password, OTP verify, reset-password (revokes all sessions via bumpTokenVersion)." "NestJS Module"
+                usersModule = component "Users Module" "GET/PUT /users/me — profile read/update including security state (failedLoginAttempts, lockedUntil) and notification preferences (JSON column). DELETE /users/me does account deletion with transactional audit." "NestJS Module"
+                transactionsModule = component "Transactions Module" "CRUD /transactions. POST /transactions/classify auto-categorises via AI. Persists suggestedCategoryId/aiConfidence/categorySource for the AI-accuracy KPI. Spending anomaly check (>20% over 3-month average) on every create. Idempotent via Idempotency-Key header." "NestJS Module"
+                categoriesModule = component "Categories Module" "System + custom categories CRUD. Exports CategoriesFacade for cross-context category resolution from Transactions." "NestJS Module"
+                budgetsModule = component "Budgets Module" "Monthly budgets per category with current-spend tracking. 80% threshold triggers anomaly alert." "NestJS Module"
+                goalsModule = component "Goals Module" "Savings goals with contribute/complete endpoints. Tracks explicit completedAt — auto-set when a contribution closes the gap, distinguishing intentional completion from coincidental balance-equals-target." "NestJS Module"
+                insightsModule = component "Insights Module" "Day / week / month summaries, multi-month comparison, financial-progress endpoint, PDF report export." "NestJS Module"
+                financialProgressModule = component "Financial Progress Module" "Monthly snapshots — budget_compliance, savings_rate, recommendations_accepted, quiz score trend. Feeds the thesis observability KPI." "NestJS Module"
 
                 # ── AI-powered modules ────────────────────────────────────────
-                predictionsModule = component "Predictions Module" "GET /predictions/expenses — builds SpendingContext from transaction history, sends to AI, returns predicted totals per category + confidence level + Spanish narrative. Falls back to weighted 3-month moving average." "NestJS Module"
-                recommendationsModule = component "Recommendations Module" "GET /recommendations and POST /ai/chat — AI-generated SAVINGS | BUDGET | GOAL recommendations plus conversational financial assistant. Also tracks accept/reject feedback on recommendations." "NestJS Module"
-                educationModule = component "Education Module" "Topics, quizzes, challenges, badges, research surveys, and GET /education/quiz/personalized — AI-generated questions capped at 5 per user per day. Tracks in-app feedback submissions." "NestJS Module"
+                predictionsModule = component "Predictions Module" "GET /predictions/expenses — builds SpendingContext, sends to AI, returns predictedTotal + by-category breakdown + confidenceInterval {lower, upper} + Spanish narrative. POST /predictions/accuracy-check persists actualTotal+accuracy once the period closes, feeding the >=80% AI-accuracy KPI." "NestJS Module"
+                recommendationsModule = component "Recommendations Module" "GET /recommendations — AI-generated SAVINGS | BUDGET | GOAL recommendations with full lifecycle (viewedAt/dismissedAt/expiresAt/feedbackAccepted) and AI traceability (modelVersion/source/inputContextJson). GET /recommendations/stats exposes acceptance rate KPI." "NestJS Module"
+                conversationsModule = component "Conversations Module" "POST /ai/chat + /ai/chat/active + /ai/chat/close — persistent AI conversations with role-tagged messages. Extracted from recommendations in B7." "NestJS Module"
+                educationModule = component "Education Module" "Topics, quizzes, GET /education/quiz/personalized (AI-generated, max 5/day). Quiz level HIGH auto-completes the topic, cascading into the Financial Sage badge when every topic is done." "NestJS Module"
+                challengesModule = component "Challenges Module" "Challenge catalog + accept/complete + EXPIRED status (derived from criteriaJson.durationDays + acceptedAt). Exports ChallengesFacade." "NestJS Module"
+                badgesModule = component "Badges Module" "Badge catalog + per-user awarded list. Exports BadgesFacade with awardIfNotEarned — consumed by Transactions/Goals/Challenges/Education/Predictions/Budgets for idempotent badge triggers." "NestJS Module"
+                surveysModule = component "Surveys Module" "PRE/POST + SUS instruments for academic validation. Returns improvementPercentage between pre and post for the thesis literacy-improvement metric." "NestJS Module"
+                feedbackModule = component "Feedback Module" "POST /feedback — captures bug/suggestion/general in-app feedback with screen context and rating." "NestJS Module"
 
                 # ── Infra ─────────────────────────────────────────────────────
-                aiProvider = component "AzureFoundryProvider" "Wraps Azure OpenAI Chat Completions. 5 methods: predictExpenses, generateRecommendations, classifyTransaction, chat, generatePersonalizedQuiz. Graceful fallback to LocalRulesProvider when not configured." "Infrastructure"
+                aiProvider = component "AzureFoundryProvider" "Wraps Azure OpenAI Chat Completions. 5 methods: predictExpenses, generateRecommendations, classifyTransaction, chat, generatePersonalizedQuiz. 15s timeout with graceful fallback to LocalRulesProvider when not configured or on error." "Infrastructure"
                 emailService = component "EmailService" "Nodemailer wrapper — sendPasswordResetEmail, sendOtpEmail." "Infrastructure"
                 spendingAlert = component "SpendingAlertService" "Compares current-month category spending against 3-month rolling average; flags anomalies >20% over." "Infrastructure"
+                auditLog = component "AuditLogService" "Cross-cutting fire-and-forget writer for the AuditLog table. RequestContextService (AsyncLocalStorage) carries userId/requestId/ipAddress through every mutation use case." "Infrastructure"
+                idempotency = component "IdempotencyInterceptor" "RFC-draft Idempotency-Key support. Opt-in via header; caches response by SHA-256 of method+path+body; 409 on hash mismatch." "Infrastructure"
             }
 
             db = container "Database" "Users, transactions, categories, budgets, goals, insights, challenges, badges, analytics events, notification preferences" "PostgreSQL 15" "Database"

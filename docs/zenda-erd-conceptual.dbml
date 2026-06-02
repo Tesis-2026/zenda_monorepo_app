@@ -108,6 +108,10 @@ Table savings_goals {
   target_amount  decimal(12,2) [not null]
   current_amount decimal(12,2) [default: 0]
   due_date       timestamp
+  // Set when the user marks the goal done OR when a contribution closes
+  // the gap. Distinguishes intentional completion from coincidental
+  // balance-equals-target (US-045 / ARCH-05).
+  completed_at   timestamp
 }
 
 Table goal_contributions {

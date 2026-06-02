@@ -1,7 +1,4 @@
-warn The configuration property `package.json#prisma` is deprecated and will be removed in Prisma 7. Please migrate to a Prisma config file (e.g., `prisma.config.ts`).
-For more information, see: https://pris.ly/prisma-config
-
--- CreateSchema
+﻿-- CreateSchema
 CREATE SCHEMA IF NOT EXISTS "public";
 
 -- CreateEnum
@@ -63,6 +60,7 @@ CREATE TABLE "User" (
     "consentAt" TIMESTAMP(3),
     "failedLoginAttempts" INTEGER NOT NULL DEFAULT 0,
     "lockedUntil" TIMESTAMP(3),
+    "tokenVersion" INTEGER NOT NULL DEFAULT 0,
     "notificationPrefs" JSONB NOT NULL DEFAULT '{}',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -76,6 +74,7 @@ CREATE TABLE "Category" (
     "id" UUID NOT NULL,
     "name" TEXT NOT NULL,
     "type" "CategoryType" NOT NULL DEFAULT 'CUSTOM',
+    "icon" TEXT,
     "transactionType" "TransactionType",
     "userId" UUID,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -113,6 +112,7 @@ CREATE TABLE "SavingsGoal" (
     "targetAmount" DECIMAL(12,2) NOT NULL,
     "currentAmount" DECIMAL(12,2) NOT NULL DEFAULT 0,
     "dueDate" TIMESTAMP(3),
+    "completedAt" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "deletedAt" TIMESTAMP(3),
@@ -259,6 +259,8 @@ CREATE TABLE "Prediction" (
     "predictedTotal" DECIMAL(12,2) NOT NULL,
     "predictedByCategory" JSONB,
     "confidenceInterval" JSONB,
+    "confidenceLevel" TEXT,
+    "narrative" TEXT,
     "modelVersion" TEXT,
     "actualTotal" DECIMAL(12,2),
     "accuracy" DECIMAL(5,2),
@@ -424,6 +426,19 @@ CREATE TABLE "AiMessage" (
     CONSTRAINT "AiMessage_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "IdempotencyKey" (
+    "id" UUID NOT NULL,
+    "key" TEXT NOT NULL,
+    "userId" UUID NOT NULL,
+    "requestHash" TEXT NOT NULL,
+    "statusCode" INTEGER NOT NULL,
+    "responseBody" JSONB NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "IdempotencyKey_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
@@ -577,6 +592,12 @@ CREATE INDEX "AiConversation_userId_status_idx" ON "AiConversation"("userId", "s
 -- CreateIndex
 CREATE INDEX "AiMessage_conversationId_createdAt_idx" ON "AiMessage"("conversationId", "createdAt");
 
+-- CreateIndex
+CREATE INDEX "IdempotencyKey_createdAt_idx" ON "IdempotencyKey"("createdAt");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "IdempotencyKey_key_userId_key" ON "IdempotencyKey"("key", "userId");
+
 -- AddForeignKey
 ALTER TABLE "Category" ADD CONSTRAINT "Category_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -666,4 +687,7 @@ ALTER TABLE "AiConversation" ADD CONSTRAINT "AiConversation_userId_fkey" FOREIGN
 
 -- AddForeignKey
 ALTER TABLE "AiMessage" ADD CONSTRAINT "AiMessage_conversationId_fkey" FOREIGN KEY ("conversationId") REFERENCES "AiConversation"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "IdempotencyKey" ADD CONSTRAINT "IdempotencyKey_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
