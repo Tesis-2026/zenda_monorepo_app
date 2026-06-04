@@ -232,6 +232,7 @@ Phase specs live in `.claude/specs/<phase>/`. **After implementing any roadmap p
 - `phase-4` — Categorization: backend PUT /api/categories/:id (rename), Flutter CategoryManagementScreen (create/rename/delete custom categories)
 - `phase-5` — Reports: backend monthly insights aggregation, Flutter ReportsScreen with pie chart + PDF export
 - `phase-6` — Budgets and goals: backend BudgetsModule + GoalsModule, Flutter BudgetScreen + GoalsScreen + GoalDetailScreen
+- `phase-11` — Notifications: backend NotificationsModule (DDD) + FcmService + 3 @Cron jobs + BUDGET_ALERT/ANOMALY_ALERT hooks; Flutter inbox screen + bell with unread badge + FCM token registration
 
 ## Thesis Success Metrics
 | Metric | Target |
