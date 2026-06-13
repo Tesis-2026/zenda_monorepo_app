@@ -68,10 +68,10 @@ Tesis2026/
 ├── zenda_fronted_app/      # Flutter + Riverpod mobile app (folder name has typo — keep as-is)
 │   └── lib/
 │       ├── core/
-│       │   ├── models/     # User, Transaction, Account, Streak, Breakdown503020
+│       │   ├── models/     # User, Transaction, Streak, Breakdown503020
 │       │   ├── services/   # ApiClient, AuthApiService, UserApiService,
-│       │   │               # AccountsRepository, TransactionsRepository,
-│       │   │               # StreakRepository, AiAdviceService, LocalKvStore, OcrService
+│       │   │               # TransactionsRepository, StreakRepository,
+│       │   │               # AiAdviceService, LocalKvStore, OcrService
 │       │   └── theme/      # AppTheme (light only)
 │       ├── features/
 │       │   ├── auth/       # LoginScreen, RegisterScreen, ForgotPasswordScreen,
@@ -79,7 +79,7 @@ Tesis2026/
 │       │   ├── budget/     # BudgetScreen, BudgetCard, budget providers
 │       │   ├── categories/ # CategoryManagementScreen
 │       │   ├── dashboard/  # DashboardScreen + widgets (SummaryCard, StreakCard,
-│       │   │               # BudgetPieChart, ZendaAiCard, AccountCard)
+│       │   │               # BudgetPieChart, ZendaAiCard)
 │       │   ├── goals/      # GoalsScreen, GoalDetailScreen, goal providers (embedded in Gestión)
 │       │   ├── management/ # ManagementScreen — "Gestión" nav tab hosting Progreso/Presupuestos/Metas as 3 chip sub-tabs (each screen rendered embedded:true)
 │       │   ├── onboarding/ # OnboardingScreen, OnboardingPage, SplashDecider, OnboardingPrefs
@@ -148,7 +148,7 @@ Tesis2026/
 ## Key Design Decisions
 - 50/30/20 budget rule: Needs / Wants / Savings
 - Category-to-bucket mapping is in `transaction.dart:bucketForCategory()`
-- Account types: cash, debit, credit — each with different mutation rules
+- No "accounts" concept: the backend does not model bank/cash accounts. Total available money = sum of per-category budgets. (Account model/repository/`AccountCard` were removed; a residual `TransactionModel.accountId` defaults to `''`.)
 - Streak system for daily engagement gamification
 
 ## Roadmap Documentation
