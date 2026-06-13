@@ -1,33 +1,34 @@
 # Frontend ↔ Backend Integration Status
 
 > Source of truth for wiring the Flutter app to the real NestJS backend.
-> Last verified: **2026-05-31** (code-level contract + response-parsing audit).
-> Method: read actual `lib/core/services/*.dart` `.fromJson` against `src/modules/*/interface/` controllers + response DTOs. `tsc --noEmit` and `flutter analyze` clean at time of audit.
+> Last verified: **2026-06-07** (reconciliation after the 2026-06-04/06 batch).
+> Method: read actual `lib/core/services/*.dart` `.fromJson` against `src/modules/*/interface/` controllers + response DTOs. `tsc --noEmit` clean, `flutter analyze` "No issues found", `test:e2e` 77/77 at time of audit.
 
 ---
 
 ## 1. Current state
 
-**The app runs 100% in DEMO/MOCK mode.** No call reaches the backend today.
+**The app defaults to the REAL backend.** Demo mode is now opt-in at build time (the §6 recommendation below was implemented).
 
-- `lib/main.dart:9` → `const bool _kDemoMode = true;`
-- `lib/main.dart:26` → `overrides: _kDemoMode ? buildDemoOverrides() : const []`
+- `lib/main.dart:14` → `const bool _kDemoMode = bool.fromEnvironment('DEMO', defaultValue: false);`
+- `lib/main.dart:42` → `if (_kDemoMode) ...buildDemoOverrides()` (mocks applied only when `DEMO=true`).
+- Run demo: `flutter run --dart-define=DEMO=true`. Run real: just `flutter run` (point the base URL at a running backend, see §2).
 - `buildDemoOverrides()` (`lib/core/mock/demo_overrides.dart`) replaces every `*ApiService` provider with a `Mock*` returning `DemoData`.
 
-**Integrating = flip the switch + point at a running backend.** It is not a big rewrite — the contract is largely aligned.
+**Integrating = point at a running backend.** No code edit needed to leave demo mode.
 
 ---
 
 ## 2. Integration checklist (to go from demo → real backend)
 
-1. **`lib/main.dart`** → set `_kDemoMode = false` (or make it a `--dart-define`, see §6).
-2. **`lib/core/services/api_client.dart:12`** → set `_kBaseUrl`:
-   - Android emulator: `http://10.0.2.2:3000/api`
+1. **Demo mode is already off by default.** Nothing to edit — to force demo, build with `--dart-define=DEMO=true` (see §6).
+2. **Base URL** is a `--dart-define` (`API_BASE_URL`), default `http://localhost:3000/api` (`api_client.dart:14-16`):
+   - Windows desktop / web / iOS simulator: `http://localhost:3000/api` (default works)
+   - Android emulator: `--dart-define=API_BASE_URL=http://10.0.2.2:3000/api`
    - Physical device: `http://<your-LAN-IP>:3000/api` (or an ngrok tunnel)
-   - `localhost` only works on iOS simulator / same host.
 3. **Backend running + DB seeded:** `docker compose up -d` → `npm run prisma:migrate` → `npm run prisma:seed` → `npm run start:dev`.
-4. **Category seed must use the Spanish names the frontend expects** (Comida, Transporte, Vivienda, Servicios, Salud, Entretenimiento, Compras, Suscripciones, Ahorro, Otros). The transaction flow resolves its `TransactionCategory` enum → name → `categoryId` via `GET /categories`. If the seed names differ, category resolution falls back to `newCategoryName` (creates duplicates).
-5. Apply the two data-mapping fixes in §4 (otherwise challenge rewards and education topic categories show wrong data — no crash).
+4. **Category seed uses ENGLISH names** (`Food`, `Transportation`, `Housing`, `Utilities`, `Health`, `Entertainment`, `Shopping`, `Subscriptions`, `Cravings`, `Savings`, `Education`, `Other` + income types). This is **intentional and correct**: the frontend resolves `TransactionCategory` enum → English name via `categoryToApiName()` (`transaction_api_service.dart:5-18`), which matches the seed — so `categoryId` resolves and **no duplicates are created**. The UI translates names to Spanish via `CategoryUtils.labelEs()` for display. (Earlier drafts of this doc wrongly said the seed must be Spanish — that was incorrect.)
+5. No data-mapping fixes required — the §4 issues are resolved (see updated §4).
 
 ---
 
@@ -41,22 +42,17 @@
 
 ---
 
-## 4. Open data-mapping issues (🟡 wrong/missing data — NOT crashes)
+## 4. Data-mapping issues (✅ resolved by the 2026-06-04/06 batch)
 
-These parse without error but display wrong/empty data until fixed.
+### 4.1 Challenge rewards (✅ resolved)
+- Backend `challenges/interface/dto/challenge.response.dto.ts:9-10` now sends `pointsReward: number` (`e.pointsReward`) and `badgeReward: string | null` (badge name parsed from `reward`), in addition to the raw `reward`.
+- Frontend `Challenge.fromJson` reads exactly those fields → challenges show the correct points / badge.
+- Pinned by the challenges e2e contract test (regression guard updated 2026-06-07). Tracked as ARCH-38 (FIXED).
 
-### 4.1 Challenge rewards
-- Backend `challenges/interface/dto/challenge.response.dto.ts:8` sends a single `reward: string | null`.
-- Frontend `core/services/education_api_service.dart:294,299` reads `pointsReward` (`as int? ?? 0`) and `badgeReward` (`as String?`) — **neither field exists** in the response.
-- **Effect:** challenges always show **0 points / no badge**; the real `reward` is dropped.
-- **Fix (pick one):** map FE to the backend field — `pointsReward: int.tryParse(json['reward'] ?? '') ?? 0` (or split reward semantics), OR change the backend DTO to expose `pointsReward`/`badgeReward` explicitly.
-
-### 4.2 Education topic metadata
-- Backend `education/interface/dto/topic.response.dto.ts` sends: id, title, content, difficulty, order, isCompleted, completedAt. It does **NOT** send `category`, `questionCount`, `isLocked`.
-- Frontend `core/services/education_api_service.dart:37,43` reads `category ?? 'budgeting'`, `questionCount ?? 0`, `isLocked ?? false`.
-- **Effect:** **every** topic renders as category "budgeting" (wrong icon/color/label for saving/investing topics) and shows **0 questions**.
-- **Fix (preferred):** add `category`, `questionCount`, `isLocked` to `TopicResponseDto` + its mapper (the data exists on the entity/DB). Alternatively accept the FE defaults.
-- **Minor related:** backend sends `difficulty` UPPERCASE (BEGINNER/INTERMEDIATE/ADVANCED). Confirm the FE doesn't compare against lowercase.
+### 4.2 Education topic metadata (✅ mostly resolved)
+- Backend `education/interface/dto/topic.response.dto.ts:10-11` now sends `category` and `questionCount` from the entity → topics render the correct icon/color and real question count.
+- **Only remaining gap:** `isLocked` is not in the DTO; `EducationTopic.fromJson` defaults it to `false`. Harmless — no topic-locking flow ships today. Tracked as ARCH-39 (PARTIAL).
+- **Note:** backend `difficulty` is UPPERCASE (BEGINNER/INTERMEDIATE/ADVANCED); the FE stores it as-is and does not compare against lowercase. No issue.
 
 ### 4.3 Category icon key (✅ resolved 2026-06-01)
 - Backend `Category` now stores a stable semantic `icon` key (e.g. `food`, `transport`); seeded for system categories, **null for custom** (`schema.prisma`, migration `20260601000000_add_category_icon`, `seed.ts` `ICON_BY_CATEGORY_NAME`).
@@ -73,14 +69,9 @@ These parse without error but display wrong/empty data until fixed.
 
 ---
 
-## 6. Recommendation: make demo mode runtime-configurable
+## 6. Demo mode is runtime-configurable (✅ implemented)
 
-Today `_kDemoMode` is a compile-time `const` → switching requires editing source + rebuilding. Consider:
-
-```dart
-const bool _kDemoMode = bool.fromEnvironment('DEMO', defaultValue: true);
-```
-Then build real: `flutter build apk --dart-define=DEMO=false`. Lets the same codebase ship demo or real without code edits.
+`main.dart:14` reads `const bool _kDemoMode = bool.fromEnvironment('DEMO', defaultValue: false);` — the same build ships real (default) or demo (`--dart-define=DEMO=true`) without code edits. The base URL is likewise a `--dart-define` (`API_BASE_URL`, `api_client.dart:14`).
 
 ---
 
@@ -96,4 +87,4 @@ Two automated sweeps over-flagged these; verified against code:
 
 ## 8. TL;DR
 
-Integration is **viable with no crashes**. Required: (1) `_kDemoMode=false`, (2) correct base URL, (3) backend up + seeded with matching category names. Recommended before demo with real data: fix §4.1 (challenge rewards) and §4.2 (topic metadata). Everything else is wired correctly.
+Integration is **viable with no crashes and no remaining data-mapping fixes**. Required: (1) demo mode already off by default, (2) correct base URL via `--dart-define=API_BASE_URL`, (3) backend up + seeded (English category names are correct). §4.1 (challenge rewards) and §4.2 (topic metadata) are resolved; only `isLocked` (ARCH-39) and the client-side User lockout/consent fields (ARCH-12) remain as harmless gaps.
