@@ -2,7 +2,7 @@
 
 **Proyecto:** Zenda — App móvil de gestión financiera con IA para estudiantes universitarios peruanos  
 **Fuente HU:** P202616_HU_y_Criterios_Aceptacion_V1.md · P202616_Product_Backlog_V1.md  
-**Auditado:** 2026-04-29 · **Actualizado:** 2026-04-30 (7 HU parciales completadas)
+**Auditado:** 2026-06-13 · **Actualizado:** 2026-06-13 (Fase 11 Notificaciones + detección de anomalías US-016 completadas)
 
 ---
 
@@ -10,12 +10,14 @@
 
 | Estado | Cantidad | % del total |
 |--------|----------|-------------|
-| ✅ Completado | 47 | 95.9% |
-| ❌ Pendiente | 2 | 4.1% |
+| ✅ Completado | 48 | 98.0% |
+| ❌ Pendiente | 1 | 2.0% |
 | **Total** | **49** | **100%** |
 
-**Las 7 historias parciales fueron completadas el 2026-04-30.** Solo quedan 2 HU sin implementar (US-016, US-034) que requieren esfuerzo alto y no bloquean la entrega.  
-Las 47 completadas tienen lógica real en backend y pantallas funcionales en frontend verificadas en código.
+**US-016 (detección de anomalías) se completó tras implementar la Fase 11 (Notificaciones).** Solo queda **US-034** (invitación a evaluación final tras 30 días) sin implementar — esfuerzo medio, no bloquea la entrega.  
+Las 48 completadas tienen lógica real en backend y pantallas funcionales en frontend verificadas en código.
+
+> **Cambios desde 2026-04-30:** Fase 11 completa (módulo `NotificationsModule` DDD + `FcmService` + 3 `@Cron` + bandeja de entrada + campana con badge + registro de token FCM); **US-016** detección de anomalías (`src/infra/spending-alert/`, dispara `ANOMALY_ALERT` al crear transacción); `AuditLog` escrito en 29+ puntos; `Prediction.actualTotal`/`accuracy` ya se persisten; concepto de "cuentas" eliminado en Flutter (reemplazado por presupuestos) + nueva pestaña "Gestión"; chat IA persistente (módulo `conversations`); instrumento SUS (`/surveys/sus`).
 
 ---
 
@@ -84,19 +86,16 @@ Las 47 completadas tienen lógica real en backend y pantallas funcionales en fro
 
 ---
 
-## ❌ Historias No Implementadas (2)
+## ✅ US-016 — Completada (detección de anomalías)
 
-> No existe implementación en backend ni en frontend.
+**Criterio:** "la app envía automáticamente una notificación alertando del aumento inusual" tras registrar una transacción que supera el 20% del promedio histórico en esa categoría.  
+**Implementado:** `src/infra/spending-alert/spending-alert.service.ts` compara el gasto del mes actual contra el promedio móvil de 3 meses por categoría; si lo supera en >20%, dispara una notificación `ANOMALY_ALERT` (persistida vía `NotificationsModule` + entrega FCM). Se invoca desde `TransactionsController.create()` al guardar la transacción. En el frontend, la alerta aparece tras guardar (igual que la alerta de presupuesto) y queda en la bandeja de notificaciones.
 
 ---
 
-### US-016 — Alerta de IA al superar 20% del promedio histórico mensual
-**Criterio:** "la app envía automáticamente una notificación alertando del aumento inusual en menos de 10 segundos" tras registrar una transacción que supera el 20% del promedio histórico en esa categoría.  
-**Estado actual:** No existe ningún módulo, endpoint, ni lógica de detección de anomalías. Solo existe `NotificationType.ANOMALY_ALERT` en el schema de Prisma como enum vacío.  
-**Para implementar:**
-1. **Backend:** Nuevo use-case `CheckAnomalyUseCase` que, tras crear una transacción, calcula el promedio de los últimos 3 meses para esa categoría y compara con el gasto actual del mes. Si supera el 20%, guarda una notificación.
-2. **Frontend:** Después de guardar una transacción (igual que el alerta de presupuesto), llamar a un endpoint de notificaciones y mostrar SnackBar rojo si hay anomalía.  
-**Esfuerzo estimado:** Alto — requiere nueva lógica en backend y frontend.
+## ❌ Historias No Implementadas (1)
+
+> No existe implementación en backend ni en frontend.
 
 ---
 
@@ -112,22 +111,25 @@ Las 47 completadas tienen lógica real en backend y pantallas funcionales en fro
 
 ## Plan de Cierre para Entrega Final
 
-### Pendiente (2 HU no implementadas)
+### Pendiente (1 HU no implementada)
 
 | # | Historia | Esfuerzo | Notas |
 |---|---------|----------|-------|
-| 1 | **US-016** Detección de anomalías | Muy Alto | Requiere nuevo módulo + notifications push — no bloquea demo |
-| 2 | **US-034** Banner invitación 30 días | Medio | Requiere endpoint `pilot-status` + banner persistente en dashboard |
+| 1 | **US-034** Banner invitación 30 días | Medio | Requiere endpoint `pilot-status` + banner persistente en dashboard |
+
+> **Pendientes de infraestructura (no son HU, no bloquean la demo):** pruebas automatizadas (Fase 14 — 0 archivos de test en backend), seed de datos demo (200+ transacciones/usuario), guion de demo + guía de instalación (Fase 16), periodo de gracia de 30 días en `DELETE /users/me`, ProGuard R8, y credenciales Firebase para entrega real de notificaciones push.
 
 ---
 
 ## Notas Técnicas
 
 - **Azure OpenAI:** Las funciones de IA (predicciones, recomendaciones, clasificación) usan Azure OpenAI `gpt-4o-mini`. Si no está configurada la variable de entorno `AZURE_OPENAI_*`, el sistema cae a fallbacks estadísticos/basados en reglas — la app sigue funcionando.
-- **Insignias auto-otorgadas:** First Transaction, Consistency (7 días consecutivos), Goal Achieved, Budgeter, Financial Sage, Challenger, Predictor — todas tienen lógica real de trigger en el backend.
-- **Seguridad:** HTTPS en producción, JWT con refresh tokens, bcrypt para contraseñas, soft deletes en todas las entidades, 401 en endpoints protegidos sin token.
-- **Encuesta pre/post:** Ambas están conectadas en DB — el endpoint de comparación calcula automáticamente el `improvementPercentage` entre la evaluación inicial y la final.
+- **Insignias auto-otorgadas:** First Transaction, Consistency (7 días consecutivos), Goal Achieved, Budgeter, Financial Sage, Challenger, Predictor — las 7 tienen lógica real de trigger en el backend.
+- **Seguridad:** HTTPS en producción, JWT con refresh tokens, bcrypt para contraseñas, soft deletes en todas las entidades, 401 en endpoints protegidos sin token. `AuditLog` se escribe en 29+ puntos (login, transacciones, presupuestos, categorías, metas, encuestas).
+- **Encuesta pre/post:** Ambas están conectadas en DB — el endpoint de comparación calcula automáticamente el `improvementPercentage` entre la evaluación inicial y la final. Se añadió el instrumento **SUS** (`GET/POST /surveys/sus`) con la fórmula estándar de 10 ítems.
+- **Notificaciones (Fase 11):** `NotificationsModule` (DDD) + `FcmService` + 3 `@Cron` (recordatorio diario, recordatorio de retos, predicción lista); bandeja de entrada + campana con badge de no leídos + registro de token FCM en Flutter. La entrega real en dispositivo requiere credenciales Firebase.
+- **Predicciones:** `actualTotal` y `accuracy` ya se persisten (`recordActuals()`), por lo que la métrica de precisión de IA (≥80%) es calculable.
 
 ---
 
-*Última actualización: 2026-04-30 — Sprint de cierre: 7 HU parciales completadas*
+*Última actualización: 2026-06-13 — Reconciliación de estado: Fase 11 + US-016 completadas (48/49 HU)*
