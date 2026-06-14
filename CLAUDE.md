@@ -148,7 +148,8 @@ Tesis2026/
 ## Key Design Decisions
 - 50/30/20 budget rule: Needs / Wants / Savings
 - Category-to-bucket mapping is in `transaction.dart:bucketForCategory()`
-- No "accounts" concept: the backend does not model bank/cash accounts. Total available money = sum of per-category budgets. (Account model/repository/`AccountCard` were removed; a residual `TransactionModel.accountId` defaults to `''`.)
+- No "accounts" concept: the backend does not model bank/cash accounts. (Account model/repository/`AccountCard` were removed; a residual `TransactionModel.accountId` defaults to `''`.)
+- Budgets are **pure monthly spending limits** (only expenses draw from one). Income is a **first-class concept**, tracked on its own and never inflating a budget. The money figure shown is the **net balance** (Ingresos − Gastos), not "sum of budgets". See [`docs/income-as-first-class-concept.md`](docs/income-as-first-class-concept.md). The "Ingresos" view is the 4th sub-tab of Gestión (`features/income/`).
 - Streak system for daily engagement gamification
 
 ## Roadmap Documentation
