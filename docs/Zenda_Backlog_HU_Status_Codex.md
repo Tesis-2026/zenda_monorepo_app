@@ -8,8 +8,8 @@ Alcance: revision estatica del codigo backend, frontend, rutas, servicios, model
 
 | Estado | Cantidad |
 |---|---:|
-| Realizado | 47 |
-| A medias | 2 |
+| Realizado | 49 |
+| A medias | 0 |
 | Sin cumplir | 0 |
 | Total HU revisadas | 49 |
 
@@ -66,19 +66,18 @@ Alcance: revision estatica del codigo backend, frontend, rutas, servicios, model
 | HU-028 Login con bloqueo por intentos | Realizado | `login.use-case.ts` aplica 3 intentos y bloqueo temporal. | Sin brecha critica. |
 | HU-029 Seguridad y privacidad Ley 29733 | Realizado | Existen JWT, bcrypt, auditoria, guards, separacion por usuario, consentimiento persistido con version/IP/user-agent, politica de privacidad/retencion documentada, exportacion de datos y borrado logico con anonimizacion. | Adjuntar evidencia operativa de Azure: HTTPS Only, certificado TLS, cifrado en reposo/backups de PostgreSQL y gestion segura de secretos. |
 | HU-030 Perfil inicial | Realizado | `profile_setup_screen.dart`, `UpdateProfileDto` y modelo User incluyen edad, universidad, situacion/ingreso y nivel financiero. | Sin brecha critica. |
-| HU-031 Moneda y formato numerico | A medias | Moneda existe en perfil/backend; hay provider y formatter reactivo para formato numerico. | No se encontro selector visible de formato numerico en `profile_screen.dart`; exponerlo en UI o confirmar pantalla alternativa. |
+| HU-031 Moneda y formato numerico | Realizado | `profile_screen.dart` expone selectores visibles de moneda y formato numerico; `numberFormatProvider` y `amountFormatterProvider` actualizan el formato de manera reactiva. | Validar manualmente cambio PEN/USD y formato punto/coma en perfil, reportes y pantallas con montos. |
 | HU-032 Onboarding guiado con omitir | Realizado | `onboarding_screen.dart`, `onboarding_prefs.dart` y `splash_decider.dart` manejan carrusel y skip. | Sin brecha critica. |
 | HU-033 Evaluacion inicial primera vez | Realizado | Router fuerza `/surveys/pre` cuando el usuario autenticado tiene perfil completo y no completo el pre-test. | Sin brecha critica. |
-| HU-034 Invitacion evaluacion final tras 30 dias | A medias | Existe `/surveys/post`, `postSurveyProvider` y comparacion pre/post. | No se encontro banner/automatizacion activa de invitacion a los 30 dias en dashboard; implementarlo o reactivar regla. |
+| HU-034 Invitacion evaluacion final tras 30 dias | Realizado | `dashboard_screen.dart` muestra banner de encuesta final cuando el usuario tiene 30+ dias desde `createdAt` y `postSurveyProvider` detecta que no existe `postScore` en `/surveys/comparison`. | Validar manualmente con usuario beta de 30+ dias y con usuario que ya respondio el post-test. |
 | HU-035 Encuesta SUS | Realizado | `surveys.controller.ts` calcula SUS 0-100; `sus_screen.dart` muestra 10 items 1-5 y exige respuesta. | Sin brecha critica. |
 | HU-036 Feedback cualitativo | Realizado | `feedback.controller.ts`, `feedback_modal.dart` y feedback abierto en encuestas finales. | Sin brecha critica. |
 | HU-037 Analisis automatico de uso | Realizado | `AnalyticsService`, `StudyTelemetryService`, eventos de uso y `research-dashboard` agregan datos. | Sin brecha critica. |
-| HU-047 Evaluacion final vinculada a inicial | Realizado | `GET /surveys/comparison` compara pre/post y frontend tiene `survey_comparison_screen.dart`. | Depende de que HU-034 dispare la invitacion oportunamente. |
+| HU-047 Evaluacion final vinculada a inicial | Realizado | `GET /surveys/comparison` compara pre/post y frontend tiene `survey_comparison_screen.dart`. | Sin brecha critica. |
 
 ## Brechas prioritarias antes de cerrar backlog
 
-1. Reactivar o implementar invitacion automatica al post-test tras 30 dias de uso activo para HU-034.
-2. Exponer selector de formato numerico en perfil para cerrar HU-031.
+No quedan HU en estado `A medias` o `Sin cumplir`. Mantener una pasada final de prueba manual sobre build beta y backend productivo.
 
 ## Nota de validacion
 
