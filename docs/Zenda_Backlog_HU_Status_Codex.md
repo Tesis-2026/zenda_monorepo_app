@@ -8,8 +8,8 @@ Alcance: revision estatica del codigo backend, frontend, rutas, servicios, model
 
 | Estado | Cantidad |
 |---|---:|
-| Realizado | 45 |
-| A medias | 4 |
+| Realizado | 47 |
+| A medias | 2 |
 | Sin cumplir | 0 |
 | Total HU revisadas | 49 |
 
@@ -52,7 +52,7 @@ Alcance: revision estatica del codigo backend, frontend, rutas, servicios, model
 | HU-042 Resumen presupuestos activos | Realizado | Pantalla de presupuestos muestra tarjetas con avance, gastado, disponible y porcentaje. | Sin brecha critica. |
 | HU-043 Editar/eliminar presupuesto | Realizado | Backend `PATCH/DELETE /budgets/:id` y UI de edicion/eliminacion. | Sin brecha critica. |
 | HU-021 Crear meta de ahorro | Realizado | `goals.controller.ts` y `goals_screen.dart` permiten nombre, monto objetivo y fecha limite. | Sin brecha critica. |
-| HU-022 Ver avance y dias restantes de meta | A medias | `goal_detail_screen.dart` muestra monto actual, porcentaje, restante y fecha limite. | Falta mostrar explicitamente dias restantes calculados. |
+| HU-022 Ver avance y dias restantes de meta | Realizado | `goal_detail_screen.dart` muestra monto actual, porcentaje, restante, fecha limite y dias restantes calculados; `goals_screen.dart` tambien muestra dias restantes en la tarjeta de cada meta activa. | Validar manualmente metas con fecha futura, fecha de hoy y fecha vencida. |
 | HU-044 Registrar aporte a meta | Realizado | `POST /goals/:id/contributions` y UI de contribucion en detalle. | Sin brecha critica. |
 | HU-045 Completar o eliminar meta | Realizado | `complete` y `delete` existen en backend y UI. | Sin brecha critica. |
 | HU-023 Modulos de educacion financiera | Realizado | `education.controller.ts`, `education_screen.dart` y seed de topicos. | Sin brecha critica. |
@@ -64,7 +64,7 @@ Alcance: revision estatica del codigo backend, frontend, rutas, servicios, model
 | HU-049 Preguntas generadas por IA | Realizado | `get-personalized-quiz.use-case.ts` usa agente RAG, limita intentos y guarda preguntas. | Sin brecha critica. |
 | HU-027 Registro e inicio automatico | Realizado | `auth.controller.ts`, `register.use-case.ts` y frontend registran usuario y retornan tokens. | Sin brecha critica. |
 | HU-028 Login con bloqueo por intentos | Realizado | `login.use-case.ts` aplica 3 intentos y bloqueo temporal. | Sin brecha critica. |
-| HU-029 Seguridad y privacidad Ley 29733 | A medias | Existen JWT, bcrypt, auditoria, guards y separacion por usuario. | Falta evidencia documentada de HTTPS en prod, cifrado en reposo, politicas de privacidad, retencion/consentimiento y manejo de datos personales. |
+| HU-029 Seguridad y privacidad Ley 29733 | Realizado | Existen JWT, bcrypt, auditoria, guards, separacion por usuario, consentimiento persistido con version/IP/user-agent, politica de privacidad/retencion documentada, exportacion de datos y borrado logico con anonimizacion. | Adjuntar evidencia operativa de Azure: HTTPS Only, certificado TLS, cifrado en reposo/backups de PostgreSQL y gestion segura de secretos. |
 | HU-030 Perfil inicial | Realizado | `profile_setup_screen.dart`, `UpdateProfileDto` y modelo User incluyen edad, universidad, situacion/ingreso y nivel financiero. | Sin brecha critica. |
 | HU-031 Moneda y formato numerico | A medias | Moneda existe en perfil/backend; hay provider y formatter reactivo para formato numerico. | No se encontro selector visible de formato numerico en `profile_screen.dart`; exponerlo en UI o confirmar pantalla alternativa. |
 | HU-032 Onboarding guiado con omitir | Realizado | `onboarding_screen.dart`, `onboarding_prefs.dart` y `splash_decider.dart` manejan carrusel y skip. | Sin brecha critica. |
@@ -77,10 +77,8 @@ Alcance: revision estatica del codigo backend, frontend, rutas, servicios, model
 
 ## Brechas prioritarias antes de cerrar backlog
 
-1. Agregar dias restantes calculados en detalle/listado de metas para HU-022.
-2. Reactivar o implementar invitacion automatica al post-test tras 30 dias de uso activo para HU-034.
-3. Exponer selector de formato numerico en perfil para cerrar HU-031.
-4. Documentar seguridad/privacidad de produccion para HU-029: HTTPS, cifrado, backups, retencion, consentimiento y manejo de datos personales.
+1. Reactivar o implementar invitacion automatica al post-test tras 30 dias de uso activo para HU-034.
+2. Exponer selector de formato numerico en perfil para cerrar HU-031.
 
 ## Nota de validacion
 
