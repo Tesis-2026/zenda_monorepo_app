@@ -1,0 +1,51 @@
+# Archivos modificados
+
+Generado de git status. No incluye secretos ni sus valores. Nuevos directorios se expanden en el diff de revision.
+
+| Repo | Estado | Archivo |
+| --- | --- | --- |
+| zenda_backend_app | M | rc/infra/analytics/analytics.service.ts |
+| zenda_backend_app | M | src/infra/email/email.service.ts |
+| zenda_backend_app | M | src/modules/accounts/application/accounts.service.ts |
+| zenda_backend_app | M | src/modules/auth/application/use-cases/register.use-case.ts |
+| zenda_backend_app | M | src/modules/budgets/application/budgets.facade.ts |
+| zenda_backend_app | M | src/modules/budgets/infrastructure/persistence/prisma-budgets.repository.ts |
+| zenda_backend_app | M | src/modules/goals/application/use-cases/complete-goal.use-case.ts |
+| zenda_backend_app | M | src/modules/goals/application/use-cases/contribute-to-goal.use-case.ts |
+| zenda_backend_app | M | src/modules/goals/domain/ports/savings-goal.repository.ts |
+| zenda_backend_app | M | src/modules/goals/infrastructure/persistence/prisma-goals.repository.ts |
+| zenda_backend_app | M | src/modules/insights/application/use-cases/generate-pdf-report.use-case.ts |
+| zenda_backend_app | M | src/modules/insights/application/use-cases/get-day-summary.use-case.ts |
+| zenda_backend_app | M | src/modules/insights/application/use-cases/get-month-summary.use-case.ts |
+| zenda_backend_app | M | src/modules/insights/application/use-cases/get-week-summary.use-case.ts |
+| zenda_backend_app | M | src/modules/insights/infrastructure/persistence/prisma-insights.repository.ts |
+| zenda_backend_app | M | src/modules/insights/interface/summary.controller.ts |
+| zenda_backend_app | M | src/modules/research-dashboard/interface/research-dashboard.controller.ts |
+| zenda_backend_app | M | src/modules/surveys/interface/surveys.controller.ts |
+| zenda_backend_app | M | src/modules/transactions/application/use-cases/create-transaction.use-case.ts |
+| zenda_backend_app | M | src/modules/transactions/application/use-cases/update-transaction.use-case.ts |
+| zenda_backend_app | M | src/modules/transactions/infrastructure/persistence/prisma-transaction.repository.ts |
+| zenda_backend_app | M | src/modules/users/application/use-cases/anonymize-account.use-case.ts |
+| zenda_backend_app | M | src/shared/exceptions/global-exception.filter.ts |
+| zenda_backend_app | M | src/shared/idempotency/idempotency.interceptor.ts |
+| zenda_backend_app | M | src/shared/idempotency/idempotency.service.ts |
+| zenda_backend_app | M | src/shared/logger/request-logging.interceptor.ts |
+| zenda_backend_app | M | test/infra/analytics.e2e-spec.ts |
+| zenda_backend_app | M | test/modules/auth.e2e-spec.ts |
+| zenda_backend_app | M | test/modules/surveys.e2e-spec.ts |
+| zenda_backend_app | M | test/modules/users.e2e-spec.ts |
+| zenda_backend_app | M | test/support/create-test-app.ts |
+| zenda_backend_app | M | test/support/setup-env.ts |
+| zenda_backend_app | ?? | src/infra/analytics/telemetry-policy.ts |
+| zenda_backend_app | ?? | src/shared/finance/ |
+| zenda_backend_app | ?? | test/modules/pilot-readiness.e2e-spec.ts |
+| zenda_fronted_app | M | ndroid/app/src/main/AndroidManifest.xml |
+| zenda_fronted_app | M | lib/app.dart |
+| zenda_fronted_app | M | lib/core/services/api_client.dart |
+| zenda_fronted_app | M | lib/core/services/study_analytics_service.dart |
+| zenda_fronted_app | M | lib/core/services/study_telemetry_service.dart |
+| zenda_fronted_app | M | lib/core/services/transaction_api_service.dart |
+| zenda_fronted_app | M | lib/features/transactions/controllers/new_transaction_controller.dart |
+| zenda_fronted_app | M | lib/features/transactions/edit_transaction_screen.dart |
+| zenda_fronted_app | ?? | lib/core/services/telemetry_policy.dart |
+| zenda_fronted_app | ?? | test/pilot_readiness_test.dart |
