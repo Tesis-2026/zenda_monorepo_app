@@ -1,5 +1,5 @@
 {
-  "baseCommit": "98bcd2cddf2df4b06fa888c35e21439b24f4bf2a",
+  "baseCommit": "f14401328770415ecd746cc3a675d90d6b005f3d",
   "endpoints": [
     {
       "method": "GET",
@@ -1343,7 +1343,7 @@
         "JwtAuthGuard"
       ],
       "file": "zenda_backend_app/src/modules/insights/interface/summary.controller.ts",
-      "line": 35
+      "line": 43
     },
     {
       "method": "GET",
@@ -1370,7 +1370,7 @@
         "JwtAuthGuard"
       ],
       "file": "zenda_backend_app/src/modules/insights/interface/summary.controller.ts",
-      "line": 47
+      "line": 62
     },
     {
       "method": "GET",
@@ -1397,7 +1397,7 @@
         "JwtAuthGuard"
       ],
       "file": "zenda_backend_app/src/modules/insights/interface/summary.controller.ts",
-      "line": 59
+      "line": 78
     },
     {
       "method": "GET",
@@ -1424,7 +1424,7 @@
         "JwtAuthGuard"
       ],
       "file": "zenda_backend_app/src/modules/insights/interface/summary.controller.ts",
-      "line": 71
+      "line": 92
     },
     {
       "method": "GET",
@@ -1444,7 +1444,7 @@
         "JwtAuthGuard"
       ],
       "file": "zenda_backend_app/src/modules/insights/interface/summary.controller.ts",
-      "line": 83
+      "line": 104
     },
     {
       "method": "GET",
@@ -1840,7 +1840,7 @@
       "returns": "Promise<string>",
       "guards": [],
       "file": "zenda_backend_app/src/modules/research-dashboard/interface/research-dashboard.controller.ts",
-      "line": 65
+      "line": 68
     },
     {
       "method": "GET",
@@ -1989,7 +1989,7 @@
         "JwtAuthGuard"
       ],
       "file": "zenda_backend_app/src/modules/surveys/interface/surveys.controller.ts",
-      "line": 348
+      "line": 351
     },
     {
       "method": "GET",
@@ -2009,7 +2009,7 @@
         "JwtAuthGuard"
       ],
       "file": "zenda_backend_app/src/modules/surveys/interface/surveys.controller.ts",
-      "line": 362
+      "line": 365
     },
     {
       "method": "POST",
@@ -2036,7 +2036,7 @@
         "JwtAuthGuard"
       ],
       "file": "zenda_backend_app/src/modules/surveys/interface/surveys.controller.ts",
-      "line": 387
+      "line": 390
     },
     {
       "method": "GET",
@@ -2056,7 +2056,7 @@
         "JwtAuthGuard"
       ],
       "file": "zenda_backend_app/src/modules/surveys/interface/surveys.controller.ts",
-      "line": 468
+      "line": 469
     },
     {
       "method": "POST",
