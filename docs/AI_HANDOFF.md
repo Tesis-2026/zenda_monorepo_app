@@ -1,6 +1,35 @@
 # AI Handoff
 
-# AI Handoff
+## Remote sync & release candidate deployment closure — 2026-09-16
+
+- **Current objective:** Synchronize verified pre-pilot release candidates to GitHub remotes across all three repositories, re-verify live Azure staging health/security guards, and prepare operational execution for the accompanied academic pre-pilot.
+- **Work completed in this session:**
+  1. **Live Staging Smoke Re-verification:** Executed `node tools/prepilot-smoke.cjs` against live Azure staging (`https://zendaapilinuxtesis-hyb8dabvh2hpdgan.centralus-01.azurewebsites.net/api`). 7/7 tests passed: Health 200 OK, DB readiness 200 OK, malformed login 400 rejection, invalid credentials 401 rejection, and strict 401 authentication guards on `/users/me`, `/transactions`, and `/summary/month`.
+  2. **Remote Push to `origin/main`:** Pushed all local commits to GitHub remotes across all 3 repositories:
+     - `zenda_monorepo_app`: `9e27d2b..6bd169e` (`main -> main`)
+     - `zenda_backend_app`: `46dd08e..dd122c5` (`main -> main`)
+     - `zenda_fronted_app`: `df666af..b2f3cac` (`main -> main`)
+  3. **Repository Status:** All 3 repositories are clean and up to date with `origin/main`.
+- **Release Assets:**
+  - **APK:** `zenda_fronted_app/build/app/outputs/flutter-apk/app-prod-release.apk`
+  - **Version:** `1.0.0` (versionCode `2`, build flavor `prodRelease`)
+  - **SHA256:** `a10f31e0298c49f68f61d356607e02742413b8b64519b4e8acb83bc1b93d753a` (63.3 MB)
+- **Final Verdict:** **GO PARA PREPILOTO ACOMPAÑADO (PEN / America/Lima)**.
+- **Recommended next steps for human operator (Fernando):**
+  1. Distribute verified APK to Firebase App Distribution:
+     ```powershell
+     firebase appdistribution:distribute zenda_fronted_app\build\app\outputs\flutter-apk\app-prod-release.apk `
+       --app 1:143147353185:android:4e4cf351f410ce12c6d620 `
+       --groups zenda-piloto-validacion `
+       --release-notes "Zenda v1.0.0 (build 2) - Prepiloto Acompañado. Correcciones FR-01, FR-02 y FR-03."
+     ```
+  2. Collect cohort participant informed consent prior to account creation.
+  3. Execute authenticated smoke test flow with two test accounts:
+     ```powershell
+     $env:SMOKE_TOKEN_A="<jwt_usuario_a>"
+     $env:SMOKE_TOKEN_B="<jwt_usuario_b>"
+     node tools/prepilot-smoke.cjs
+     ```
 
 ## Pre-pilot readiness closure — 2026-09-15
 
@@ -18,10 +47,6 @@
   - Frontend: 10 files in commit `a793c52`.
   - Root: `tools/prepilot-smoke.cjs`, `docs/pilot-readiness/PRE_PILOT_RELEASE.md`, `docs/pilot-readiness/11_FINAL_REVIEW.md`, `docs/pilot-readiness/05_TEST_EVIDENCE.md`, `docs/pilot-readiness/09_PILOT_READINESS_REPORT.md`, `docs/pilot-readiness/CHANGED_FILES.md`, `docs/AI_HANDOFF.md`.
 - **Final Verdict:** **GO PARA PREPILOTO ACOMPAÑADO (PEN / America/Lima)**.
-- **Recommended next steps for human operator (Fernando):**
-  1. Distribute verified APK to Firebase App Distribution (`firebase appdistribution:distribute ... --groups zenda-piloto-validacion`).
-  2. Collect cohort participant consent prior to account creation.
-  3. Optionally execute full authenticated smoke flow with two synthetic accounts (`SMOKE_TOKEN_A=<jwt> SMOKE_TOKEN_B=<jwt> node tools/prepilot-smoke.cjs`).
 
 ## Current objective
 
