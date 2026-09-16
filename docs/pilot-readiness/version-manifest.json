@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-09-15T17:05:54.161Z",
+  "generatedAt": "2026-09-16T01:37:27.047Z",
   "repos": [
     {
       "repo": "zenda_monorepo_app",
       "branch": "feature/pilot-readiness-audit",
-      "baseCommit": "c8aa812eec77a3da6cc8912758a87c5458613910",
+      "baseCommit": "bde880a274168cb339aa12befb987124a9fdd928",
       "dirty": true
     },
     {
@@ -16,7 +16,7 @@
     {
       "repo": "zenda_fronted_app",
       "branch": "feature/pilot-readiness-audit",
-      "baseCommit": "8b26160cf6110a303a1815d127ce0992266be068",
+      "baseCommit": "a793c5218623ba2ea290dec91a5a92b2d499d6d8",
       "dirty": false
     }
   ],

@@ -1,5 +1,31 @@
 # Evidencia de Ejecución de Pruebas - Piloto Zenda
 
+## Adenda: revisión final incremental y cierre de prepiloto — 2026-09-15
+
+Base final verificada: backend `f144013`, frontend `a793c52`, monorepo raíz `feature/pilot-readiness-audit`. Se ejecutaron todas las validaciones estáticas, dinámicas y de entorno en frío.
+
+| Componente / Suite | Comando | Resultado Observado | Estado |
+|---|---|---|---|
+| **Backend Tests (Completo)** | `npm test` (26 suites Jest) | 26 suites pasadas, 135 pruebas pasadas, 0 fallidas (291.4 s) | **PASSED** |
+| **Backend Build** | `npm run build` (`nest build`) | Código de salida 0; artefactos generados en `dist/` | **BUILD OK** |
+| **Frontend Analyze** | `flutter analyze` | `No issues found!` Cero lints, cero errores | **NO ISSUES** |
+| **Frontend Tests (Completo)** | `flutter test` | 25 pruebas pasadas, 0 fallidas (16 base + 9 sesión final) | **PASSED** |
+| **Frontend APK Release** | `Get-FileHash` SHA-256 | `A10F31E0298C49F68F61D356607E02742413B8B64519B4E8ACB83BC1B93D753A` (63.3 MB) | **VERIFIED** |
+| **Smoke Test Staging Real** | `node tools/prepilot-smoke.cjs` | 7 pruebas pasadas, 0 fallidas contra Azure staging (`/health`, `/ready`, DTO 400, 401s) | **PASSED** |
+| **Herramientas de Auditoría** | `node --test tools/pilot-tools.test.cjs` | 3 pruebas pasadas, 0 fallidas (export pseudónimo y consent gate) | **PASSED** |
+| **Inventario AST & Manifiesto** | `node tools/pilot-audit.cjs` | 99 endpoints, 94 DTOs, 29 modelos, 49 HU, 30 migraciones | **AUDIT OK** |
+| **RAG Métricas (Python)** | `python -m unittest test_metrics.py` | 3 pruebas OK (0.001 s) | **PASSED** |
+| **RAG Runner Sintético** | `python evaluate.py dataset.base.jsonl` | 120 casos validados en modo offline | **OFFLINE OK** |
+
+### Detalles de Verificación de APK:
+- **Archivo:** `zenda_fronted_app/build/app/outputs/flutter-apk/app-prod-release.apk`
+- **Tamaño:** 63.3 MB (66,419,006 bytes)
+- **SHA256:** `a10f31e0298c49f68f61d356607e02742413b8b64519b4e8acb83bc1b93d753a`
+- **Versión Android:** `versionName=1.0.0`, `versionCode=2`, `minSdkVersion=28`, `targetSdkVersion=35`
+- **Estado de Distribución:** Compilado localmente y verificado. No subido a Firebase en esta iteración de hardening técnico; listo para distribución por el operador.
+
+---
+
 **Fecha de ejecución:** 2026-09-13  
 **Rama:** `feature/pilot-readiness-audit` (en los 3 repositorios: monorepo raíz, backend y frontend)  
 **Último commit base raíz:** `c8aa812 chore: checkpoint Astra pilot-readiness audit`  
@@ -228,4 +254,3 @@ Ran all test suites.
 - **Release ID:** `57vilo46sq37g`
 - **Grupo de Testers:** `zenda-piloto-validacion`
 - **Resultado:** `distributed to testers/groups successfully` (Código de salida 0).
-

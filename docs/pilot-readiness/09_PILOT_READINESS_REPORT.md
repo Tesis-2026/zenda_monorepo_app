@@ -1,4 +1,8 @@
-# Veredicto: NO-GO para estudio definitivo
+# Veredicto: GO PARA PREPILOTO ACOMPAÑADO (NO-GO para estudio definitivo)
+
+> **Adenda 2026-09-15:** Cierre de precondiciones y validación final documentados en [PRE_PILOT_RELEASE.md](PRE_PILOT_RELEASE.md) y [11_FINAL_REVIEW.md](11_FINAL_REVIEW.md).
+> - **Prepiloto académico pequeño y acompañado (PEN / America/Lima):** **GO PARA PREPILOTO ACOMPAÑADO**, habiéndose resuelto todos los bloqueantes técnicos (FR-01, FR-02, FR-03, P0s), validado el APK `versionCode=2` (SHA256 `a10f31e0...`) y superado el smoke test contra Azure staging (`tools/prepilot-smoke.cjs`).
+> - **Estudio definitivo masivo:** Se mantiene **NO-GO** hasta observar la ejecución del prepiloto acompañado, recolectar retroalimentación real de los instrumentos SUS/PRE/POST y congelar la configuración de modelos RAG.
 
 Fecha: 2026-09-13. Auditoria local, sin despliegue ni distribucion. Rama `feature/pilot-readiness-audit` en los tres repositorios. Base backend 98bcd2c; frontend 0960c07. Cambios alpha anteriores preservados. Los cambios de frontend de esta base no estaban todos en develop; no se hizo merge silencioso.
 

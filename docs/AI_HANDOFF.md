@@ -1,5 +1,28 @@
 # AI Handoff
 
+# AI Handoff
+
+## Pre-pilot readiness closure — 2026-09-15
+
+- **Current objective:** Complete prepilot readiness validation for a small, accompanied academic prepilot (PEN / `America/Lima`), resolve all technically solvable preconditions, execute full test batteries across all layers, and seal the release candidates in the 3 repositories.
+- **Work completed in this session:**
+  1. **Frontend Hardening & Commit:** Committed all review fixes in `zenda_fronted_app` at commit `a793c52` (`fix: harden Flutter app for pilot readiness`). Resolves FR-01 (offline queue user ownership & cache isolation), FR-02 (preservation of offline writes after retries exhausted, concurrency serialization), FR-03 (elimination of fake financial progress fallback, visible error retry, locked month selector), and new regression suite `test/final_review_session_test.dart`.
+  2. **Backend Hardening & Verification:** Backend clean at commit `f144013` (`fix: harden backend for pilot readiness`). Executed full 26 Jest suites (135/135 tests passed) and full TypeScript compilation (`nest build` exit 0).
+  3. **Frontend Analysis & Tests:** `flutter analyze` clean with 0 issues; `flutter test` 25/25 tests passed.
+  4. **Release Candidate APK Verification:** Independently verified SHA256 of `zenda_fronted_app/build/app/outputs/flutter-apk/app-prod-release.apk` (`a10f31e0298c49f68f61d356607e02742413b8b64519b4e8acb83bc1b93d753a`, 63.3 MB, `versionCode=2`).
+  5. **Pre-pilot Smoke Tooling:** Created `tools/prepilot-smoke.cjs` and executed against live Azure staging (`https://zendaapilinuxtesis-hyb8dabvh2hpdgan.centralus-01.azurewebsites.net/api`). 7/7 tests passed (health, database readiness, bad request validation, invalid credentials rejection, and strict 401 guards on `/users/me`, `/transactions`, `/summary/month`).
+  6. **Root & RAG Tools:** Ran `pilot-tools.test.cjs` (3/3 passed), `pilot-audit.cjs` (99 routes, 94 DTOs, 29 models, 49 HUs), `test_metrics.py` (3/3 passed), and `evaluate.py` (120 synthetic cases validated offline).
+  7. **Documentation:** Created `docs/pilot-readiness/PRE_PILOT_RELEASE.md` with complete operational instructions for Fernando. Updated `05_TEST_EVIDENCE.md`, `09_PILOT_READINESS_REPORT.md`, and `CHANGED_FILES.md`.
+- **Files modified/created:**
+  - Backend: 37 files in commit `f144013`.
+  - Frontend: 10 files in commit `a793c52`.
+  - Root: `tools/prepilot-smoke.cjs`, `docs/pilot-readiness/PRE_PILOT_RELEASE.md`, `docs/pilot-readiness/11_FINAL_REVIEW.md`, `docs/pilot-readiness/05_TEST_EVIDENCE.md`, `docs/pilot-readiness/09_PILOT_READINESS_REPORT.md`, `docs/pilot-readiness/CHANGED_FILES.md`, `docs/AI_HANDOFF.md`.
+- **Final Verdict:** **GO PARA PREPILOTO ACOMPAÑADO (PEN / America/Lima)**.
+- **Recommended next steps for human operator (Fernando):**
+  1. Distribute verified APK to Firebase App Distribution (`firebase appdistribution:distribute ... --groups zenda-piloto-validacion`).
+  2. Collect cohort participant consent prior to account creation.
+  3. Optionally execute full authenticated smoke flow with two synthetic accounts (`SMOKE_TOKEN_A=<jwt> SMOKE_TOKEN_B=<jwt> node tools/prepilot-smoke.cjs`).
+
 ## Current objective
 
 Complete the Zenda pilot-readiness audit, verify and contrast Astra's claims against source code, fix verified defects prioritizing P0/P1/P2, generate real test evidence in `docs/pilot-readiness/05_TEST_EVIDENCE.md`, and determine an honest readiness verdict.
@@ -138,4 +161,3 @@ Complete the Zenda pilot-readiness audit, verify and contrast Astra's claims aga
 - **Release Notes:** Zenda v1.0 - Release para grupo de validacion del piloto (SUS contextual, correcciones MOV-01/03/05, GES-01/02, REP-02, PERF-01, GAM-01).
 - **Tester Access Link:** `https://appdistribution.firebase.google.com/testerapps/1:143147353185:android:4e4cf351f410ce12c6d620/releases/57vilo46sq37g?utm_source=firebase-tools`
 - **Console Link:** `https://console.firebase.google.com/project/zenda-flutter-mobile-app/appdistribution/app/android:com.zenda.zenda_fronted/releases/57vilo46sq37g?utm_source=firebase-tools`
-
