@@ -13,9 +13,9 @@ Zenda is a thesis project: an AI-powered mobile finance app for Peruvian univers
 ## Quick Start
 
 ### Prerequisites
-- Node.js 20+
+- Node.js 22.x (backend engine >=22 <23)
 - Docker Desktop
-- Flutter SDK 3.10+
+- Flutter compatible with Dart >=3.10 (audit: Flutter 3.41.6 / Dart 3.11.4)
 
 ### Backend
 ```bash
@@ -32,12 +32,16 @@ npm run start:dev           # http://localhost:3000
 ```bash
 cd zenda_fronted_app
 flutter pub get
-flutter run
+flutter run --flavor dev --dart-define=API_BASE_URL=http://10.0.2.2:3000/api
 ```
 
 
 ## API Documentation
 Swagger UI is available at `http://localhost:3000/api/docs` when the backend is running.
+
+## Pilot Validation
+
+See [pilot readiness](docs/pilot-readiness/09_PILOT_READINESS_REPORT.md) for the audit, pending acceptance criteria and exact local verification commands. Existing Jest suites use mocked persistence, not a real PostgreSQL database. Do not reset or seed production from the local setup instructions.
 
 ## Contributing
 See [CONTRIBUTING.md](CONTRIBUTING.md) for branching model, commit conventions, and PR process.

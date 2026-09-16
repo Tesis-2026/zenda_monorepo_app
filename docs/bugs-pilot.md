@@ -1,0 +1,20 @@
+ID	Módulo	Feedback del usuario	Tipo	Prioridad	Acción recomendada
+CAT-01	Categorías / Reportes	Las categorías existen al registrar transacciones, pero no aparecen igual en reportes. Además, en reportes están en inglés.	Bug funcional + contenido	P1	Unificar catálogo de categorías en toda la app y traducir labels a español.
+CAT-02	Categorías / Movimientos	Las categorías disponibles al crear un gasto no coinciden con las categorías creadas por el usuario.	Bug funcional	P1	Usar una sola fuente de categorías: default + personalizadas del usuario.
+CAT-03	Categorías	No aparecen las categorías creadas por el propio usuario.	Bug funcional	P1	Validar guardado, consulta y renderizado de categorías personalizadas.
+QUIZ-01	Educación / Quiz	Para avanzar en el quiz hay que presionar dos veces: primero “Enviar” y luego “Siguiente pregunta”.	Bug UX	P1	Simplificar el flujo: una acción debe enviar respuesta y pasar a la siguiente pregunta, o mostrar feedback inmediato sin doble clic.
+QUIZ-02	Educación / Quiz	Falta feedback después de realizar un quiz.	Mejora funcional	P2	Mostrar resultado final, respuestas correctas, recomendaciones y aprendizaje sugerido.
+MOV-01	Movimientos	Al ingresar una nueva transacción aparece el monto anterior.	Bug de estado / UX	P1	Limpiar el formulario después de guardar una transacción. El monto debería iniciar en 0 o vacío.
+MOV-02	Movimientos / Voz	Al usar micrófono y no responder aparece error_speech_timeout.	Bug de localización	P2	Traducir mensaje a español: “No se detectó audio. Inténtalo nuevamente.”
+MOV-03	Movimientos / Fecha-hora	El datetime de transacciones a veces no coincide con la hora real.	Bug de datos	P0	Revisar zona horaria, formato UTC/local y conversión backend–frontend.
+MOV-04	Movimientos / Notificaciones	Las notificaciones llegan 5 minutos después y no al instante.	Rendimiento / sincronización	P2	Revisar lógica de envío, jobs, Firebase/servicio push y eventos en tiempo real.
+MOV-05	Movimientos / Gestión	Al borrar un ingreso en movimientos, no se refleja en gestión.	Bug de consistencia de datos	P0	Actualizar saldos, presupuestos y gestión al eliminar ingresos/gastos. Invalidar caché o refrescar estado global.
+REP-01	Reportes	No deja exportar reportes a PDF.	Funcionalidad faltante	P2	Implementar exportación PDF o deshabilitar el botón si aún no está disponible.
+REP-02	Navegación / Reportes	Para acceder a reportes hay que ir a Perfil y luego Reportes.	Mejora UX	P2	Agregar acceso directo a reportes desde Inicio o menú inferior.
+GES-01	Gestión / Ahorro y necesidad	No se entiende cómo agregar dinero a ahorro o necesidad.	Problema de usabilidad	P1	Añadir botón claro: “Agregar dinero”, tutorial breve o texto guía.
+GES-02	Gestión / Presupuestos	El apartado de presupuestos no aparece completo.	Bug UI responsive	P1	Permitir desplazamiento horizontal o rediseñar tarjetas para que se vean completas.
+PERF-01	Perfil / Inicio	Al cambiar el nombre, se actualiza en “Mi perfil”, pero no en “Inicio” hasta cerrar y abrir la app.	Bug de estado / caché	P2	Sincronizar estado global del usuario al editar perfil.
+GAM-01	Gamificación / Insignias	La sección de insignias aparece vacía sin mensaje.	Bug UX / estado vacío	P2	Mostrar estado vacío: “Aún no tienes insignias. Completa retos para ganarlas.”
+UI-01	Apariencia	El usuario solicita modo oscuro.	Mejora visual	P3	Agregar dark mode como preferencia de apariencia.
+IA-01	Zenda AI / Ayuda	La IA dice que no es posible crear nuevas categorías, aunque el usuario espera que ayude a entender la app.	Problema de conocimiento IA / UX	P1	Actualizar contexto del asistente con funcionalidades reales, flujos de uso y limitaciones actuales.
+IA-02	Zenda AI / Soporte interno	Puede ocurrir que la IA responda incorrectamente sobre otras funciones.	Riesgo funcional IA	P1	Crear base de conocimiento de la app: categorías, movimientos, gestión, reportes, retos, perfil y educación.

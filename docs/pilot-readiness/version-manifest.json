@@ -1,0 +1,192 @@
+{
+  "generatedAt": "2026-09-16T01:37:27.047Z",
+  "repos": [
+    {
+      "repo": "zenda_monorepo_app",
+      "branch": "feature/pilot-readiness-audit",
+      "baseCommit": "bde880a274168cb339aa12befb987124a9fdd928",
+      "dirty": true
+    },
+    {
+      "repo": "zenda_backend_app",
+      "branch": "feature/pilot-readiness-audit",
+      "baseCommit": "f14401328770415ecd746cc3a675d90d6b005f3d",
+      "dirty": false
+    },
+    {
+      "repo": "zenda_fronted_app",
+      "branch": "feature/pilot-readiness-audit",
+      "baseCommit": "a793c5218623ba2ea290dec91a5a92b2d499d6d8",
+      "dirty": false
+    }
+  ],
+  "files": [
+    {
+      "file": "zenda_backend_app/src/infra/ai/azure-foundry-agent.client.ts",
+      "sha256": "6e93d1077d9b702d53af97dcd594680ec526879e8de079975ab130b3740b27ab"
+    },
+    {
+      "file": "zenda_backend_app/src/modules/conversations/application/services/financial-context.service.ts",
+      "sha256": "12435a20d3fd6ff3500f395261125ba6a45be2dccdf2cdb16b3cf2283c151053"
+    },
+    {
+      "file": "zenda_backend_app/src/modules/education/application/use-cases/get-personalized-learning-path.use-case.ts",
+      "sha256": "9f80b6d4ae3ca59be43fae195046ccbf57649cc1bb1e151be5e9e54a2b4f5822"
+    },
+    {
+      "file": "zenda_backend_app/src/modules/education/application/use-cases/get-personalized-quiz.use-case.ts",
+      "sha256": "17f25996ade8aa5a94c1aa7b7d46c11a5cd900dcb0bf592eb6295a30de56ac6a"
+    },
+    {
+      "file": "zenda_backend_app/src/modules/surveys/interface/surveys.controller.ts",
+      "sha256": "10026e0f0e3165b743f7027da9df2e778a8b6606816c34a913894e2f5787b6b8"
+    },
+    {
+      "file": "zenda_backend_app/prisma/seed.ts",
+      "sha256": "7d1b04babbb8ac883dd8358e47b9f6f1b94e706d7e2b84122b7e50e3d5f65855"
+    },
+    {
+      "file": "zenda_backend_app/prisma/schema.prisma",
+      "sha256": "b5223f0e035706e383337adda9b6ed0564ba88a27c5fab51aad9702e7ac1ff55"
+    },
+    {
+      "file": "zenda_backend_app/package-lock.json",
+      "sha256": "7be639061f1e0046ceef6f27e8120c59b42235f17365ab421ba24ad1bf08f444"
+    },
+    {
+      "file": "zenda_fronted_app/pubspec.lock",
+      "sha256": "0b1548bcd8fbf3d3c1d56535cf8c7aa9ffba28fb10e045b38d31cd30aa3ae4b9"
+    },
+    {
+      "file": "zenda_backend_app/prisma/migrations/20260304014913_init/migration.sql",
+      "sha256": "b401fef1bea8695631ac16d06639fc502a391366c5c3637ddcdc792d46746c67"
+    },
+    {
+      "file": "zenda_backend_app/prisma/migrations/20260304020948_auth_scope_mvp/migration.sql",
+      "sha256": "de7f31e8d78e90901e6101adb941d2ac76efa92639e221f4ba8e82a0efa32454"
+    },
+    {
+      "file": "zenda_backend_app/prisma/migrations/20260304140924_category_system_custom/migration.sql",
+      "sha256": "7a9e15709a3cec6a7c8a9672309ae4189e7620b8921785b1f3afe8bc77284ffc"
+    },
+    {
+      "file": "zenda_backend_app/prisma/migrations/20260330000000_add_goal_contributions/migration.sql",
+      "sha256": "b9f0a5790dc62f869011df3c1b5dc5ea29ef69604aeca1033e8d70ff8220c395"
+    },
+    {
+      "file": "zenda_backend_app/prisma/migrations/20260330100000_add_refresh_tokens/migration.sql",
+      "sha256": "3afa61cd1e94eb07d255fec4191e75f3ba812950ef74ab454753398de88e0c33"
+    },
+    {
+      "file": "zenda_backend_app/prisma/migrations/20260415025515_add_category_transaction_type/migration.sql",
+      "sha256": "2a2d734b12cde7b5a93c08d605a8e85742c6120e04b92db79b0220c330dacbab"
+    },
+    {
+      "file": "zenda_backend_app/prisma/migrations/20260429000000_add_survey_question_correct_answer/migration.sql",
+      "sha256": "3544347fd09d36a03663d6b2f51f3f84d97c4fe3d89e2d6a8470668ed7e93a50"
+    },
+    {
+      "file": "zenda_backend_app/prisma/migrations/20260429100000_add_login_lockout_and_otp/migration.sql",
+      "sha256": "12c75c807aaab513a8833b868971c1f5f33103a9eac705ac923b72183889fb6c"
+    },
+    {
+      "file": "zenda_backend_app/prisma/migrations/20260429200000_add_quiz_question_pool/migration.sql",
+      "sha256": "2d4ef5f7aeeef1cd897d321e27718f143531222bc8504bcf7f59b5267ca83058"
+    },
+    {
+      "file": "zenda_backend_app/prisma/migrations/20260515000000_add_transaction_ai_classification/migration.sql",
+      "sha256": "debd161285e6c77822856c59632c524ad9f79b691d005d2acfd6455a6ddb121b"
+    },
+    {
+      "file": "zenda_backend_app/prisma/migrations/20260515120000_audit_quiz_recommendation_history/migration.sql",
+      "sha256": "542d301a7493e514dd485b9197a5550372b5037797e9ae350935c32400f4cd63"
+    },
+    {
+      "file": "zenda_backend_app/prisma/migrations/20260515130000_simplify_normalization_tier_a/migration.sql",
+      "sha256": "76976fcfec7b80d441db307c11c6bfe49cbf9fd5996d83214453612b43e384a8"
+    },
+    {
+      "file": "zenda_backend_app/prisma/migrations/20260515140000_simplify_normalization_tier_b/migration.sql",
+      "sha256": "f25b0764df019df213161642be5e2ef4b465bf2e2164874e61b2ea1ac79da63e"
+    },
+    {
+      "file": "zenda_backend_app/prisma/migrations/20260517000000_add_user_financial_progress/migration.sql",
+      "sha256": "ffe08e539b2023e8b372feb1e5c83d16a2356310c9e13c4f8980297bcdd41517"
+    },
+    {
+      "file": "zenda_backend_app/prisma/migrations/20260524000000_add_user_token_version/migration.sql",
+      "sha256": "c0397d3bc0e07f04f0c4c90270de023bed372b699cce3e2f76673eaa583b8f52"
+    },
+    {
+      "file": "zenda_backend_app/prisma/migrations/20260524010000_add_idempotency_keys/migration.sql",
+      "sha256": "f564152c94d30bcb272aa1a8e6bd7b36caf7f68a685993bbcfe6034a8d2b81a6"
+    },
+    {
+      "file": "zenda_backend_app/prisma/migrations/20260524020000_prediction_unpack_confidence_narrative/migration.sql",
+      "sha256": "5ebe5fa23ed3b3dca5ce19b9e4495d74a3486f71c665c44bd97db94467a3a609"
+    },
+    {
+      "file": "zenda_backend_app/prisma/migrations/20260525000000_add_savings_goal_completed_at/migration.sql",
+      "sha256": "b1a6da03f408b5bf0dd5a23f0459142f58a607a41ad8fd96dd334f44e999b472"
+    },
+    {
+      "file": "zenda_backend_app/prisma/migrations/20260601000000_add_category_icon/migration.sql",
+      "sha256": "60b97fab7b4da9b2dfa2ddb3a4aae190c87743d6d5916d32161ae8280b111004"
+    },
+    {
+      "file": "zenda_backend_app/prisma/migrations/20260604023629_add_notifications_inbox_and_fcm_token/migration.sql",
+      "sha256": "94c0bd481d310bb1dc77db7095bc319cbc01a86ac983d67cd815e58897e03c88"
+    },
+    {
+      "file": "zenda_backend_app/prisma/migrations/20260606125953_add_rewards_categories_ai_chat/migration.sql",
+      "sha256": "6e7efb04b747c0745a809fb85c1526bbba70938334fc2e815c4631f325ee288e"
+    },
+    {
+      "file": "zenda_backend_app/prisma/migrations/20260606140650_add_budget_name/migration.sql",
+      "sha256": "7e175b5546d6f5654da63fdbf12b8ddd597778f09ac28ddfc29713213e5cee96"
+    },
+    {
+      "file": "zenda_backend_app/prisma/migrations/20260606161918_add_topic_read_at/migration.sql",
+      "sha256": "4b83b709d2135b9f5c7c4eee95e00a0270e46f3bf0d828f9b255a3ad29a003b5"
+    },
+    {
+      "file": "zenda_backend_app/prisma/migrations/20260606182838_add_transaction_budget_link/migration.sql",
+      "sha256": "29e981d3b7d66df2d2469cafdbe1fce7f676dd7fe6c5a93efeff07a3c0c4abd6"
+    },
+    {
+      "file": "zenda_backend_app/prisma/migrations/20260615222055_add_ai_conversations/migration.sql",
+      "sha256": "924a158d8e37b3a6e85c8152ac74b2cca28af3f052d637bc8e4489fd4732ba2f"
+    },
+    {
+      "file": "zenda_backend_app/prisma/migrations/20260624090000_add_accounts_and_transfers/migration.sql",
+      "sha256": "7257e012784928e7c1bc3a4d01aa55cb4af0341c235bd49e287254c368d10313"
+    },
+    {
+      "file": "zenda_backend_app/prisma/migrations/20260625123000_add_transaction_recorded_notification/migration.sql",
+      "sha256": "b2a1b48168933223c91328095d575a0916c93820e90d278d06a20c64787c9836"
+    },
+    {
+      "file": "zenda_backend_app/prisma/migrations/20260625180000_add_research_satisfaction_and_ai_feedback/migration.sql",
+      "sha256": "9daad85b46d9221a42fd2669c8172f7d4f955572723bc561d2254a958dacb392"
+    },
+    {
+      "file": "zenda_backend_app/prisma/migrations/20260703090000_add_privacy_consent_and_anonymization/migration.sql",
+      "sha256": "42307956ffe2555139b26a97594dfdd71412ca4ad2a5a30ef237d478dc66bd17"
+    },
+    {
+      "file": "zenda_backend_app/prisma/migrations/20260703190000_add_email_verification/migration.sql",
+      "sha256": "d62cf9149dac8620f0e9b126b01665dcded80dff5a03d3aab42165d06870bfed"
+    }
+  ],
+  "remoteAgent": {
+    "model": null,
+    "modelVersion": null,
+    "temperature": null,
+    "topP": null,
+    "embeddings": null,
+    "index": null,
+    "documentCount": null,
+    "reason": "Remote configuration not inspected; do not infer from agent name"
+  },
+  "instrumentVersion": "survey-validation-2026-09-13"
+}
