@@ -1,5 +1,51 @@
 # AI Handoff
 
+## Financial Literacy Pre-Test (FINLIT_PRE_V1) Implementation & Audit — 2026-09-22
+
+- **Current objective:** Audit and properly implement the Financial Literacy Pre-Test (`FINLIT_PRE_V1`) for new user registrations in Zenda, ensuring full separation between authentication and academic research identity, server-side scoring, atomic submission, informed consent, and elimination of pre-test skipping.
+- **Work completed in this session:**
+  1. **Audited Legacy Survey:** Identified lack of pseudonymization (answers stored as JSON linked to `userId`), outdated 10-question bank with percentage score, client-side skip bypass, and exposure of scores/answers at completion.
+  2. **Database & Models (`zenda_backend_app/prisma/schema.prisma`):**
+     - Added enums `AssessmentType` (`PRE`, `POST`) and `AssessmentStatus` (`IN_PROGRESS`, `COMPLETED`).
+     - Implemented `ResearchParticipant` with server-generated cryptographically random UUID v4 `researchParticipantId`.
+     - Implemented `FinancialLiteracyAssessment` (strictly without `userId`, compound unique key `[researchParticipantId, assessmentType, questionnaireVersion]`).
+     - Implemented `FinancialLiteracyAnswer` (strictly without `userId`, compound unique key `[assessmentId, questionId]`).
+     - Created migration `20260922120000_add_research_participant_and_financial_literacy_assessment`.
+  3. **Backend Service & Controller:**
+     - Created `src/modules/surveys/domain/financial-literacy-questions.ts`: Defines official 12 questions bank across 7 domains (`PLANIFICACION`, `AHORRO`, `CONOCIMIENTO_FINANCIERO`, `INFLACION`, `RIESGO`, `CREDITO`, `SEGURIDAD_FINANCIERA`), server scoring (0–12), and `getPublicFinancialLiteracyQuestions()` stripping `correctAnswer`.
+     - Created DTOs: `StartFinancialLiteracyDto`, `SaveFinancialLiteracyProgressDto`, `SubmitFinancialLiteracyDto`.
+     - Created `FinancialLiteracyAssessmentService`: Manages pseudonymization, informed consent (`FINLIT_CONSENT_V1`), auto-save draft, atomic `$transaction` submission, server-side score calculation, backwards compatibility dual-write, and pseudonymized dataset export.
+     - Updated `SurveysController`: Added `GET /api/surveys/pre`, `GET /api/surveys/pre/status`, `POST /api/surveys/pre/start`, `PUT /api/surveys/pre/save-progress`, `POST /api/surveys/pre/response`.
+     - Updated `ResearchDashboardController`: Added `GET /api/research-dashboard/export/financial-literacy.json` and `.csv`.
+  4. **Frontend Implementation (`zenda_fronted_app`):**
+     - Updated `lib/core/services/education_api_service.dart`: Added `SurveyOption`, structured parsing in `SurveyQuestion`, `FinancialLiteracyStatus`, and API methods `getPreStatus`, `startPre`, `savePreProgress`, `submitPre`.
+     - Updated `lib/providers/pre_survey_provider.dart`: Removed `_SurveySkipStore` for pre-survey; verified `preSurveyDone` strictly against backend `getPreStatus().isCompleted`.
+     - Updated `lib/features/surveys/survey_screen.dart`:
+       - Added Academic Informed Consent view with checkbox and start button.
+       - Implemented 12 questions in Spanish with domain badges, A-D radio options, progress bar and question indicator.
+       - Integrated background auto-save via `savePreProgress`.
+       - Removed Skip button and protected against pop/back.
+       - Enforced all 12 questions answered before submission.
+       - Added neutral academic confirmation view without exposing scores or answers.
+  5. **Verification & Testing:**
+     - Backend: 18/18 tests passed in `test/modules/financial-literacy-pretest.e2e-spec.ts`. All 27 backend test suites passed (152/152 tests).
+     - Frontend: 29/29 tests passed in `flutter test` (including new `test/financial_literacy_pretest_test.dart`). `flutter analyze` clean with 0 issues.
+     - Database: `npx ts-node scripts/validate-financial-literacy-db.ts` verified 7/7 criteria.
+  6. **Documentation:** Created comprehensive `docs/pilot-readiness/FINANCIAL_LITERACY_PRETEST.md` covering all 14 required sections.
+- **Files modified/created:**
+  - Backend: `prisma/schema.prisma`, `prisma/migrations/20260922120000_...`, `src/modules/surveys/domain/financial-literacy-questions.ts`, `src/modules/surveys/application/financial-literacy-assessment.service.ts`, `src/modules/surveys/interface/surveys.controller.ts`, DTOs, tests, validation script.
+  - Frontend: `lib/core/services/education_api_service.dart`, `lib/providers/pre_survey_provider.dart`, `lib/features/surveys/survey_screen.dart`, `test/financial_literacy_pretest_test.dart`.
+  - Monorepo: `docs/pilot-readiness/FINANCIAL_LITERACY_PRETEST.md`, `docs/AI_HANDOFF.md`.
+- **Remaining work:**
+  - Human operator deployment to live Azure staging / production.
+  - Pilot cohort participant execution during onboarding.
+- **Important decisions:**
+  - Maintained legacy `SurveyResponse` dual-write so existing comparison and analytics logic continues working seamlessly without breaking changes.
+  - Re-submission after `COMPLETED` returns HTTP 409 `ASSESSMENT_ALREADY_COMPLETED` and is blocked.
+- **Recommended next step:**
+  - Run database migration on live staging environment (`npx prisma migrate deploy`).
+  - Deploy backend and build updated release APK for testing with participant cohort.
+
 ## Remote sync & release candidate deployment closure — 2026-09-16
 
 - **Current objective:** Synchronize verified pre-pilot release candidates to GitHub remotes across all three repositories, re-verify live Azure staging health/security guards, and prepare operational execution for the accompanied academic pre-pilot.
