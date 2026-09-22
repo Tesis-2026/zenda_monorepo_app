@@ -36,15 +36,22 @@
   - Backend: `prisma/schema.prisma`, `prisma/migrations/20260922120000_...`, `src/modules/surveys/domain/financial-literacy-questions.ts`, `src/modules/surveys/application/financial-literacy-assessment.service.ts`, `src/modules/surveys/interface/surveys.controller.ts`, DTOs, tests, validation script.
   - Frontend: `lib/core/services/education_api_service.dart`, `lib/providers/pre_survey_provider.dart`, `lib/features/surveys/survey_screen.dart`, `test/financial_literacy_pretest_test.dart`.
   - Monorepo: `docs/pilot-readiness/FINANCIAL_LITERACY_PRETEST.md`, `docs/AI_HANDOFF.md`.
+- **Release Assets (Build 3):**
+  - **APK:** `zenda_fronted_app/build/app/outputs/flutter-apk/app-prod-release.apk`
+  - **Version:** `1.0.0` (versionCode `3`, build flavor `prodRelease`)
+  - **SHA256:** `D253EAB71E5077F4F3C89742ED3D6F2EEC35C5B9298E56612C3634BC8653F6CD` (63.3 MB)
+  - **Firebase App Distribution:** Uploaded and distributed to group `zenda-piloto-validacion` (Release ID `62ruc5uush4v8`).
+  - **Console URL:** `https://console.firebase.google.com/project/zenda-flutter-mobile-app/appdistribution/app/android:com.zenda.zenda_fronted/releases/62ruc5uush4v8`
+  - **Tester URL:** `https://appdistribution.firebase.google.com/testerapps/1:143147353185:android:4e4cf351f410ce12c6d620/releases/62ruc5uush4v8`
 - **Remaining work:**
-  - Human operator deployment to live Azure staging / production.
-  - Pilot cohort participant execution during onboarding.
+  - Automated deployment of backend commit `a83e1a1` via GitHub Actions on Azure Web App.
+  - Run database migration on live staging environment (`npx prisma migrate deploy`).
+  - Participant cohort execution with Build 3 during onboarding.
 - **Important decisions:**
   - Maintained legacy `SurveyResponse` dual-write so existing comparison and analytics logic continues working seamlessly without breaking changes.
   - Re-submission after `COMPLETED` returns HTTP 409 `ASSESSMENT_ALREADY_COMPLETED` and is blocked.
 - **Recommended next step:**
-  - Run database migration on live staging environment (`npx prisma migrate deploy`).
-  - Deploy backend and build updated release APK for testing with participant cohort.
+  - Verify that the testers in `zenda-piloto-validacion` receive the update in Firebase App Tester app.
 
 ## Remote sync & release candidate deployment closure — 2026-09-16
 
