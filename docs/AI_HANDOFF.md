@@ -1,5 +1,20 @@
 # AI Handoff
 
+## Corrección de navegación y envío del pre-test — 2026-09-22
+
+- **Objetivo actual:** Corregir la navegación regresiva/índices negativos del pre-test y el rechazo `answers must be an object` al guardar o finalizar.
+- **Trabajo completado:**
+  1. Corregido `Siguiente` para incrementar el índice y añadidos límites defensivos para impedir preguntas fuera del rango `1..12`.
+  2. La posición de reanudación se calcula una sola vez; volver a una pregunta respondida ya no provoca un salto automático hacia adelante durante cada reconstrucción de la pantalla.
+  3. `savePreProgress` y `submitPre` envían `answers` como objeto `{ questionId: optionId }`, según el contrato `Record<string, string>` del backend.
+  4. El conteo de completitud considera únicamente IDs pertenecientes al cuestionario vigente.
+  5. Añadidas regresiones para el cuerpo HTTP y el flujo reanudar → anterior → siguiente.
+- **Archivos modificados:** `zenda_fronted_app/lib/core/services/education_api_service.dart`, `zenda_fronted_app/lib/features/surveys/survey_screen.dart`, `zenda_fronted_app/test/financial_literacy_pretest_test.dart`, `docs/AI_HANDOFF.md`.
+- **Pruebas ejecutadas:** `flutter test test/financial_literacy_pretest_test.dart` (6/6), `flutter test` (31/31), `flutter analyze` (0 problemas), `flutter build apk --debug --flavor prod` (exitoso; `build/app/outputs/flutter-apk/app-prod-debug.apk`), `git diff --check` (sin errores).
+- **Trabajo restante:** Generar y distribuir un nuevo build móvil si se requiere entregar esta corrección a testers; el Build 3 ya distribuido no contiene este cambio.
+- **Decisión importante:** Se mantuvo el contrato existente del backend; el defecto estaba en la serialización y el estado de navegación del cliente Flutter.
+- **Siguiente paso recomendado:** Validar el flujo completo en un dispositivo con una cuenta de prueba antes de publicar el siguiente build.
+
 ## Financial Literacy Pre-Test (FINLIT_PRE_V1) Implementation & Audit — 2026-09-22
 
 - **Current objective:** Audit and properly implement the Financial Literacy Pre-Test (`FINLIT_PRE_V1`) for new user registrations in Zenda, ensuring full separation between authentication and academic research identity, server-side scoring, atomic submission, informed consent, and elimination of pre-test skipping.
