@@ -11,9 +11,19 @@
   5. Añadidas regresiones para el cuerpo HTTP y el flujo reanudar → anterior → siguiente.
 - **Archivos modificados:** `zenda_fronted_app/lib/core/services/education_api_service.dart`, `zenda_fronted_app/lib/features/surveys/survey_screen.dart`, `zenda_fronted_app/test/financial_literacy_pretest_test.dart`, `docs/AI_HANDOFF.md`.
 - **Pruebas ejecutadas:** `flutter test test/financial_literacy_pretest_test.dart` (6/6), `flutter test` (31/31), `flutter analyze` (0 problemas), `flutter build apk --debug --flavor prod` (exitoso; `build/app/outputs/flutter-apk/app-prod-debug.apk`), `git diff --check` (sin errores).
-- **Trabajo restante:** Generar y distribuir un nuevo build móvil si se requiere entregar esta corrección a testers; el Build 3 ya distribuido no contiene este cambio.
-- **Decisión importante:** Se mantuvo el contrato existente del backend; el defecto estaba en la serialización y el estado de navegación del cliente Flutter.
-- **Siguiente paso recomendado:** Validar el flujo completo en un dispositivo con una cuenta de prueba antes de publicar el siguiente build.
+- **Release Assets (Build 4):**
+  - **APK:** `zenda_fronted_app/build/app/outputs/flutter-apk/app-prod-release.apk`
+  - **Version:** `1.0.0` (versionCode `4`, build flavor `prodRelease`)
+  - **SHA256:** `E154B0A8AFEC89C3029BC1DEFCCABF422956D06D417BD1002854927F8E1F4779` (63.3 MB)
+  - **Firebase App Distribution:** Subido y distribuido al grupo `zenda-piloto-validacion` (Release ID `2t79eshb99tfg`).
+  - **Console URL:** `https://console.firebase.google.com/project/zenda-flutter-mobile-app/appdistribution/app/android:com.zenda.zenda_fronted/releases/2t79eshb99tfg`
+  - **Tester URL:** `https://appdistribution.firebase.google.com/testerapps/1:143147353185:android:4e4cf351f410ce12c6d620/releases/2t79eshb99tfg`
+- **Trabajo restante:**
+  - Despliegue del backend en Azure Web App (commit con endpoints `FINLIT_PRE_V1`).
+  - Aplicar migración de base de datos en staging (`npx prisma migrate deploy`).
+  - Validación del flujo completo por los testers del grupo con la nueva versión Build 4.
+- **Decisión importante:** Se incrementó el número de compilación a `1.0.0+4` en `pubspec.yaml` para asegurar la entrega de la actualización a los testers en Firebase App Distribution.
+- **Siguiente paso recomendado:** Confirmar la recepción de la actualización en los dispositivos del grupo `zenda-piloto-validacion` y verificar que el pre-test se complete sin errores.
 
 ## Financial Literacy Pre-Test (FINLIT_PRE_V1) Implementation & Audit — 2026-09-22
 
