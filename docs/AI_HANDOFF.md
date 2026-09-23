@@ -11,9 +11,16 @@
   5. La pantalla de preferencias explica la frecuencia y horario del recordatorio.
 - **Archivos modificados:** frontend en providers de pre-test, cola de encuestas, repositorio/tarjeta de racha, controlador de transacciones y localizaciones; backend en `notifications-schedule.service.ts`; regresiones en `financial_literacy_pretest_test.dart`, `streak_repository_test.dart` y `notifications-schedule.e2e-spec.ts`.
 - **Pruebas ejecutadas:** frontend focalizadas (11/11), `flutter test` (36/36), `flutter analyze` (0 problemas), `flutter build apk --debug --flavor prod` (exitoso); backend focalizadas (3/3), suite completa (155/155) y `npm run build` (exitoso); `git diff --check` sin errores.
-- **Trabajo restante:** Desplegar el commit backend para activar el cron horario y distribuir un nuevo build móvil; el Build 4 publicado no contiene estos cambios.
-- **Decisiones importantes:** El recordatorio se limita a horas activas para evitar notificaciones nocturnas; se detiene después del primer movimiento del día y respeta la preferencia `DAILY_REMINDER`.
-- **Siguiente paso recomendado:** Desplegar backend, generar el siguiente build release y validar con un dispositivo que el pre-test no reaparece después de cerrar y abrir la app.
+- **Release Assets (Build 5):**
+  - **APK:** `zenda_fronted_app/build/app/outputs/flutter-apk/app-prod-release.apk`
+  - **Version:** `1.0.0` (versionCode `5`, build flavor `prodRelease`)
+  - **SHA256:** `5C29AE565CFA71BE63EF038F5C5B9BA30CAE4798D07A4756F7261CA24F76A3E1` (63.4 MB)
+  - **Firebase App Distribution:** Subido y distribuido al grupo `zenda-piloto-validacion` (Release ID `4lnc9n40cfj28`).
+  - **Console URL:** `https://console.firebase.google.com/project/zenda-flutter-mobile-app/appdistribution/app/android:com.zenda.zenda_fronted/releases/4lnc9n40cfj28`
+  - **Tester URL:** `https://appdistribution.firebase.google.com/testerapps/1:143147353185:android:4e4cf351f410ce12c6d620/releases/4lnc9n40cfj28`
+- **Trabajo restante:** Desplegar backend en Azure Web App (commit `972bbe1` en `origin/main`), verificar migración y validar con testers del grupo `zenda-piloto-validacion`.
+- **Decisiones importantes:** Se incrementó el número de compilación a `1.0.0+5` en `pubspec.yaml` para asegurar la entrega a los testers en Firebase App Distribution. El recordatorio se limita a horas activas para evitar notificaciones nocturnas; se detiene después del primer movimiento del día y respeta la preferencia `DAILY_REMINDER`.
+- **Siguiente paso recomendado:** Confirmar la recepción de la actualización Build 5 en los dispositivos del grupo `zenda-piloto-validacion` y verificar que el pre-test no reaparece después de cerrar y abrir la app.
 
 ## Corrección de navegación y envío del pre-test — 2026-09-22
 
