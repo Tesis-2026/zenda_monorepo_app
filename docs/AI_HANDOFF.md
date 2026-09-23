@@ -1,5 +1,20 @@
 # AI Handoff
 
+## Persistencia del pre-test, racha y recordatorios horarios — 2026-09-22
+
+- **Objetivo actual:** Evitar que el pre-test completado vuelva a mostrarse al reabrir la app, reforzar la lógica y presentación de la racha, y enviar recordatorios push cada hora.
+- **Trabajo completado:**
+  1. El cierre confirmado del pre-test se persiste por `userId`; los envíos offline pendientes también mantienen el flujo desbloqueado durante el reinicio y se sincronizan al recuperar conexión.
+  2. La racha usa almacenamiento seguro aislado por usuario, caduca cuando se rompe la continuidad, conserva el récord e ignora transacciones futuras o antiguas que intentarían moverla hacia atrás.
+  3. La tarjeta de racha muestra cumplimiento diario, progreso hacia metas de 3/7/14/30/60/100 días y récord personal.
+  4. El backend envía `DAILY_REMINDER` cada hora entre 08:00 y 21:00 de Lima mientras la preferencia esté habilitada y el usuario no haya registrado una transacción ese día. Cada hora tiene protección contra duplicados.
+  5. La pantalla de preferencias explica la frecuencia y horario del recordatorio.
+- **Archivos modificados:** frontend en providers de pre-test, cola de encuestas, repositorio/tarjeta de racha, controlador de transacciones y localizaciones; backend en `notifications-schedule.service.ts`; regresiones en `financial_literacy_pretest_test.dart`, `streak_repository_test.dart` y `notifications-schedule.e2e-spec.ts`.
+- **Pruebas ejecutadas:** frontend focalizadas (11/11), `flutter test` (36/36), `flutter analyze` (0 problemas), `flutter build apk --debug --flavor prod` (exitoso); backend focalizadas (3/3), suite completa (155/155) y `npm run build` (exitoso); `git diff --check` sin errores.
+- **Trabajo restante:** Desplegar el commit backend para activar el cron horario y distribuir un nuevo build móvil; el Build 4 publicado no contiene estos cambios.
+- **Decisiones importantes:** El recordatorio se limita a horas activas para evitar notificaciones nocturnas; se detiene después del primer movimiento del día y respeta la preferencia `DAILY_REMINDER`.
+- **Siguiente paso recomendado:** Desplegar backend, generar el siguiente build release y validar con un dispositivo que el pre-test no reaparece después de cerrar y abrir la app.
+
 ## Corrección de navegación y envío del pre-test — 2026-09-22
 
 - **Objetivo actual:** Corregir la navegación regresiva/índices negativos del pre-test y el rechazo `answers must be an object` al guardar o finalizar.
