@@ -1,5 +1,43 @@
 # AI Handoff
 
+## Habilitación del Post-Test (FINLIT_PRE_V1) y trazabilidad completa — 2026-09-24
+
+- **Objetivo actual:** Habilitar el Post-Test (evaluación final de educación financiera) para que esté disponible a los usuarios cuando deseen ingresar, basado en las 12 preguntas de `FINLIT_PRE_V1`, garantizando calificación server-side, validación estricta, auto-guardado, resiliencia offline y trazabilidad completa (auditoría, analítica, persistencia seudónima y dual-write).
+- **Trabajo completado:**
+  1. **Backend:**
+     - Endpoints en `surveys.controller.ts`: añadidos `GET /api/surveys/post/status`, `POST /api/surveys/post/start`, `PUT /api/surveys/post/save-progress` y actualizado `POST /api/surveys/post/response` devolviendo metadatos completos (`completed`, `message`, `assessmentType`, `questionnaireVersion`, `completedAt`, `improvement`, `score`).
+     - Trazabilidad y auditoría en `financial-literacy-assessment.service.ts`:
+       - Auditoría: logs `START_FINANCIAL_LITERACY_POST` y `SUBMIT_FINANCIAL_LITERACY_POST` en `AuditLogService`.
+       - Telemetría: eventos `financial_literacy_post_started` y `financial_literacy_post_submitted` en `AnalyticsService`.
+       - Persistencia atómica en `$transaction` con `FinancialLiteracyAssessment` (`assessmentType: POST`, `status: COMPLETED`), 12 respuestas en `FinancialLiteracyAnswer`, cálculo de mejora `improvement = postScore - preScore`, y dual-write en `SurveyResponse` (type: `POST_SURVEY`).
+       - Fallback defensivo en `startedAt` (`created.startedAt ?? now`) previniendo excepciones en contextos mockeados o concurrentes.
+  2. **Frontend:**
+     - Eliminado el bloqueo temporal de $\ge 30$ días en `_PostSurveyBanner` dentro de `dashboard_screen.dart` y en textos de localización (`app_es.arb` y `app_en.arb`), permitiendo al usuario ingresar al Post-Test en cualquier momento desde el Dashboard o desde `/surveys/post`.
+     - Implementado el flujo interactivo de 12 preguntas en `survey_screen.dart` reutilizando el banco validado `FINLIT_PRE_V1` (consentimiento informado adaptado para post-test, navegación reactiva con límites defensivos, selección de respuestas, auto-guardado en segundo plano, diálogo defensivo de salida y pantalla final con resumen institucional sin filtración de respuestas ni correctas).
+     - Añadido `PostSurveyCompletionStore` en `pre_survey_provider.dart` para cachear la compleción local por `userId` y proteger el estado tras reinicios o sin conexión.
+     - Añadidos métodos `getPostStatus()`, `startPost()`, `savePostProgress()` a `SurveysApiService` en `education_api_service.dart`.
+     - Corregido padding y flex en `_buildSummaryRow` (`Expanded`/`Flexible`) evitando RenderFlex overflow en pantallas compactas.
+  3. **Pruebas y Verificación:**
+     - Backend: 13/13 pruebas en `surveys.e2e-spec.ts` y 18/18 pruebas en `financial-literacy-pretest.e2e-spec.ts` pasadas exitosamente. Compilación `nest build` exitosa (código 0).
+     - Frontend: 9/9 pruebas en `financial_literacy_pretest_test.dart` y 38/38 pruebas de la suite completa de Flutter aprobadas. `flutter analyze` con 0 issues encontrados.
+- **Archivos modificados:**
+  - Backend: `zenda_backend_app/src/modules/surveys/application/financial-literacy-assessment.service.ts`, `zenda_backend_app/src/modules/surveys/interface/surveys.controller.ts`, `zenda_backend_app/test/modules/surveys.e2e-spec.ts`.
+  - Frontend: `zenda_fronted_app/lib/core/services/education_api_service.dart`, `zenda_fronted_app/lib/features/dashboard/dashboard_screen.dart`, `zenda_fronted_app/lib/features/surveys/survey_screen.dart`, `zenda_fronted_app/lib/l10n/app_en.arb`, `zenda_fronted_app/lib/l10n/app_es.arb`, `zenda_fronted_app/lib/l10n/app_localizations.dart`, `zenda_fronted_app/lib/l10n/app_localizations_en.dart`, `zenda_fronted_app/lib/l10n/app_localizations_es.dart`, `zenda_fronted_app/lib/providers/pre_survey_provider.dart`, `zenda_fronted_app/test/financial_literacy_pretest_test.dart`.
+  - Monorepo: `docs/AI_HANDOFF.md`.
+- **Decisiones importantes:**
+  - Se utiliza el instrumento idéntico `FINLIT_PRE_V1` en el Post-Test para preservar la validez estadística y psicométrica de comparación pre-post de la investigación académica.
+  - El backend mantiene inmutabilidad de evaluaciones cerradas (`HTTP 409 ASSESSMENT_ALREADY_COMPLETED`).
+- **Release Assets (Build 6):**
+  - **APK:** `zenda_fronted_app/build/app/outputs/flutter-apk/app-prod-release.apk`
+  - **Version:** `1.0.0` (versionCode `6`, build flavor `prodRelease`)
+  - **SHA256:** `990D8542D9B87BD50C9B55349E85FFF1DF45A452BAE7F870F78814BA4C1B9C83` (63.4 MB)
+  - **Firebase App Distribution:** Subido y distribuido al grupo `zenda-piloto-validacion` (Release ID `6j1vrfk8864do`).
+  - **Console URL:** `https://console.firebase.google.com/project/zenda-flutter-mobile-app/appdistribution/app/android:com.zenda.zenda_fronted/releases/6j1vrfk8864do`
+  - **Tester URL:** `https://appdistribution.firebase.google.com/testerapps/1:143147353185:android:4e4cf351f410ce12c6d620/releases/6j1vrfk8864do`
+- **Trabajo restante:** Validar la recepción de la actualización Build 6 por los testers y probar el flujo completo del post-test en dispositivos móviles.
+- **Siguiente paso recomendado:**
+  - Los testers pueden actualizar a la Build 6 desde el App Tester de Firebase o descargar directamente el nuevo APK para responder el Post-Test cuando lo deseen.
+
 ## Persistencia del pre-test, racha y recordatorios horarios — 2026-09-22
 
 - **Objetivo actual:** Evitar que el pre-test completado vuelva a mostrarse al reabrir la app, reforzar la lógica y presentación de la racha, y enviar recordatorios push cada hora.
