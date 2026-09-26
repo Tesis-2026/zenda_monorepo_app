@@ -1,5 +1,19 @@
 # AI Handoff
 
+## Dashboard Research para stakeholders — 2026-09-26
+
+- **Objetivo actual:** Convertir el dashboard interno de investigación en una vista ejecutiva clara, accesible y segura para stakeholders del prepiloto.
+- **Trabajo completado:**
+  1. Se identificó la lógica existente en `research-dashboard.service.ts`: agrega participantes, uso, comportamiento financiero, IA, PRE/POST pareado, SUS, satisfacción y feedback cualitativo desde PostgreSQL.
+  2. Se rediseñó la vista server-side protegida por `RESEARCH_DASHBOARD_TOKEN` con resumen ejecutivo, estado honesto de madurez de evidencia, comparación PRE/POST, tendencia diaria, adopción, finanzas, experiencia y voz del usuario.
+  3. Se añadieron filtros de periodo, navegación por secciones, accesos a exportaciones, estilos responsive/impresión, foco visible, objetivos táctiles y descripciones accesibles para gráficos.
+  4. Se mantuvo la privacidad: `noindex`, política de referrer, datos agregados/seudonimizados, escape de contenido cualitativo y sin identificadores directos.
+- **Archivos modificados:** `zenda_backend_app/src/modules/research-dashboard/interface/research-dashboard.view.ts`, `zenda_backend_app/test/modules/research-dashboard-view.e2e-spec.ts`, `zenda_backend_app/docs/research-pilot-data.md`, `docs/AI_HANDOFF.md`.
+- **Decisiones importantes:** No se cambió la agregación ni el contrato de datos. El dashboard continúa siendo privado por token. El estado de evidencia cambia entre “Esperando cohorte pareada”, “Muestra inicial” y “Evidencia comparable” según el número de participantes con PRE y POST.
+- **Pruebas ejecutadas:** `npm run build`; prueba focalizada del dashboard (3/3), incluida protección XSS y estado sin cohorte; suite backend completa (29 suites, 162 pruebas); revisión visual local en escritorio y breakpoint móvil con datos representativos.
+- **Trabajo restante:** Desplegar el backend actualizado y compartir la URL protegida con stakeholders por un canal privado.
+- **Siguiente paso recomendado:** Configurar o verificar `RESEARCH_DASHBOARD_TOKEN` en el entorno desplegado y abrir `https://<backend-host>/api/research-dashboard?token=<token>` con datos reales del prepiloto.
+
 ## Habilitación del Post-Test (FINLIT_PRE_V1) y trazabilidad completa — 2026-09-24
 
 - **Objetivo actual:** Habilitar el Post-Test (evaluación final de educación financiera) para que esté disponible a los usuarios cuando deseen ingresar, basado en las 12 preguntas de `FINLIT_PRE_V1`, garantizando calificación server-side, validación estricta, auto-guardado, resiliencia offline y trazabilidad completa (auditoría, analítica, persistencia seudónima y dual-write).
