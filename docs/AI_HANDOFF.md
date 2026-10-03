@@ -10,10 +10,10 @@
   4. El seed bloquea producción salvo habilitación deliberada con `ALLOW_ILLUSTRATIVE_RESEARCH_SEED=true`, reemplaza exclusivamente correos `@research-scenario.zenda.invalid` y valida sus agregados después de cada ejecución.
 - **Resultados validados:** 30 consentimientos y pares PRE/POST; promedio 54 → 76; diferencia +22; SUS 77,5; utilidad 24/30; continuidad 23/30; registro habitual 10 → 19; planificación 12 → 20; movimientos 27/30; presupuestos 21/30; metas 18/30; clasificación IA 84/100.
 - **Archivos modificados:** backend en `prisma/seed.research-scenario.ts`, `package.json`, servicio/tipos/DTO/controlador/vista del Research Dashboard, prueba de vista y `docs/research-pilot-data.md`; monorepo en `docs/AI_HANDOFF.md`.
-- **Pruebas ejecutadas:** `npm run build`; seed ejecutado dos veces sobre PostgreSQL local para comprobar idempotencia y aislamiento; endpoint HTML/JSON validado; prueba focalizada 4/4; suite backend completa 29 suites y 163 pruebas; `git diff --check`; revisión visual desktop.
+- **Pruebas ejecutadas:** `npm run build`; seed ejecutado dos veces sobre PostgreSQL local para comprobar idempotencia y aislamiento; endpoint HTML/JSON validado; prueba focalizada 4/4; suite backend completa 29 suites y 163 pruebas; `git diff --check`; revisión visual desktop; seed autocheckeado ejecutado en Azure mediante el workflow `37132612128`, con restauración del arranque normal y verificación posterior de `/api/live`.
 - **Decisiones importantes:** Los datos sintéticos nunca se incluyen en la vista real por defecto. Los indicadores de hábitos y clasificación se almacenan como eventos de investigación persistentes para evitar valores hardcodeados en la vista.
-- **Trabajo restante:** Desplegar el backend y ejecutar el seed de forma deliberada contra el entorno donde se presentará el escenario.
-- **Siguiente paso recomendado:** Abrir `/api/research-dashboard?token=<token>&cohort=ILLUSTRATIVE_30` y verificar la presentación con stakeholders; mantener la URL de cohorte separada del dashboard real.
+- **Trabajo restante:** Compartir la URL protegida de la cohorte con los stakeholders autorizados.
+- **Siguiente paso recomendado:** Abrir `/api/research-dashboard?token=<token>&cohort=ILLUSTRATIVE_30`; mantener la URL de cohorte separada del dashboard real.
 
 ## Dashboard Research para stakeholders — 2026-09-26
 
