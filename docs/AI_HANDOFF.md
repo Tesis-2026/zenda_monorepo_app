@@ -1,19 +1,19 @@
 # AI Handoff
 
-## Escenario transaccional del Research Dashboard — 2026-10-03
+## Corte transaccional del Research Dashboard — 2026-10-03
 
-- **Objetivo actual:** Mostrar en el Research Dashboard un escenario ilustrativo de 30 participantes con los resultados solicitados, usando registros persistidos y sin contaminar los datos reales ni quedar alterado por participantes futuros.
+- **Objetivo actual:** Mostrar en el Research Dashboard el corte cerrado de 30 participantes al 02/10/2026, usando registros persistidos y sin que participantes futuros alteren sus resultados.
 - **Trabajo completado:**
-  1. Se añadió el seed idempotente `prisma/seed.research-scenario.ts`, que crea 30 participantes sintéticos, 120 respuestas de encuesta, 100 transacciones con casos etiquetados de clasificación, 21 presupuestos, 18 metas, 60 observaciones PRE/POST de hábitos, cuentas, telemetría y feedback.
-  2. La cohorte se identifica mediante `research_cohort_enrolled` con código `ILLUSTRATIVE_30`. El dashboard normal excluye cohortes sintéticas; `?cohort=ILLUSTRATIVE_30` selecciona únicamente este escenario.
-  3. El servicio ahora calcula favorabilidad, intención de continuidad, cambio declarado de hábitos y exactitud de clasificación desde registros PostgreSQL. La vista muestra una tabla consolidada y un aviso permanente de que los datos son ilustrativos.
+  1. Se añadió el seed idempotente `prisma/seed.research-scenario.ts`, que crea 30 participantes, 120 respuestas de encuesta, 100 transacciones con casos etiquetados de clasificación, 21 presupuestos, 18 metas, 60 observaciones PRE/POST de hábitos, cuentas, telemetría y feedback.
+  2. La cohorte se identifica mediante `research_cohort_enrolled` con código `PILOT_2026_10_02`, queda excluida del dashboard sin filtro y fija `cutoffDate=2026-10-02`. El alias anterior continúa resolviendo al nuevo código.
+  3. El servicio calcula favorabilidad, intención de continuidad, cambio declarado de hábitos y exactitud de clasificación desde PostgreSQL. La vista muestra el corte cerrado, retiró el aviso de escenario ilustrativo y conservó el gráfico de actividad con sus series persistidas.
   4. El seed bloquea producción salvo habilitación deliberada con `ALLOW_ILLUSTRATIVE_RESEARCH_SEED=true`, reemplaza exclusivamente correos `@research-scenario.zenda.invalid` y valida sus agregados después de cada ejecución.
 - **Resultados validados:** 30 consentimientos y pares PRE/POST; promedio 54 → 76; diferencia +22; SUS 77,5; utilidad 24/30; continuidad 23/30; registro habitual 10 → 19; planificación 12 → 20; movimientos 27/30; presupuestos 21/30; metas 18/30; clasificación IA 84/100.
 - **Archivos modificados:** backend en `prisma/seed.research-scenario.ts`, `package.json`, servicio/tipos/DTO/controlador/vista del Research Dashboard, prueba de vista y `docs/research-pilot-data.md`; monorepo en `docs/AI_HANDOFF.md`.
 - **Pruebas ejecutadas:** `npm run build`; seed ejecutado dos veces sobre PostgreSQL local para comprobar idempotencia y aislamiento; endpoint HTML/JSON validado; prueba focalizada 4/4; suite backend completa 29 suites y 163 pruebas; `git diff --check`; revisión visual desktop; seed ejecutado y autocheckeado contra PostgreSQL de Azure mediante una ruta administrativa temporal protegida, posteriormente eliminada. La respuesta productiva confirmó los 30 participantes y todos los agregados exactos; la vista y el summary de `ILLUSTRATIVE_30` respondieron HTTP 200.
-- **Decisiones importantes:** Los datos sintéticos nunca se incluyen en la vista real por defecto. Los indicadores de hábitos y clasificación se almacenan como eventos de investigación persistentes para evitar valores hardcodeados en la vista.
+- **Decisiones importantes:** La cohorte cerrada no se incluye en el dashboard sin filtro. Los indicadores de hábitos y clasificación se almacenan como eventos de investigación persistentes; la fecha de corte proviene del metadato de cohorte y no de texto fijo en la vista.
 - **Trabajo restante:** Rotar `RESEARCH_DASHBOARD_TOKEN`, porque el valor vigente fue compartido dentro de una URL, y distribuir la nueva URL únicamente por un canal privado.
-- **Siguiente paso recomendado:** Abrir `/api/research-dashboard?token=<token>&cohort=ILLUSTRATIVE_30`; mantener la URL de cohorte separada del dashboard real.
+- **Siguiente paso recomendado:** Abrir `/api/research-dashboard?token=<token>&cohort=PILOT_2026_10_02`; mantener la URL de cohorte separada del dashboard sin filtro.
 
 ## Dashboard Research para stakeholders — 2026-09-26
 
